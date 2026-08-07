@@ -2,42 +2,42 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const protect = async (req, res, next) => {
-    try {
-        let token;
+  try {
+    const authHeader = req.headers.authorization;
 
-        if (
-            req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer")
-        ) {
-            token = req.headers.authorization.split(" ")[1];
-        }
-
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: "Access denied. No token provided."
-            });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        req.user = await User.findById(decoded.id).select("-password");
-
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                message: "User no longer exists."
-            });
-        }
-
-        next();
-
-    } catch (error) {
-        res.status(401).json({
-            success: false,
-            message: "Invalid token."
-        });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication token required.",
+      });
     }
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findOne({
+      _id: decoded.id,
+      isActive: true,
+      deletedAt: null,
+    }).select("-password");
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User account is inactive or no longer exists.",
+      });
+    }
+
+    req.user = user;
+
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired authentication token.",
+    });
+  }
 };
 
 module.exports = protect;

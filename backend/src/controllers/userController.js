@@ -1,79 +1,278 @@
 const bcrypt = require("bcryptjs");
+
 const User = require("../models/User");
+const getPagination = require("../utils/pagination");
 
 const createUser = async (req, res) => {
-    try {
-        const { fullname, username, password, role } = req.body;
+  const { fullname, username, password, role } = req.body;
 
-        const exists = await User.findOne({ username });
+  if (!fullname || !username || !password || !role) {
+    return res.status(400).json({
+      success: false,
+      message: "Full name, username, password and role are required.",
+    });
+  }
 
-        if (exists) {
-            return res.status(400).json({
-                success: false,
-                message: "Username already exists."
-            });
-        }
+  const existingUser = await User.findOne({
+    username: username.toLowerCase(),
+    deletedAt: null,
+  });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+  if (existingUser) {
+    return res.status(409).json({
+      success: false,
+      message: "Username already exists.",
+    });
+  }
 
-        const user = await User.create({
-            fullname,
-            username,
-            password: hashedPassword,
-            role
-        });
+  const hashedPassword = await bcrypt.hash(password, 12);
 
-        res.status(201).json({
-            success: true,
-            message: "User created successfully.",
-            user: {
-                id: user._id,
-                fullname: user.fullname,
-                username: user.username,
-                role: user.role
-            }
-        });
+  const user = await User.create({
+    fullname,
+    username: username.toLowerCase(),
+    password: hashedPassword,
+    role,
+  });
 
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+  return res.status(201).json({
+    success: true,
+    message: "Administrator created successfully.",
+    data: {
+      id: user._id,
+      fullname: user.fullname,
+      username: user.username,
+      role: user.role,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+    },
+  });
 };
+
 
 const getUsers = async (req, res) => {
-    try {
+  const { page, limit, skip } = getPagination(req.query);
 
-        const users = await User.find().select("-password");
+  const search = req.query.search?.trim();
 
-        res.json({
-            success: true,
-            count: users.length,
-            users
-        });
+  const filter = {
+    deletedAt: null,
+  };
 
-    } catch (error) {
+  if (search) {
+    filter.$or = [
+      { fullname: { $regex: search, $options: "i" } },
+      { username: { $regex: search, $options: "i" } },
+    ];
+  }
 
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+  const [users, total] = await Promise.all([
+    User.find(filter)
+      .select("-password")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
 
-    }
+    User.countDocuments(filter),
+  ]);
+
+  return res.json({
+    success: true,
+    data: users,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  });
 };
+
+
+const getUserById = async (req, res) => {
+  const user = await User.findOne({
+    _id: req.params.id,
+    deletedAt: null,
+  }).select("-password");
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Administrator not found.",
+    });
+  }
+
+  return res.json({
+    success: true,
+    data: user,
+  });
+};
+
+
+const updateUser = async (req, res) => {
+  const { fullname, role } = req.body;
+
+  const user = await User.findOne({
+    _id: req.params.id,
+    deletedAt: null,
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Administrator not found.",
+    });
+  }
+
+  if (fullname !== undefined) {
+    user.fullname = fullname.trim();
+  }
+
+  if (role !== undefined) {
+    user.role = role;
+  }
+
+  await user.save();
+
+  return res.json({
+    success: true,
+    message: "Administrator updated successfully.",
+    data: {
+      id: user._id,
+      fullname: user.fullname,
+      username: user.username,
+      role: user.role,
+      isActive: user.isActive,
+    },
+  });
+};
+
+
+const toggleUserStatus = async (req, res) => {
+  const user = await User.findOne({
+    _id: req.params.id,
+    deletedAt: null,
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Administrator not found.",
+    });
+  }
+
+  if (user._id.toString() === req.user._id.toString()) {
+    return res.status(400).json({
+      success: false,
+      message: "You cannot deactivate your own account.",
+    });
+  }
+
+  user.isActive = !user.isActive;
+
+  await user.save();
+
+  return res.json({
+    success: true,
+    message: user.isActive
+      ? "Administrator activated successfully."
+      : "Administrator deactivated successfully.",
+    data: {
+      id: user._id,
+      isActive: user.isActive,
+    },
+  });
+};
+
+
+const deleteUser = async (req, res) => {
+  const user = await User.findOne({
+    _id: req.params.id,
+    deletedAt: null,
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Administrator not found.",
+    });
+  }
+
+  if (user._id.toString() === req.user._id.toString()) {
+    return res.status(400).json({
+      success: false,
+      message: "You cannot delete your own account.",
+    });
+  }
+
+  user.deletedAt = new Date();
+  user.isActive = false;
+
+  await user.save();
+
+  return res.json({
+    success: true,
+    message: "Administrator deleted successfully.",
+  });
+};
+
+
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Current password and new password are required.",
+    });
+  }
+
+  if (newPassword.length < 8) {
+    return res.status(400).json({
+      success: false,
+      message: "New password must contain at least 8 characters.",
+    });
+  }
+
+  const user = await User.findById(req.user._id);
+
+  const passwordMatch = await bcrypt.compare(
+    currentPassword,
+    user.password
+  );
+
+  if (!passwordMatch) {
+    return res.status(401).json({
+      success: false,
+      message: "Current password is incorrect.",
+    });
+  }
+
+  user.password = await bcrypt.hash(newPassword, 12);
+
+  await user.save();
+
+  return res.json({
+    success: true,
+    message: "Password changed successfully.",
+  });
+};
+
 
 const getProfile = async (req, res) => {
-
-    res.json({
-        success: true,
-        user: req.user
-    });
-
+  return res.json({
+    success: true,
+    data: req.user,
+  });
 };
 
+
 module.exports = {
-    createUser,
-    getUsers,
-    getProfile
+  createUser,
+  getUsers,
+  getUserById,
+  updateUser,
+  toggleUserStatus,
+  deleteUser,
+  changePassword,
+  getProfile,
 };
