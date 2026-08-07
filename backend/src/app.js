@@ -9,6 +9,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 const householdRoutes = require("./routes/householdRoutes");
+const residentRoutes = require("./routes/residentRoutes");
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use(errorHandler);
 app.use("/api/v1/households", householdRoutes);
+app.use("/api/v1/residents", residentRoutes);
 
 module.exports = app;
