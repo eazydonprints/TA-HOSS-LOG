@@ -156,6 +156,12 @@ const residentSchema = new mongoose.Schema(
       default: null,
     },
 
+    rejectionReason: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+
     deletedAt: {
       type: Date,
       default: null,

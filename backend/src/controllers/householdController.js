@@ -2,6 +2,9 @@ const Household = require("../models/Household");
 const generateHouseholdId = require("../utils/generateHouseholdId");
 const getPagination = require("../utils/pagination");
 
+const Relationship = require("../models/Relationship");
+const Resident = require("../models/Resident");
+
 const createHousehold = async (req, res) => {
   const {
     compound,
@@ -252,12 +255,137 @@ const deleteHousehold = async (req, res) => {
   });
 };
 
+const getHouseholdTree = async (req, res) => {
+  try {
+    const household = await Household.findOne({
+      _id: req.params.id,
+      deletedAt: null,
+      status: "active",
+    }).select(
+      "householdId community lga state country compound houseNumber householdHead"
+    );
+
+    if (!household) {
+      return res.status(404).json({
+        success: false,
+        message: "Household not found.",
+      });
+    }
+
+    const residents = await Resident.find({
+      household: household._id,
+      deletedAt: null,
+      status: "active",
+    }).select(
+      "residentId firstName middleName lastName gender dateOfBirth relationshipToHead verificationStatus"
+    );
+
+    const relationships = await Relationship.find({
+      household: household._id,
+      deletedAt: null,
+    })
+      .populate(
+        "fromResident",
+        "residentId firstName middleName lastName gender"
+      )
+      .populate(
+        "toResident",
+        "residentId firstName middleName lastName gender"
+      );
+
+    const members = residents.map((resident) => ({
+      id: resident._id,
+      residentId: resident.residentId,
+
+      name: [
+        resident.firstName,
+        resident.middleName,
+        resident.lastName,
+      ]
+        .filter(Boolean)
+        .join(" "),
+
+      gender: resident.gender,
+
+      dateOfBirth: resident.dateOfBirth,
+
+      relationshipToHead:
+        resident.relationshipToHead,
+
+      verificationStatus:
+        resident.verificationStatus,
+
+      isHead:
+        household.householdHead &&
+        household.householdHead.toString() ===
+          resident._id.toString(),
+    }));
+
+    const treeRelationships =
+      relationships.map((relationship) => ({
+        id: relationship._id,
+
+        from: relationship.fromResident
+          ? relationship.fromResident._id
+          : null,
+
+        to: relationship.toResident
+          ? relationship.toResident._id
+          : null,
+
+        relationship:
+          relationship.relationship,
+      }));
+
+    return res.json({
+      success: true,
+
+      data: {
+        household: {
+          id: household._id,
+          householdId:
+            household.householdId,
+          community:
+            household.community,
+          lga: household.lga,
+          state: household.state,
+          country: household.country,
+          compound:
+            household.compound,
+          houseNumber:
+            household.houseNumber,
+        },
+
+        memberCount:
+          members.length,
+
+        members,
+
+        relationships:
+          treeRelationships,
+      },
+    });
+
+  } catch (error) {
+    console.error(
+      "HOUSEHOLD TREE ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to generate household relationship tree.",
+    });
+  }
+};
 
 module.exports = {
   createHousehold,
   getHouseholds,
   getHouseholdById,
   updateHousehold,
+  getHouseholdTree,
   updateHouseholdGPS,
   deleteHousehold,
 };

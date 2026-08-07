@@ -14,6 +14,7 @@ const {
   updateHousehold,
   updateHouseholdGPS,
   deleteHousehold,
+  getHouseholdTree,
 } = require("../controllers/householdController");
 
 const {
@@ -47,6 +48,17 @@ router.get(
   getHouseholds
 );
 
+router.get(
+  "/:id/tree",
+  protect,
+  authorize(
+    ROLES.SUPER_ADMIN,
+    ROLES.REGISTRATION_OFFICER,
+    ROLES.VERIFICATION_OFFICER,
+    ROLES.VIEWER
+  ),
+  getHouseholdTree
+);
 
 router.get(
   "/:id",
