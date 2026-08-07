@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
+const householdRoutes = require("./routes/householdRoutes");
 
 const app = express();
 
@@ -34,5 +35,6 @@ app.use('/api/v1/auth', authRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use(errorHandler);
+app.use("/api/v1/households", householdRoutes);
 
 module.exports = app;
