@@ -166,6 +166,47 @@ const residentSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    identityStatus: {
+  type: String,
+  enum: [
+    "pending",
+    "active",
+    "suspended",
+    "deceased",
+    "moved",
+  ],
+  default: "pending",
+  index: true,
+},
+
+qrToken: {
+  type: String,
+  unique: true,
+  sparse: true,
+  index: true,
+},
+
+photo: {
+  type: String,
+  default: null,
+},
+
+photoPublicId: {
+  type: String,
+  default: null,
+},
+
+identityIssuedAt: {
+  type: Date,
+  default: null,
+},
+
+identityUpdatedAt: {
+  type: Date,
+  default: null,
+},
+
   },
   {
     timestamps: true,

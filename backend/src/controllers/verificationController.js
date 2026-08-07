@@ -24,6 +24,11 @@ const verifyResident = async (req, res) => {
   resident.verificationStatus = "verified";
   resident.verifiedBy = req.user._id;
   resident.verifiedAt = new Date();
+
+  resident.identityStatus = "active";
+  resident.identityIssuedAt = new Date();
+  resident.identityUpdatedAt = new Date();
+
   resident.rejectionReason = null;
 
   await resident.save();
@@ -39,12 +44,15 @@ const verifyResident = async (req, res) => {
 const rejectResident = async (req, res) => {
   const { reason } = req.body;
 
-  if (!reason || !reason.trim()) {
-    return res.status(400).json({
-      success: false,
-      message: "A rejection reason is required.",
-    });
-  }
+  if (
+  resident.verificationStatus === "verified"
+) {
+  return res.status(400).json({
+    success: false,
+    message:
+      "A verified resident cannot be rejected through the normal verification workflow.",
+  });
+}
 
   const resident = await Resident.findOne({
     _id: req.params.id,
@@ -62,6 +70,10 @@ const rejectResident = async (req, res) => {
   resident.verificationStatus = "rejected";
   resident.verifiedBy = req.user._id;
   resident.verifiedAt = new Date();
+
+  resident.identityStatus = "pending";
+  resident.identityUpdatedAt = new Date();
+
   resident.rejectionReason = reason.trim();
 
   await resident.save();

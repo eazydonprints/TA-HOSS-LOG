@@ -12,6 +12,7 @@ const householdRoutes = require("./routes/householdRoutes");
 const residentRoutes = require("./routes/residentRoutes");
 const verificationRoutes = require("./routes/verificationRoutes");
 const relationshipRoutes = require("./routes/relationshipRoutes");
+const identityRoutes = require("./routes/identityRoutes");
 
 const app = express();
 
@@ -42,5 +43,6 @@ app.use("/api/v1/households", householdRoutes);
 app.use("/api/v1/residents", residentRoutes);
 app.use("/api/v1/verification", verificationRoutes);
 app.use("/api/v1/relationships", relationshipRoutes);
+app.use("/api/v1/identity", identityRoutes);
 
 module.exports = app;
