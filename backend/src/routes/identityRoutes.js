@@ -15,6 +15,8 @@ const {
   generateResidentQR,
   verifyResidentQR,
   getResidentProfile,
+  generateResidentIdCard,
+  generateResidentIdCardPDF,
 } = require("../controllers/identityController");
 
 
@@ -44,6 +46,30 @@ router.get(
     ROLES.VIEWER
   ),
   getResidentProfile
+);
+
+router.get(
+  "/:residentId/id-card",
+  protect,
+  authorize(
+    ROLES.SUPER_ADMIN,
+    ROLES.REGISTRATION_OFFICER,
+    ROLES.VERIFICATION_OFFICER,
+    ROLES.VIEWER
+  ),
+  generateResidentIdCard
+);
+
+router.get(
+  "/:residentId/id-card/pdf",
+  protect,
+  authorize(
+    ROLES.SUPER_ADMIN,
+    ROLES.REGISTRATION_OFFICER,
+    ROLES.VERIFICATION_OFFICER,
+    ROLES.VIEWER
+  ),
+  generateResidentIdCardPDF
 );
 
 module.exports = router;
