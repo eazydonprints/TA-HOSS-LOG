@@ -14,8 +14,8 @@ const ROLES =
 const {
   generateResidentQR,
   verifyResidentQR,
-} =
-  require("../controllers/identityController");
+  getResidentProfile,
+} = require("../controllers/identityController");
 
 
 router.post(
@@ -34,5 +34,16 @@ router.get(
   verifyResidentQR
 );
 
+router.get(
+  "/:residentId/profile",
+  protect,
+  authorize(
+    ROLES.SUPER_ADMIN,
+    ROLES.REGISTRATION_OFFICER,
+    ROLES.VERIFICATION_OFFICER,
+    ROLES.VIEWER
+  ),
+  getResidentProfile
+);
 
 module.exports = router;
