@@ -7,30 +7,35 @@ const householdSchema = new mongoose.Schema(
       required: true,
       unique: true,
       index: true,
+      trim: true,
     },
 
     community: {
       type: String,
       default: "Ta-hoss",
       immutable: true,
+      trim: true,
     },
 
     lga: {
       type: String,
       default: "Riyom",
       immutable: true,
+      trim: true,
     },
 
     state: {
       type: String,
       default: "Plateau",
       immutable: true,
+      trim: true,
     },
 
     country: {
       type: String,
       default: "Nigeria",
       immutable: true,
+      trim: true,
     },
 
     compound: {
@@ -47,28 +52,48 @@ const householdSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Resident",
       default: null,
+      index: true,
     },
 
-    gps: {
+    location: {
       latitude: {
         type: Number,
         min: -90,
         max: 90,
+        default: null,
       },
 
       longitude: {
         type: Number,
         min: -180,
         max: 180,
+        default: null,
       },
 
       accuracy: {
         type: Number,
         min: 0,
+        default: null,
+      },
+
+      altitude: {
+        type: Number,
+        default: null,
       },
 
       capturedAt: {
         type: Date,
+        default: null,
+      },
+
+      captureMethod: {
+        type: String,
+        enum: [
+          "gps",
+          "manual",
+          "offline_gps",
+        ],
+        default: null,
       },
     },
 
@@ -76,6 +101,7 @@ const householdSchema = new mongoose.Schema(
       type: String,
       enum: ["active", "inactive"],
       default: "active",
+      index: true,
     },
 
     notes: {
@@ -92,11 +118,13 @@ const householdSchema = new mongoose.Schema(
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      default: null,
     },
 
     deletedAt: {
       type: Date,
       default: null,
+      index: true,
     },
   },
   {
@@ -104,4 +132,7 @@ const householdSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Household", householdSchema);
+module.exports = mongoose.model(
+  "Household",
+  householdSchema
+);

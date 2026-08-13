@@ -1,0 +1,1194 @@
+/* =========================================================
+   TA-HOSS LOG
+   ID CARDS PAGE
+   ========================================================= */
+
+.id-cards-page {
+  width: 100%;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.id-cards-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.id-card-refresh-button {
+  border: 1px solid #d8e0e8;
+  background: #ffffff;
+  color: #123b63;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.id-card-refresh-button:hover {
+  background: #f5f8fb;
+  border-color: #123b63;
+}
+
+.id-card-refresh-button:active {
+  transform: translateY(1px);
+}
+
+.id-card-refresh-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.id-card-stat-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 22px;
+}
+
+.id-card-stat-card {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5eaf0;
+
+  border-radius: 12px;
+
+  padding: 18px;
+
+  min-height: 92px;
+
+  box-shadow:
+    0 2px 8px rgba(
+      18,
+      59,
+      99,
+      0.04
+    );
+}
+
+.id-card-stat-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eef4f9;
+
+  color: #123b63;
+
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.id-card-stat-icon.verified {
+  background: #edf8f1;
+  color: #16803a;
+}
+
+.id-card-stat-icon.active {
+  background: #edf3fb;
+  color: #123b63;
+}
+
+.id-card-stat-icon.qr {
+  background: #f3effb;
+  color: #6741a5;
+}
+
+.id-card-stat-card span {
+  display: block;
+
+  color: #718096;
+
+  font-size: 12px;
+
+  margin-bottom: 4px;
+}
+
+.id-card-stat-card strong {
+  display: block;
+
+  color: #172b3a;
+
+  font-size: 24px;
+
+  line-height: 1.1;
+}
+
+
+/* =========================================================
+   INFORMATION BANNER
+   ========================================================= */
+
+.id-card-info-banner {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 13px;
+
+  background: #f2f7fb;
+
+  border: 1px solid #d9e6f1;
+
+  border-radius: 10px;
+
+  padding: 15px 17px;
+
+  margin-bottom: 22px;
+}
+
+.id-card-info-icon {
+  width: 25px;
+  height: 25px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #123b63;
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.id-card-info-banner strong {
+  color: #123b63;
+}
+
+.id-card-info-banner p {
+  margin: 4px 0 0;
+
+  color: #536576;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+.id-card-info-banner p strong {
+  margin: 0 3px;
+}
+
+
+/* =========================================================
+   REGISTRY
+   ========================================================= */
+
+.id-card-registry-panel {
+  overflow: hidden;
+}
+
+.id-card-record-count {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  background: #f1f5f8;
+
+  color: #536576;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.id-card-filters {
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid #edf0f3;
+}
+
+.id-card-search {
+  position: relative;
+
+  flex: 1;
+
+  max-width: 600px;
+}
+
+.id-card-search > span {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #7b8a98;
+
+  font-size: 20px;
+
+  pointer-events: none;
+}
+
+.id-card-search input {
+  width: 100%;
+
+  height: 44px;
+
+  box-sizing: border-box;
+
+  padding:
+    0 42px
+    0 42px;
+
+  border: 1px solid #dce3e9;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #172b3a;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.id-card-search input:focus {
+  border-color: #123b63;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      18,
+      59,
+      99,
+      0.08
+    );
+}
+
+.id-card-search input::placeholder {
+  color: #9aa7b2;
+}
+
+.id-card-clear-search {
+  position: absolute;
+
+  right: 10px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 26px;
+  height: 26px;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: #edf1f4;
+
+  color: #536576;
+
+  cursor: pointer;
+
+  font-size: 17px;
+
+  line-height: 1;
+}
+
+.id-card-clear-search:hover {
+  background: #dfe5ea;
+}
+
+.id-card-filter-select {
+  min-width: 190px;
+}
+
+.id-card-filter-select label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #647484;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.id-card-filter-select select {
+  width: 100%;
+
+  height: 44px;
+
+  padding:
+    0 35px
+    0 12px;
+
+  border: 1px solid #dce3e9;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #253746;
+
+  font-size: 13px;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+.id-card-filter-select select:focus {
+  border-color: #123b63;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.id-card-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.id-card-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 1080px;
+}
+
+.id-card-table thead th {
+  padding:
+    12px
+    14px;
+
+  background: #f8fafc;
+
+  border-bottom:
+    1px solid #e4e9ee;
+
+  color: #667786;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.id-card-table tbody td {
+  padding:
+    13px
+    14px;
+
+  border-bottom:
+    1px solid #edf0f3;
+
+  vertical-align: middle;
+
+  color: #354857;
+
+  font-size: 13px;
+}
+
+.id-card-table tbody tr {
+  transition:
+    background 0.15s ease;
+}
+
+.id-card-table tbody tr:hover {
+  background: #fafcfd;
+}
+
+.id-card-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   RESIDENT CELL
+   ========================================================= */
+
+.id-card-resident-cell {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  min-width: 190px;
+}
+
+.id-card-avatar {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eaf1f6;
+
+  color: #123b63;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.id-card-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.id-card-resident-name {
+  min-width: 0;
+}
+
+.id-card-resident-name strong {
+  display: block;
+
+  max-width: 190px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #1d3343;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.id-card-resident-name span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #81909d;
+
+  font-size: 11px;
+
+  text-transform: capitalize;
+}
+
+
+/* =========================================================
+   RESIDENT ID
+   ========================================================= */
+
+.resident-id-value {
+  display: inline-block;
+
+  padding: 5px 8px;
+
+  border-radius: 5px;
+
+  background: #f2f5f7;
+
+  color: #385066;
+
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   HOUSEHOLD
+   ========================================================= */
+
+.id-card-household strong {
+  display: block;
+
+  color: #354c5d;
+
+  font-size: 12px;
+}
+
+.id-card-household span {
+  display: block;
+
+  max-width: 130px;
+
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #8996a1;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.id-status-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding:
+    5px
+    8px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-transform: capitalize;
+
+  white-space: nowrap;
+}
+
+.id-status-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+}
+
+.id-status-badge.verified {
+  background: #edf8f1;
+
+  color: #16803a;
+}
+
+.id-status-badge.pending {
+  background: #fff8e8;
+
+  color: #a56b00;
+}
+
+.id-status-badge.rejected {
+  background: #fff0f0;
+
+  color: #b42318;
+}
+
+
+/* =========================================================
+   QR STATUS
+   ========================================================= */
+
+.qr-ready-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding:
+    5px
+    8px;
+
+  border-radius: 20px;
+
+  background: #edf8f1;
+
+  color: #16803a;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.qr-pending-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding:
+    5px
+    8px;
+
+  border-radius: 20px;
+
+  background: #fff8e8;
+
+  color: #a56b00;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.qr-disabled-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding:
+    5px
+    8px;
+
+  border-radius: 20px;
+
+  background: #f1f3f5;
+
+  color: #7b8791;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+.id-card-date {
+  color: #697987;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.id-card-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  white-space: nowrap;
+}
+
+.id-card-action-button {
+  border: 1px solid #d8e0e7;
+
+  background: #ffffff;
+
+  color: #536576;
+
+  padding:
+    7px
+    10px;
+
+  border-radius: 6px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.id-card-action-button.view:hover {
+  background: #f4f7f9;
+
+  border-color: #bdc9d3;
+
+  color: #123b63;
+}
+
+.id-card-action-button.primary {
+  border-color: #123b63;
+
+  background: #123b63;
+
+  color: #ffffff;
+}
+
+.id-card-action-button.primary:hover {
+  background: #0d2d4c;
+
+  border-color: #0d2d4c;
+}
+
+.id-card-action-button.disabled,
+.id-card-action-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.id-card-loading {
+  min-height: 260px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+}
+
+.id-card-loading p {
+  margin: 0;
+
+  color: #758594;
+
+  font-size: 13px;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+
+  border:
+    3px solid #e4eaf0;
+
+  border-top-color: #123b63;
+
+  border-radius: 50%;
+
+  animation:
+    idCardSpinner
+    0.8s linear infinite;
+}
+
+@keyframes idCardSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.id-card-error {
+  margin: 20px 0;
+
+  padding: 22px;
+
+  border:
+    1px solid #f0cccc;
+
+  border-radius: 9px;
+
+  background: #fff7f7;
+
+  text-align: center;
+}
+
+.id-card-error strong {
+  display: block;
+
+  color: #a51c1c;
+
+  font-size: 14px;
+
+  margin-bottom: 5px;
+}
+
+.id-card-error p {
+  margin:
+    0 0
+    14px;
+
+  color: #7c5555;
+
+  font-size: 12px;
+}
+
+.id-card-error button {
+  border: 0;
+
+  border-radius: 7px;
+
+  background: #123b63;
+
+  color: #ffffff;
+
+  padding:
+    9px
+    15px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.id-card-empty {
+  min-height: 280px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 35px;
+
+  text-align: center;
+}
+
+.id-card-empty-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #f1f5f8;
+
+  color: #718392;
+
+  font-size: 25px;
+
+  margin-bottom: 13px;
+}
+
+.id-card-empty h3 {
+  margin:
+    0 0
+    7px;
+
+  color: #34495a;
+
+  font-size: 16px;
+}
+
+.id-card-empty p {
+  max-width: 420px;
+
+  margin:
+    0 0
+    16px;
+
+  color: #82909b;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+
+.id-card-empty button {
+  border: 1px solid #d4dee6;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #123b63;
+
+  padding:
+    9px
+    15px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.id-card-empty button:hover {
+  background: #f4f7f9;
+
+  border-color: #123b63;
+}
+
+
+/* =========================================================
+   LEGEND
+   ========================================================= */
+
+.id-card-legend-panel {
+  margin-top: 22px;
+}
+
+.id-card-legend-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.id-card-legend-item {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 15px;
+
+  border:
+    1px solid #e7ebef;
+
+  border-radius: 9px;
+
+  background: #fbfcfd;
+}
+
+.id-card-legend-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+}
+
+.id-card-legend-icon.success {
+  background: #edf8f1;
+
+  color: #16803a;
+}
+
+.id-card-legend-icon.pending {
+  background: #fff8e8;
+
+  color: #a56b00;
+}
+
+.id-card-legend-icon.qr {
+  background: #f3effb;
+
+  color: #6741a5;
+}
+
+.id-card-legend-icon.unavailable {
+  background: #fff0f0;
+
+  color: #b42318;
+}
+
+.id-card-legend-item strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #354a5a;
+
+  font-size: 12px;
+}
+
+.id-card-legend-item p {
+  margin: 0;
+
+  color: #7b8995;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .id-card-stat-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .id-card-table {
+    min-width: 1000px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .id-cards-header {
+    flex-direction: column;
+  }
+
+  .id-card-refresh-button {
+    width: 100%;
+  }
+
+  .id-card-stat-grid {
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 12px;
+  }
+
+  .id-card-stat-card {
+    padding: 14px;
+  }
+
+  .id-card-stat-icon {
+    width: 38px;
+    height: 38px;
+
+    font-size: 17px;
+  }
+
+  .id-card-stat-card strong {
+    font-size: 20px;
+  }
+
+  .id-card-filters {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .id-card-search {
+    max-width: none;
+  }
+
+  .id-card-filter-select {
+    width: 100%;
+  }
+
+  .id-card-legend-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .id-card-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .id-card-stat-card {
+    min-height: 78px;
+  }
+
+  .id-card-info-banner {
+    padding: 13px;
+  }
+
+  .id-card-table-wrapper {
+    margin:
+      0 -12px;
+  }
+}

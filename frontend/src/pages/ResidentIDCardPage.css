@@ -1,0 +1,1033 @@
+/* =========================================================
+   RESIDENT ID CARD PAGE
+   TA-HOSS LOG
+========================================================= */
+
+.resident-id-card-page {
+  width: 100%;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.resident-id-card-header {
+  margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.resident-id-card-loading {
+  min-height: 420px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  color: #64748b;
+}
+
+.resident-id-card-loading p {
+  margin: 0;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.resident-id-card-error {
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 40px;
+}
+
+.resident-id-card-error-icon {
+  width: 54px;
+  height: 54px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+
+  font-size: 25px;
+  font-weight: 800;
+
+  margin-bottom: 15px;
+}
+
+.resident-id-card-error h2 {
+  margin: 0 0 8px;
+
+  color: #172033;
+
+  font-size: 20px;
+}
+
+.resident-id-card-error p {
+  max-width: 500px;
+
+  margin: 0 0 20px;
+
+  color: #64748b;
+
+  line-height: 1.6;
+}
+
+.resident-id-card-inline-error {
+  padding: 13px 16px;
+
+  margin-bottom: 16px;
+
+  border: 1px solid #fecaca;
+
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.resident-id-card-actions-panel {
+  margin-bottom: 20px;
+}
+
+.resident-id-card-actions {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.resident-id-card-primary-button,
+.resident-id-card-secondary-button {
+  min-height: 42px;
+
+  border-radius: 8px;
+
+  padding: 0 17px;
+
+  border: 1px solid #d7dee8;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.resident-id-card-primary-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  background: #123b63;
+
+  border-color: #123b63;
+
+  color: #ffffff;
+}
+
+.resident-id-card-primary-button:hover:not(:disabled) {
+  background: #0d2d4d;
+
+  border-color: #0d2d4d;
+}
+
+.resident-id-card-secondary-button {
+  background: #ffffff;
+
+  color: #26364a;
+}
+
+.resident-id-card-secondary-button:hover {
+  background: #f4f7fa;
+
+  border-color: #b9c5d3;
+}
+
+.resident-id-card-primary-button:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+.button-spinner {
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid rgba(255, 255, 255, 0.4);
+
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: residentCardSpin 0.8s linear infinite;
+}
+
+@keyframes residentCardSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   PREVIEW PANEL
+========================================================= */
+
+.resident-id-card-preview-panel {
+  overflow: hidden;
+}
+
+.resident-id-card-status {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  background: #dcfce7;
+
+  color: #166534;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+}
+
+
+/* =========================================================
+   CARD STAGE
+========================================================= */
+
+.resident-id-card-stage {
+  min-height: 520px;
+
+  padding: 50px 25px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f1f5f9 25%,
+      transparent 25%
+    ),
+    linear-gradient(
+      315deg,
+      #f1f5f9 25%,
+      transparent 25%
+    );
+
+  background-size: 28px 28px;
+
+  background-position:
+    0 0,
+    14px 14px;
+
+  border-radius: 12px;
+}
+
+
+/* =========================================================
+   ID CARD
+========================================================= */
+
+.resident-id-card {
+  width: min(760px, 100%);
+
+  min-height: 390px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #d7dee8;
+
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.15),
+    0 3px 10px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   CARD TOP
+========================================================= */
+
+.resident-id-card-top {
+  min-height: 82px;
+
+  padding: 15px 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  background: #123b63;
+
+  color: #ffffff;
+}
+
+.resident-id-card-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.resident-id-card-brand-mark {
+  width: 44px;
+  height: 44px;
+
+  flex: 0 0 44px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #123b63;
+
+  font-size: 15px;
+
+  font-weight: 900;
+
+  letter-spacing: -0.04em;
+}
+
+.resident-id-card-brand strong {
+  display: block;
+
+  font-size: 18px;
+
+  line-height: 1.1;
+
+  letter-spacing: 0.01em;
+}
+
+.resident-id-card-brand span {
+  display: block;
+
+  margin-top: 4px;
+
+  opacity: 0.78;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+}
+
+.resident-id-card-community {
+  text-align: right;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.resident-id-card-community small {
+  display: block;
+
+  margin-top: 4px;
+
+  opacity: 0.7;
+
+  font-size: 9px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.resident-id-card-body {
+  min-height: 235px;
+
+  padding: 23px;
+
+  display: grid;
+
+  grid-template-columns:
+    125px
+    minmax(0, 1fr)
+    105px;
+
+  gap: 22px;
+
+  align-items: start;
+}
+
+
+/* =========================================================
+   PHOTO
+========================================================= */
+
+.resident-id-card-photo {
+  width: 125px;
+  height: 155px;
+
+  overflow: hidden;
+
+  border-radius: 8px;
+
+  border: 2px solid #d8e0ea;
+
+  background: #eef2f6;
+
+  position: relative;
+}
+
+.resident-id-card-photo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.resident-id-card-photo-fallback {
+  width: 100%;
+  height: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #e8edf3;
+
+  color: #123b63;
+
+  font-size: 48px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.resident-id-card-details {
+  min-width: 0;
+}
+
+.resident-id-card-name {
+  margin-bottom: 15px;
+
+  color: #123b63;
+
+  font-size: 21px;
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  word-break: break-word;
+}
+
+.resident-id-card-detail {
+  margin-bottom: 9px;
+}
+
+.resident-id-card-detail span {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #7a8797;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.07em;
+}
+
+.resident-id-card-detail strong {
+  display: block;
+
+  color: #243447;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  word-break: break-word;
+}
+
+.resident-id-card-detail-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap: 15px;
+}
+
+
+/* =========================================================
+   QR
+========================================================= */
+
+.resident-id-card-qr {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+}
+
+.resident-id-card-qr img {
+  width: 92px;
+  height: 92px;
+
+  display: block;
+
+  object-fit: contain;
+
+  border: 4px solid #ffffff;
+
+  box-shadow:
+    0 0 0 1px #d9e1ea;
+}
+
+.resident-id-card-qr span {
+  color: #657387;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.06em;
+
+  text-align: center;
+}
+
+.resident-id-card-qr-empty {
+  width: 92px;
+  height: 92px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px dashed #c5cfdb;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  font-size: 20px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   STATUS BAR
+========================================================= */
+
+.resident-id-card-status-bar {
+  min-height: 48px;
+
+  padding: 8px 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+
+  border-top: 1px solid #e1e7ee;
+
+  border-bottom: 1px solid #e1e7ee;
+
+  background: #f7f9fb;
+}
+
+.resident-id-card-status-bar > div {
+  min-width: 100px;
+}
+
+.resident-id-card-status-bar span {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #7a8797;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.06em;
+}
+
+.resident-id-card-status-bar strong {
+  color: #123b63;
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+.resident-id-card-valid {
+  margin-left: auto;
+
+  color: #16803a !important;
+
+  font-size: 9px !important;
+
+  font-weight: 800 !important;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.resident-id-card-footer {
+  min-height: 31px;
+
+  padding: 7px 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  color: #738093;
+
+  font-size: 7px;
+
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   INFORMATION
+========================================================= */
+
+.resident-id-card-information-panel {
+  margin-top: 20px;
+}
+
+.resident-id-card-info-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.resident-id-card-info-item {
+  padding: 15px;
+
+  border: 1px solid #e1e7ee;
+
+  border-radius: 9px;
+
+  background: #fafbfd;
+}
+
+.resident-id-card-info-item span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #7a8797;
+
+  font-size: 10px;
+
+  font-weight: 600;
+}
+
+.resident-id-card-info-item strong {
+  display: block;
+
+  color: #243447;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-transform: capitalize;
+
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   BOTTOM ACTIONS
+========================================================= */
+
+.resident-id-card-bottom-panel {
+  margin-top: 20px;
+}
+
+.resident-id-card-bottom-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.resident-id-card-bottom-actions button {
+  min-height: 90px;
+
+  padding: 16px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: flex-start;
+
+  gap: 7px;
+
+  border: 1px solid #dce3eb;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #26364a;
+
+  font-family: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.resident-id-card-bottom-actions button:hover {
+  background: #f6f8fa;
+
+  border-color: #b9c5d3;
+
+  transform: translateY(-1px);
+}
+
+.resident-id-card-bottom-actions strong {
+  font-size: 13px;
+}
+
+.resident-id-card-bottom-actions span {
+  color: #7a8797;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .resident-id-card-info-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .resident-id-card-bottom-actions {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+@media (max-width: 760px) {
+  .resident-id-card-stage {
+    min-height: auto;
+
+    padding: 25px 10px;
+  }
+
+  .resident-id-card {
+    border-radius: 12px;
+  }
+
+  .resident-id-card-top {
+    padding: 14px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .resident-id-card-community {
+    text-align: left;
+  }
+
+  .resident-id-card-body {
+    grid-template-columns:
+      100px
+      minmax(0, 1fr);
+
+    gap: 15px;
+
+    padding: 18px;
+  }
+
+  .resident-id-card-photo {
+    width: 100px;
+    height: 130px;
+  }
+
+  .resident-id-card-qr {
+    grid-column: 1 / -1;
+
+    flex-direction: row;
+
+    justify-content: flex-end;
+  }
+
+  .resident-id-card-qr img,
+  .resident-id-card-qr-empty {
+    width: 75px;
+    height: 75px;
+  }
+
+  .resident-id-card-status-bar {
+    padding: 10px 15px;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+  }
+
+  .resident-id-card-valid {
+    margin-left: 0;
+  }
+
+  .resident-id-card-footer {
+    padding: 8px 15px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+}
+
+
+@media (max-width: 560px) {
+  .resident-id-card-actions {
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .resident-id-card-primary-button,
+  .resident-id-card-secondary-button {
+    width: 100%;
+
+    padding: 0 10px;
+
+    font-size: 11px;
+  }
+
+  .resident-id-card-body {
+    grid-template-columns:
+      85px
+      minmax(0, 1fr);
+
+    padding: 14px;
+
+    gap: 12px;
+  }
+
+  .resident-id-card-photo {
+    width: 85px;
+    height: 112px;
+  }
+
+  .resident-id-card-name {
+    font-size: 16px;
+
+    margin-bottom: 10px;
+  }
+
+  .resident-id-card-detail-row {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+  .resident-id-card-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resident-id-card-bottom-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .sidebar,
+  .topbar,
+  .resident-id-card-header,
+  .resident-id-card-actions-panel,
+  .resident-id-card-information-panel,
+  .resident-id-card-bottom-panel,
+  .panel-header,
+  .resident-id-card-status,
+  .dashboard-header,
+  .dashboard-panel:not(
+    .resident-id-card-preview-panel
+  ) {
+    display: none !important;
+  }
+
+  .main-area {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .content-area {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .dashboard-page {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .resident-id-card-preview-panel {
+    display: block !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+  }
+
+  .resident-id-card-stage {
+    min-height: auto !important;
+
+    padding: 0 !important;
+
+    background: #ffffff !important;
+  }
+
+  .resident-id-card {
+    width: 760px;
+
+    max-width: 100%;
+
+    box-shadow: none !important;
+
+    border: 1px solid #cbd5e1;
+  }
+}

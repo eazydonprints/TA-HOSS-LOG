@@ -1,0 +1,1114 @@
+/* =========================================================
+   TA-HOSS LOG
+   RESIDENT REGISTRATION PAGE
+   Professional Registry UI
+========================================================= */
+
+.resident-registration-page {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* =========================================================
+   FORM LAYOUT
+========================================================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.form-group {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  margin: 0;
+
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.required {
+  color: #dc2626;
+  margin-left: 2px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   INPUTS / SELECTS / TEXTAREAS
+========================================================= */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+
+  padding: 10px 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #0f172a;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #94a3b8;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: #94a3b8;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+/* =========================================================
+   SELECT ARROW
+========================================================= */
+
+.form-group select {
+  cursor: pointer;
+}
+
+.form-group select:disabled {
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   FORM HELP
+========================================================= */
+
+.form-help {
+  display: block;
+
+  margin: 0;
+
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   PHOTO UPLOAD SECTION
+========================================================= */
+
+.resident-photo-section {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+
+  padding: 22px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fafc 100%
+    );
+}
+
+/* =========================================================
+   PHOTO PREVIEW
+========================================================= */
+
+.resident-photo-preview {
+  position: relative;
+
+  width: 160px;
+  height: 160px;
+
+  margin: 0 auto;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+
+  background: #f1f5f9;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 15px rgba(15, 23, 42, 0.08);
+}
+
+.resident-photo-preview img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* =========================================================
+   EMPTY PHOTO PREVIEW
+========================================================= */
+
+.resident-photo-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #64748b;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f8fafc,
+      #eef2f7
+    );
+}
+
+.resident-photo-placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 56px;
+
+  border-radius: 50%;
+
+  background: #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 26px;
+}
+
+.resident-photo-placeholder span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   PHOTO DETAILS
+========================================================= */
+
+.resident-photo-content {
+  min-width: 0;
+}
+
+.resident-photo-content h3 {
+  margin: 0 0 6px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.resident-photo-content p {
+  margin: 0 0 16px;
+
+  max-width: 650px;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   PHOTO ACTIONS
+========================================================= */
+
+.photo-upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.photo-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 9px 14px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.photo-upload-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+
+  box-shadow:
+    0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.photo-upload-button:active {
+  transform: translateY(1px);
+}
+
+.photo-upload-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   HIDDEN FILE INPUT
+========================================================= */
+
+.photo-file-input {
+  display: none;
+}
+
+/* =========================================================
+   CHANGE PHOTO BUTTON
+========================================================= */
+
+.photo-change-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 9px 14px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.photo-change-button:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.photo-change-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   REMOVE PHOTO BUTTON
+========================================================= */
+
+.photo-remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 9px 14px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #b91c1c;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.photo-remove-button:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.photo-remove-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   PHOTO FILE INFORMATION
+========================================================= */
+
+.photo-file-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+
+  margin-top: 12px;
+
+  color: #64748b;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.photo-file-name {
+  max-width: 100%;
+
+  color: #334155;
+  font-weight: 650;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   PHOTO VALIDATION
+========================================================= */
+
+.photo-validation-error {
+  margin-top: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.photo-validation-success {
+  margin-top: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+
+  background: #f0fdf4;
+  color: #166534;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   PHOTO UPLOAD STATUS
+========================================================= */
+
+.photo-upload-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-top: 12px;
+
+  color: #2563eb;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.photo-upload-spinner {
+  width: 14px;
+  height: 14px;
+
+  border: 2px solid #dbeafe;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation: photoUploadSpin 0.8s linear infinite;
+}
+
+@keyframes photoUploadSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   PHOTO UPLOAD PROGRESS
+========================================================= */
+
+.photo-upload-progress {
+  width: 100%;
+  max-width: 420px;
+
+  height: 6px;
+
+  margin-top: 10px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #e2e8f0;
+}
+
+.photo-upload-progress-bar {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #2563eb;
+
+  transition: width 0.2s ease;
+}
+
+/* =========================================================
+   GPS SECTION
+========================================================= */
+
+.gps-section {
+  position: relative;
+}
+
+.gps-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gps-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 18px;
+
+  padding: 12px 14px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+
+  background: #f0fdf4;
+  color: #166534;
+
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.gps-success::before {
+  content: "✓";
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  flex: 0 0 20px;
+
+  border-radius: 50%;
+
+  background: #dcfce7;
+
+  color: #15803d;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   GPS INPUTS
+========================================================= */
+
+.gps-coordinate-input {
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace !important;
+
+  letter-spacing: 0.1px;
+}
+
+/* =========================================================
+   ALERTS
+========================================================= */
+
+.dashboard-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  margin-bottom: 20px;
+
+  padding: 13px 15px;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  background: #fef2f2;
+  color: #991b1b;
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.dashboard-success {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-bottom: 20px;
+
+  padding: 13px 15px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 9px;
+
+  background: #f0fdf4;
+  color: #166534;
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.dashboard-success::before {
+  content: "✓";
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22px;
+  height: 22px;
+
+  flex: 0 0 22px;
+
+  border-radius: 50%;
+
+  background: #dcfce7;
+
+  color: #15803d;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   HEADER BACK BUTTON
+========================================================= */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 9px 14px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.back-button:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.back-button:focus-visible {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.back-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.registration-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+}
+
+.registration-actions .primary-button {
+  min-width: 180px;
+}
+
+.registration-actions .secondary-button,
+.registration-actions .back-button {
+  min-height: 40px;
+}
+
+/* =========================================================
+   STANDARD PRIMARY BUTTON FALLBACK
+========================================================= */
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 9px 15px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.primary-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+
+  box-shadow:
+    0 4px 10px rgba(37, 99, 235, 0.18);
+}
+
+.primary-button:active {
+  transform: translateY(1px);
+}
+
+.primary-button:focus-visible {
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =========================================================
+   STANDARD SECONDARY BUTTON FALLBACK
+========================================================= */
+
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 9px 14px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.secondary-button:focus-visible {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.secondary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   REQUIRED FIELD ERROR STATE
+========================================================= */
+
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea {
+  border-color: #dc2626;
+  background: #fffafa;
+}
+
+.form-group.has-error input:focus,
+.form-group.has-error select:focus,
+.form-group.has-error textarea:focus {
+  border-color: #dc2626;
+
+  box-shadow:
+    0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-error {
+  color: #b91c1c;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   READ-ONLY FIELD
+========================================================= */
+
+.form-group input[readonly],
+.form-group select[readonly] {
+  background: #f8fafc;
+  color: #475569;
+}
+
+/* =========================================================
+   PANEL SPACING
+========================================================= */
+
+.dashboard-page > form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-page > form .dashboard-panel {
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   SMALL INFORMATION BADGE
+========================================================= */
+
+.registration-info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 9px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+
+  background: #eff6ff;
+  color: #1d4ed8;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .resident-photo-section {
+    grid-template-columns: 150px minmax(0, 1fr);
+
+    gap: 22px;
+  }
+
+  .resident-photo-preview {
+    width: 140px;
+    height: 140px;
+  }
+
+  .form-grid {
+    gap: 16px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group-full {
+    grid-column: auto;
+  }
+
+  .resident-photo-section {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+
+    padding: 18px;
+  }
+
+  .resident-photo-preview {
+    width: 150px;
+    height: 150px;
+  }
+
+  .resident-photo-content {
+    text-align: center;
+  }
+
+  .resident-photo-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .photo-upload-actions {
+    justify-content: center;
+  }
+
+  .photo-file-info {
+    justify-content: center;
+  }
+
+  .photo-upload-progress {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .registration-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .registration-actions button {
+    width: 100%;
+  }
+
+  .registration-actions .primary-button {
+    min-width: 0;
+  }
+
+  .dashboard-error {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-success {
+    align-items: flex-start;
+  }
+
+  .gps-actions {
+    width: 100%;
+  }
+
+  .gps-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .resident-photo-section {
+    padding: 15px;
+  }
+
+  .resident-photo-preview {
+    width: 130px;
+    height: 130px;
+  }
+
+  .resident-photo-placeholder-icon {
+    width: 48px;
+    height: 48px;
+
+    font-size: 22px;
+  }
+
+  .photo-upload-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .photo-upload-button,
+  .photo-change-button,
+  .photo-remove-button {
+    width: 100%;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-height: 46px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible,
+.photo-upload-button:focus-visible,
+.photo-change-button:focus-visible,
+.photo-remove-button:focus-visible {
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.13);
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .primary-button,
+  .secondary-button,
+  .back-button,
+  .photo-upload-button,
+  .photo-change-button,
+  .photo-remove-button {
+    transition: none;
+  }
+
+  .photo-upload-spinner {
+    animation: none;
+  }
+}

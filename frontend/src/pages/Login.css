@@ -1,0 +1,394 @@
+/* -------------------------------------------------------------------------- */
+/* Page Background & Layout                                                   */
+/* -------------------------------------------------------------------------- */
+
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+
+  /* Scenic Nature Mountain Background */
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.25),
+      rgba(0, 0, 0, 0.35)
+    ),
+    url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80")
+    center/cover no-repeat fixed;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  color: #ffffff;
+
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Glassmorphism Card Container                                               */
+/* -------------------------------------------------------------------------- */
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+
+  /* Reduced vertical padding */
+  padding: 26px 32px 22px;
+
+  border-radius: 16px;
+
+  /* Translucent frosted glass effect */
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    0 16px 35px rgba(0, 0, 0, 0.35);
+
+  text-align: center;
+  box-sizing: border-box;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* TA-HOSS LOGIN LOGO                                                         */
+/* -------------------------------------------------------------------------- */
+
+.login-logo-container {
+  width: 72px;
+  height: 72px;
+
+  margin: 0 auto 10px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, 0.2);
+}
+
+.login-logo {
+  width: 82%;
+  height: 82%;
+
+  display: block;
+
+  object-fit: contain;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Login Title                                                                */
+/* -------------------------------------------------------------------------- */
+
+.login-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+
+  margin: 0 0 18px;
+
+  letter-spacing: 0.5px;
+
+  color: #ffffff;
+
+  text-transform: lowercase;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Input Controls                                                             */
+/* -------------------------------------------------------------------------- */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+.input-group input {
+  width: 100%;
+
+  padding: 11px 18px;
+
+  border-radius: 25px;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+
+  font-size: 0.92rem;
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.65);
+
+  text-transform: lowercase;
+}
+
+.input-group input:focus {
+  border-color: rgba(255, 255, 255, 0.6);
+
+  background: rgba(255, 255, 255, 0.18);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Checkbox & Forgot Password Links                                           */
+/* -------------------------------------------------------------------------- */
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 0.8rem;
+
+  margin-top: -2px;
+
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+  accent-color: #ffffff;
+
+  width: 14px;
+  height: 14px;
+
+  cursor: pointer;
+}
+
+.forgot-password-link {
+  color: rgba(255, 255, 255, 0.9);
+
+  text-decoration: none;
+
+  transition: opacity 0.2s ease;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+
+  opacity: 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Submit Button                                                              */
+/* -------------------------------------------------------------------------- */
+
+.login-submit-btn {
+  width: 100%;
+
+  padding: 11px;
+
+  margin-top: 6px;
+
+  border-radius: 25px;
+
+  border: none;
+
+  background-color: #ffffff;
+
+  color: #111111;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  text-transform: lowercase;
+
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease;
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.login-submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Error Message                                                              */
+/* -------------------------------------------------------------------------- */
+
+.login-error {
+  background: rgba(239, 68, 68, 0.25);
+
+  border: 1px solid rgba(239, 68, 68, 0.5);
+
+  color: #fecaca;
+
+  padding: 8px 12px;
+
+  border-radius: 12px;
+
+  font-size: 0.82rem;
+
+  text-align: center;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Bottom Register Prompt                                                     */
+/* -------------------------------------------------------------------------- */
+
+.register-text {
+  margin: 16px 0 0;
+
+  font-size: 0.83rem;
+
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.register-text a {
+  color: #ffffff;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  margin-left: 3px;
+}
+
+.register-text a:hover {
+  text-decoration: underline;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Community Information                                                      */
+/* -------------------------------------------------------------------------- */
+
+.login-community-info {
+  margin-top: 12px;
+
+  padding-top: 10px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+  font-size: 0.72rem;
+
+  color: rgba(255, 255, 255, 0.6);
+
+  letter-spacing: 0.3px;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Developer Credit Footer                                                    */
+/* -------------------------------------------------------------------------- */
+
+.developer-footer {
+  position: absolute;
+
+  bottom: 16px;
+
+  text-align: center;
+
+  font-size: 0.8rem;
+
+  color: rgba(255, 255, 255, 0.7);
+
+  letter-spacing: 0.5px;
+
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Mobile                                                                     */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 500px) {
+  .login-page {
+    padding: 16px;
+  }
+
+  .login-card {
+    max-width: 100%;
+
+    padding: 24px 22px 20px;
+  }
+
+  .login-logo-container {
+    width: 65px;
+    height: 65px;
+
+    margin-bottom: 9px;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+
+    margin-bottom: 16px;
+  }
+
+  .form-options {
+    font-size: 0.75rem;
+  }
+
+  .developer-footer {
+    bottom: 10px;
+
+    font-size: 0.7rem;
+  }
+}

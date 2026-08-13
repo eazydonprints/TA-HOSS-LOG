@@ -1,0 +1,255 @@
+/* =========================================================
+   IDENTITY & QR MANAGEMENT
+========================================================= */
+
+.identity-page {
+  width: 100%;
+}
+
+/* Statistics */
+
+.identity-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.identity-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.identity-stat-icon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.identity-stat-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.identity-stat-card span:not(.identity-stat-icon) {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.identity-stat-card strong {
+  color: #0f172a;
+  font-size: 22px;
+}
+
+/* Toolbar */
+
+.identity-toolbar {
+  align-items: flex-end;
+}
+
+.identity-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.identity-tools input,
+.identity-tools select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  outline: none;
+}
+
+.identity-tools input {
+  width: 230px;
+}
+
+.identity-tools select {
+  min-width: 160px;
+}
+
+.identity-tools input:focus,
+.identity-tools select:focus {
+  border-color: #2563eb;
+}
+
+/* Table */
+
+.identity-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.identity-table {
+  width: 100%;
+  min-width: 950px;
+  border-collapse: collapse;
+}
+
+.identity-table th {
+  padding: 14px 15px;
+  text-align: left;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.identity-table td {
+  padding: 14px 15px;
+  border-bottom: 1px solid #eef2f7;
+  color: #334155;
+  font-size: 13px;
+}
+
+.identity-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Resident */
+
+.identity-resident {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.identity-resident > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.identity-resident strong {
+  color: #0f172a;
+}
+
+.identity-resident span {
+  color: #64748b;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
+.identity-avatar {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #334155;
+  font-weight: 700;
+}
+
+.identity-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* QR */
+
+.qr-status {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.qr-status.available {
+  color: #15803d;
+  font-weight: 700;
+}
+
+/* Actions */
+
+.identity-action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.identity-action-buttons button {
+  border: 1px solid #dbe3ec;
+  background: #ffffff;
+  color: #334155;
+  padding: 7px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.identity-action-buttons button:hover {
+  background: #f1f5f9;
+}
+
+.identity-action-buttons button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.identity-action-buttons button:last-child {
+  color: #2563eb;
+}
+
+/* Mobile */
+
+@media (max-width: 900px) {
+  .identity-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .identity-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .identity-tools {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .identity-tools input {
+    flex: 1;
+    width: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .identity-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .identity-tools input,
+  .identity-tools select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

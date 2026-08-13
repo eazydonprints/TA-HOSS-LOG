@@ -2,11 +2,16 @@ const mongoose = require("mongoose");
 
 const residentSchema = new mongoose.Schema(
   {
+    // =========================================================
+    // RESIDENT IDENTITY
+    // =========================================================
+
     residentId: {
       type: String,
       required: true,
       unique: true,
       index: true,
+      trim: true,
     },
 
     household: {
@@ -15,6 +20,10 @@ const residentSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+
+    // =========================================================
+    // PERSONAL INFORMATION
+    // =========================================================
 
     firstName: {
       type: String,
@@ -38,6 +47,7 @@ const residentSchema = new mongoose.Schema(
       type: String,
       enum: ["male", "female", "other"],
       required: true,
+      lowercase: true,
     },
 
     dateOfBirth: {
@@ -48,6 +58,7 @@ const residentSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       trim: true,
+      default: "",
     },
 
     maritalStatus: {
@@ -61,17 +72,28 @@ const residentSchema = new mongoose.Schema(
         "unknown",
       ],
       default: "unknown",
+      lowercase: true,
     },
+
+    // =========================================================
+    // SOCIO-ECONOMIC INFORMATION
+    // =========================================================
 
     occupation: {
       type: String,
       trim: true,
+      default: "",
     },
 
     educationLevel: {
       type: String,
       trim: true,
+      default: "",
     },
+
+    // =========================================================
+    // HOUSEHOLD RELATIONSHIP
+    // =========================================================
 
     relationshipToHead: {
       type: String,
@@ -87,19 +109,56 @@ const residentSchema = new mongoose.Schema(
         "other",
       ],
       required: true,
+      lowercase: true,
     },
+
+    // =========================================================
+    // RESIDENT PHOTO
+    // =========================================================
 
     photo: {
-      url: String,
-      publicId: String,
+      type: String,
+      default: null,
+      trim: true,
     },
 
-    gps: {
-      latitude: Number,
-      longitude: Number,
-      accuracy: Number,
-      capturedAt: Date,
+    photoPublicId: {
+      type: String,
+      default: null,
+      trim: true,
     },
+
+    // =========================================================
+    // GPS INFORMATION
+    // =========================================================
+
+    gps: {
+      latitude: {
+        type: Number,
+        min: -90,
+        max: 90,
+      },
+
+      longitude: {
+        type: Number,
+        min: -180,
+        max: 180,
+      },
+
+      accuracy: {
+        type: Number,
+        min: 0,
+      },
+
+      capturedAt: {
+        type: Date,
+        default: null,
+      },
+    },
+
+    // =========================================================
+    // VERIFICATION
+    // =========================================================
 
     verificationStatus: {
       type: String,
@@ -109,40 +168,7 @@ const residentSchema = new mongoose.Schema(
         "rejected",
       ],
       default: "pending",
-    },
-
-    status: {
-      type: String,
-      enum: ["active", "inactive"],
-      default: "active",
-    },
-
-    biometric: {
-      enrolled: {
-        type: Boolean,
-        default: false,
-      },
-
-      provider: {
-        type: String,
-        default: null,
-      },
-
-      templateReference: {
-        type: String,
-        default: null,
-      },
-
-      enrolledAt: {
-        type: Date,
-        default: null,
-      },
-    },
-
-    registeredBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      index: true,
     },
 
     verifiedBy: {
@@ -162,56 +188,155 @@ const residentSchema = new mongoose.Schema(
       default: null,
     },
 
-    deletedAt: {
+    // =========================================================
+    // BIOMETRIC INFORMATION
+    // =========================================================
+
+    biometric: {
+      enrolled: {
+        type: Boolean,
+        default: false,
+      },
+
+      provider: {
+        type: String,
+        default: null,
+        trim: true,
+      },
+
+      templateReference: {
+        type: String,
+        default: null,
+        trim: true,
+      },
+
+      enrolledAt: {
+        type: Date,
+        default: null,
+      },
+    },
+
+    // =========================================================
+    // DIGITAL IDENTITY
+    // =========================================================
+
+    identityStatus: {
+      type: String,
+      enum: [
+        "pending",
+        "active",
+        "suspended",
+        "deceased",
+        "moved",
+      ],
+      default: "pending",
+      index: true,
+    },
+
+    qrToken: {
+      type: String,
+      unique: true,
+      sparse: true,
+      index: true,
+      default: null,
+    },
+
+    identityIssuedAt: {
       type: Date,
       default: null,
     },
 
-    identityStatus: {
-  type: String,
-  enum: [
-    "pending",
-    "active",
-    "suspended",
-    "deceased",
-    "moved",
-  ],
-  default: "pending",
-  index: true,
-},
+    identityUpdatedAt: {
+      type: Date,
+      default: null,
+    },
 
-qrToken: {
-  type: String,
-  unique: true,
-  sparse: true,
-  index: true,
-},
+    // =========================================================
+    // RESIDENT ACCOUNT STATUS
+    // =========================================================
 
-photo: {
-  type: String,
-  default: null,
-},
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+      index: true,
+    },
 
-photoPublicId: {
-  type: String,
-  default: null,
-},
+    // =========================================================
+    // REGISTRATION INFORMATION
+    // =========================================================
 
-identityIssuedAt: {
-  type: Date,
-  default: null,
-},
+    registeredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
 
-identityUpdatedAt: {
-  type: Date,
-  default: null,
-},
+    // =========================================================
+    // SOFT DELETE
+    // =========================================================
 
+    deletedAt: {
+      type: Date,
+      default: null,
+      index: true,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// =========================================================
+// VIRTUAL - FULL NAME
+// =========================================================
+
+residentSchema.virtual("fullName").get(function () {
+  return [
+    this.firstName,
+    this.middleName,
+    this.lastName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+});
+
+// =========================================================
+// JSON SETTINGS
+// =========================================================
+
+residentSchema.set("toJSON", {
+  virtuals: true,
+});
+
+residentSchema.set("toObject", {
+  virtuals: true,
+});
+
+// =========================================================
+// INDEXES
+// =========================================================
+
+residentSchema.index({
+  household: 1,
+  relationshipToHead: 1,
+});
+
+residentSchema.index({
+  firstName: 1,
+  lastName: 1,
+});
+
+residentSchema.index({
+  verificationStatus: 1,
+  status: 1,
+});
+
+residentSchema.index({
+  identityStatus: 1,
+  status: 1,
+});
 
 module.exports = mongoose.model(
   "Resident",

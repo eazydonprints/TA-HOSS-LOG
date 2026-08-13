@@ -1,0 +1,358 @@
+/* ============================================================
+   TA-HOSS FLOATING AI CHAT WIDGET (ISOLATED NAMESPACE: taw-*)
+   ============================================================ */
+
+/* Container positioning */
+.taw-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Chat Box Window - Compact Height */
+.taw-window {
+  margin-bottom: 12px;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  height: 380px; /* Reduced from 500px to prevent overflow */
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.15), 0 4px 10px -2px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: tawSlideUp 0.2s ease-out forwards;
+}
+
+@keyframes tawSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.taw-header {
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.taw-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taw-header-icon {
+  background: rgba(99, 102, 241, 0.2);
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b4fc;
+}
+
+.taw-header-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+}
+
+.taw-badge {
+  background: rgba(99, 102, 241, 0.25);
+  color: #c7d2fe;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.taw-status {
+  font-size: 10px;
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 1px;
+}
+
+.taw-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #34d399;
+  animation: tawPulse 2s infinite;
+}
+
+@keyframes tawPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.taw-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.taw-icon-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.taw-icon-btn:hover {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+.taw-icon-btn.taw-clear:hover {
+  color: #fb7185;
+}
+
+/* Messages Area */
+.taw-messages-body {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.taw-msg-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.taw-msg-row.user {
+  align-items: flex-end;
+}
+
+.taw-msg-row.assistant {
+  align-items: flex-start;
+}
+
+.taw-msg-bubble {
+  position: relative;
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.taw-msg-row.user .taw-msg-bubble {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.taw-msg-row.assistant .taw-msg-bubble {
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.taw-msg-bubble.error {
+  background-color: #fff1f2;
+  border-color: #fecdd3;
+  color: #9f1239;
+}
+
+.taw-copy-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  opacity: 0;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.taw-msg-bubble:hover .taw-copy-btn {
+  opacity: 1;
+}
+
+.taw-timestamp {
+  font-size: 9px;
+  color: #94a3b8;
+  margin-top: 3px;
+  padding: 0 2px;
+}
+
+/* Typing / Loading dots */
+.taw-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  border-bottom-left-radius: 2px;
+  width: fit-content;
+}
+
+.taw-dot {
+  width: 5px;
+  height: 5px;
+  background-color: #6366f1;
+  border-radius: 50%;
+  animation: tawBounce 1.2s infinite ease-in-out;
+}
+
+.taw-dot:nth-child(2) { animation-delay: 0.2s; }
+.taw-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes tawBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-5px); }
+}
+
+/* Suggestions */
+.taw-suggestions {
+  margin-top: 4px;
+}
+
+.taw-suggestions-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.taw-suggestion-chip {
+  width: 100%;
+  text-align: left;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #4338ca;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.taw-suggestion-chip:hover {
+  background-color: #f5f3ff;
+  border-color: #c7d2fe;
+}
+
+/* Input Form */
+.taw-input-form {
+  padding: 10px;
+  background-color: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.taw-input-field {
+  flex: 1;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.taw-input-field:focus {
+  background-color: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.taw-send-btn {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: none;
+  padding: 7px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.taw-send-btn:hover:not(:disabled) {
+  background-color: #4338ca;
+}
+
+.taw-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Floating Trigger Button */
+.taw-trigger-btn {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  box-shadow: 0 8px 16px -2px rgba(79, 70, 229, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.taw-trigger-btn:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -2px rgba(79, 70, 229, 0.45);
+}
+
+.taw-trigger-btn:active {
+  transform: translateY(0);
+}

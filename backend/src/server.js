@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const app = require('./app');
-
+// Load environment variables BEFORE importing app or any other modules
 dotenv.config();
+
+const mongoose = require('mongoose');
+const app = require('./app');
 
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('MongoDB connected');
 
@@ -14,6 +16,6 @@ mongoose.connect(process.env.MONGODB_URI)
       console.log(`Server running on port ${PORT}`);
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('MongoDB connection error:', err.message);
   });

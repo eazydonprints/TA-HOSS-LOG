@@ -1,0 +1,1514 @@
+/* =========================================================
+   TA-HOSS LOG — RESIDENTS REGISTRY
+   Complete replacement stylesheet
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.residents-page {
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.residents-page-header {
+  align-items: flex-start;
+}
+
+.residents-page-header .header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   RESIDENT TOOLS / SEARCH + EXPORT
+========================================================= */
+
+.resident-tools-panel {
+  position: relative;
+}
+
+.resident-tools-header {
+  align-items: center;
+  gap: 24px;
+}
+
+
+/* =========================================================
+   EXPORT ACTIONS
+========================================================= */
+
+.resident-export-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+
+/*
+   Compact professional export buttons.
+
+   They intentionally do NOT stretch across the panel.
+*/
+
+.export-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-width: 92px;
+  height: 40px;
+
+  padding: 0 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  line-height: 1;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.export-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.export-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.export-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* Excel */
+
+.export-excel {
+  border-color: #bbf7d0;
+  color: #166534;
+  background: #f0fdf4;
+}
+
+.export-excel:hover:not(:disabled) {
+  border-color: #86efac;
+  background: #dcfce7;
+}
+
+
+/* PDF */
+
+.export-pdf {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.export-pdf:hover:not(:disabled) {
+  border-color: #fca5a5;
+  background: #fee2e2;
+}
+
+
+/* Export label */
+
+.export-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 27px;
+  height: 22px;
+
+  padding: 0 4px;
+
+  border-radius: 4px;
+
+  background: currentColor;
+  color: #ffffff;
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+
+/* Loading spinner inside buttons */
+
+.button-spinner {
+  width: 13px;
+  height: 13px;
+
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+
+  border-radius: 50%;
+
+  animation: residentsButtonSpin 0.7s linear infinite;
+}
+
+@keyframes residentsButtonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.resident-search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+
+  margin-top: 4px;
+}
+
+.resident-search-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  flex: 1;
+  min-width: 220px;
+}
+
+.resident-search-input input {
+  width: 100%;
+  min-height: 44px;
+
+  box-sizing: border-box;
+
+  padding: 10px 42px 10px 40px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #0f172a;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.resident-search-input input::placeholder {
+  color: #94a3b8;
+}
+
+.resident-search-input input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 18px;
+  height: 18px;
+
+  color: #64748b;
+
+  font-size: 21px;
+  line-height: 1;
+
+  pointer-events: none;
+}
+
+.search-clear-button {
+  position: absolute;
+  right: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #e2e8f0;
+  color: #475569;
+
+  font-size: 17px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.search-clear-button:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+.search-submit-button {
+  min-width: 92px;
+}
+
+.search-clear-action {
+  min-width: 100px;
+}
+
+
+/* =========================================================
+   SEARCH RESULT INFO
+========================================================= */
+
+.search-result-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  margin-top: 14px;
+  padding: 10px 13px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 7px;
+
+  background: #eff6ff;
+  color: #475569;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.search-result-info strong {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.resident-page-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.resident-page-error > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.resident-page-error strong {
+  color: #991b1b;
+  font-size: 13px;
+}
+
+.resident-page-error span {
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   REGISTRY PANEL
+========================================================= */
+
+.resident-registry-panel {
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   PANEL COUNT
+========================================================= */
+
+.resident-registry-panel .panel-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+
+  padding: 5px 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+
+  background: #f8fafc;
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.residents-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+.residents-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.residents-table-wrapper::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.residents-table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.residents-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.residents-table {
+  width: 100%;
+  min-width: 1180px;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  color: #334155;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.residents-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  padding: 12px 13px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.residents-table thead th:first-child {
+  padding-left: 16px;
+}
+
+.residents-table thead th:last-child {
+  padding-right: 16px;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.residents-table tbody td {
+  padding: 13px;
+
+  border-bottom: 1px solid #eef2f7;
+
+  background: #ffffff;
+
+  vertical-align: middle;
+}
+
+.residents-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.residents-table tbody tr {
+  transition:
+    background-color 0.16s ease;
+}
+
+.residents-table tbody tr:hover td {
+  background: #f8fbff;
+}
+
+.residents-table tbody tr:hover
+  .resident-table-avatar {
+  border-color: #bfdbfe;
+}
+
+
+/* =========================================================
+   RESIDENT PERSON
+========================================================= */
+
+.resident-table-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+
+  min-width: 215px;
+
+  color: inherit;
+  text-decoration: none;
+}
+
+.resident-table-person:hover
+  .resident-person-details strong {
+  color: #2563eb;
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.resident-table-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 42px;
+  height: 42px;
+
+  overflow: hidden;
+
+  border: 1px solid #dbe3ed;
+  border-radius: 50%;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.resident-table-avatar img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.resident-table-avatar span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+.resident-table-avatar.avatar-image-error {
+  background: #eff6ff;
+}
+
+
+/* =========================================================
+   PERSON DETAILS
+========================================================= */
+
+.resident-person-details {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 3px;
+}
+
+.resident-person-details strong {
+  max-width: 205px;
+
+  overflow: hidden;
+
+  color: #0f172a;
+
+  font-size: 13px;
+  font-weight: 750;
+
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  transition: color 0.18s ease;
+}
+
+.resident-person-details span {
+  max-width: 190px;
+
+  overflow: hidden;
+
+  color: #64748b;
+
+  font-size: 11px;
+
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   RESIDENT ID
+========================================================= */
+
+.resident-id {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 5px;
+
+  background: #eff6ff;
+
+  color: #1d4ed8;
+
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   HOUSEHOLD
+========================================================= */
+
+.household-link {
+  display: inline-flex;
+  align-items: center;
+
+  color: #2563eb;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.household-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.muted-text {
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   DEMOGRAPHICS
+========================================================= */
+
+.resident-demographics {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.resident-demographics > span {
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.resident-demographics small {
+  color: #94a3b8;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   RELATIONSHIP
+========================================================= */
+
+.relationship-text {
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  min-height: 25px;
+
+  padding: 4px 8px;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: currentColor;
+}
+
+
+/* Success */
+
+.status-success {
+  border-color: #bbf7d0;
+
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+
+/* Warning */
+
+.status-warning {
+  border-color: #fde68a;
+
+  background: #fffbeb;
+  color: #b45309;
+}
+
+
+/* Danger */
+
+.status-danger {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+
+/* Neutral */
+
+.status-neutral {
+  border-color: #e2e8f0;
+
+  background: #f8fafc;
+  color: #64748b;
+}
+
+
+/* =========================================================
+   ACTION COLUMN
+========================================================= */
+
+.action-column {
+  text-align: right !important;
+}
+
+.resident-action-cell {
+  text-align: right;
+}
+
+.resident-row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+
+/* =========================================================
+   TABLE ACTION BUTTONS
+========================================================= */
+
+.table-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 53px;
+  height: 31px;
+
+  padding: 0 9px;
+
+  border: 1px solid transparent;
+  border-radius: 6px;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  line-height: 1;
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.table-action-button:hover {
+  transform: translateY(-1px);
+}
+
+
+/* View */
+
+.view-action {
+  border-color: #dbeafe;
+
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.view-action:hover {
+  border-color: #bfdbfe;
+
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+
+/* Edit */
+
+.edit-action {
+  border-color: #e2e8f0;
+
+  background: #ffffff;
+  color: #475569;
+}
+
+.edit-action:hover {
+  border-color: #cbd5e1;
+
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   MOBILE RESIDENT LIST
+========================================================= */
+
+.residents-mobile-list {
+  display: none;
+}
+
+.resident-mobile-card {
+  padding: 16px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03);
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.resident-mobile-card:hover {
+  border-color: #cbd5e1;
+
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+
+/* Mobile top */
+
+.resident-mobile-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.resident-mobile-identity {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 3px;
+}
+
+.resident-mobile-identity strong {
+  overflow: hidden;
+
+  color: #0f172a;
+
+  font-size: 14px;
+  font-weight: 750;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resident-mobile-identity span {
+  color: #2563eb;
+
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.resident-mobile-identity small {
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE DETAILS
+========================================================= */
+
+.resident-mobile-details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin-top: 16px;
+  padding-top: 14px;
+
+  border-top: 1px solid #eef2f7;
+}
+
+.resident-mobile-details > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.resident-mobile-details span {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 650;
+
+  text-transform: uppercase;
+}
+
+.resident-mobile-details strong {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   MOBILE STATUS
+========================================================= */
+
+.resident-mobile-statuses {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  margin-top: 14px;
+}
+
+.resident-mobile-statuses .status-badge {
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   MOBILE ACTIONS
+========================================================= */
+
+.resident-mobile-actions {
+  display: flex;
+  gap: 8px;
+
+  margin-top: 15px;
+  padding-top: 13px;
+
+  border-top: 1px solid #eef2f7;
+}
+
+.resident-mobile-actions
+  .table-action-button {
+  flex: 1;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  min-height: 280px;
+
+  padding: 35px 20px;
+
+  text-align: center;
+}
+
+.empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 14px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 50%;
+
+  background: #eff6ff;
+
+  font-size: 25px;
+}
+
+.empty-state strong {
+  color: #1e293b;
+
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.empty-state span {
+  max-width: 420px;
+
+  margin-top: 6px;
+
+  color: #64748b;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.empty-state .primary-button,
+.empty-state .secondary-button {
+  margin-top: 17px;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+}
+
+.pagination-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.pagination-info strong {
+  color: #334155;
+  font-weight: 750;
+}
+
+.pagination-info span {
+  color: #94a3b8;
+}
+
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 6px;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.pagination-page-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pagination-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.pagination-page:hover:not(.active) {
+  border-color: #cbd5e1;
+
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.pagination-page.active {
+  border-color: #2563eb;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  cursor: default;
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+.pagination-nav-button {
+  min-height: 34px;
+
+  padding: 0 11px;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   MANAGEMENT ACTIONS
+========================================================= */
+
+.resident-management-grid {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+.resident-management-grid button {
+  min-height: 90px;
+}
+
+.resident-management-grid button strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.resident-management-grid button span {
+  display: block;
+}
+
+
+/* =========================================================
+   GENERAL BUTTON SAFETY
+========================================================= */
+
+.export-button:focus-visible,
+.table-action-button:focus-visible,
+.pagination-page:focus-visible,
+.search-clear-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.18);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .resident-tools-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resident-export-actions {
+    justify-content: flex-start;
+  }
+
+  .pagination-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET / SMALL LAPTOP
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .residents-table {
+    min-width: 1050px;
+  }
+
+  .resident-management-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* Header */
+
+  .residents-page-header {
+    gap: 15px;
+  }
+
+  .residents-page-header .header-actions {
+    width: 100%;
+
+    justify-content: flex-start;
+  }
+
+  .residents-page-header
+    .header-actions
+    button {
+    flex: 0 0 auto;
+  }
+
+
+  /* Tools */
+
+  .resident-tools-header {
+    gap: 15px;
+  }
+
+  .resident-export-actions {
+    width: 100%;
+
+    justify-content: flex-start;
+  }
+
+  .export-button {
+    min-width: 88px;
+    height: 38px;
+
+    padding: 0 11px;
+  }
+
+
+  /* Search */
+
+  .resident-search-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .resident-search-input {
+    width: 100%;
+  }
+
+  .search-submit-button,
+  .search-clear-action {
+    width: auto;
+    min-width: 100px;
+    align-self: flex-start;
+  }
+
+
+  /* Table */
+
+  .residents-table-wrapper {
+    display: none;
+  }
+
+  .residents-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+
+  /* Pagination */
+
+  .pagination-controls {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .pagination-pages {
+    order: 3;
+
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .pagination-nav-button {
+    flex: 1;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .resident-export-actions {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    width: 100%;
+  }
+
+  .export-button {
+    width: 100%;
+  }
+
+
+  .resident-mobile-card {
+    padding: 13px;
+  }
+
+  .resident-mobile-details {
+    gap: 9px;
+  }
+
+  .resident-mobile-actions {
+    flex-direction: column;
+  }
+
+  .resident-mobile-actions
+    .table-action-button {
+    width: 100%;
+  }
+
+
+  .pagination-page {
+    width: 32px;
+    height: 32px;
+  }
+
+  .pagination-controls {
+    gap: 5px;
+  }
+
+
+  .resident-page-error {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resident-page-error
+    .secondary-button {
+    width: auto;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .resident-mobile-details {
+    grid-template-columns: 1fr;
+  }
+
+  .resident-export-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination-pages {
+    overflow-x: auto;
+
+    justify-content: flex-start;
+
+    max-width: 100%;
+
+    padding-bottom: 3px;
+  }
+
+}

@@ -182,54 +182,6 @@ const updateHousehold = async (req, res) => {
 };
 
 
-const updateHouseholdGPS = async (req, res) => {
-  const {
-    latitude,
-    longitude,
-    accuracy,
-  } = req.body;
-
-  if (
-    typeof latitude !== "number" ||
-    typeof longitude !== "number"
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "Valid latitude and longitude are required.",
-    });
-  }
-
-  const household = await Household.findOne({
-    _id: req.params.id,
-    deletedAt: null,
-  });
-
-  if (!household) {
-    return res.status(404).json({
-      success: false,
-      message: "Household not found.",
-    });
-  }
-
-  household.gps = {
-    latitude,
-    longitude,
-    accuracy,
-    capturedAt: new Date(),
-  };
-
-  household.updatedBy = req.user._id;
-
-  await household.save();
-
-  return res.json({
-    success: true,
-    message: "Household GPS location updated successfully.",
-    data: household.gps,
-  });
-};
-
-
 const deleteHousehold = async (req, res) => {
   const household = await Household.findOne({
     _id: req.params.id,
@@ -380,12 +332,137 @@ const getHouseholdTree = async (req, res) => {
   }
 };
 
+const updateHouseholdGPS = async (req, res) => {
+  try {
+    const {
+      latitude,
+      longitude,
+      accuracy,
+      altitude,
+      captureMethod,
+    } = req.body;
+
+    if (
+      latitude === undefined ||
+      longitude === undefined
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Latitude and longitude are required.",
+      });
+    }
+
+    if (
+      latitude < -90 ||
+      latitude > 90
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid latitude.",
+      });
+    }
+
+    if (
+      longitude < -180 ||
+      longitude > 180
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid longitude.",
+      });
+    }
+
+    const allowedMethods = [
+      "gps",
+      "manual",
+      "offline_gps",
+    ];
+
+    if (
+      captureMethod &&
+      !allowedMethods.includes(
+        captureMethod
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid GPS capture method.",
+      });
+    }
+
+    const household =
+      await Household.findOne({
+        _id: req.params.id,
+        deletedAt: null,
+      });
+
+    if (!household) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Household not found.",
+      });
+    }
+
+    household.location = {
+      latitude,
+      longitude,
+      accuracy:
+        accuracy !== undefined
+          ? accuracy
+          : null,
+
+      altitude:
+        altitude !== undefined
+          ? altitude
+          : null,
+
+      capturedAt: new Date(),
+
+      captureMethod:
+        captureMethod || "gps",
+    };
+
+    await household.save();
+
+    return res.json({
+      success: true,
+      message:
+        "Household GPS location updated successfully.",
+
+      data: {
+        householdId:
+          household.householdId,
+
+        location:
+          household.location,
+      },
+    });
+
+  } catch (error) {
+    console.error(
+      "UPDATE GPS ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to update household GPS location.",
+    });
+  }
+};
+
 module.exports = {
   createHousehold,
   getHouseholds,
   getHouseholdById,
   updateHousehold,
-  getHouseholdTree,
   updateHouseholdGPS,
   deleteHousehold,
+  getHouseholdTree,
 };

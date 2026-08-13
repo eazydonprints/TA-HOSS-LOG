@@ -36,6 +36,7 @@ const relationshipSchema = new mongoose.Schema(
         "other",
       ],
       required: true,
+      trim: true,
     },
 
     createdBy: {
@@ -47,6 +48,7 @@ const relationshipSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
       default: null,
+      index: true,
     },
   },
   {
@@ -54,6 +56,11 @@ const relationshipSchema = new mongoose.Schema(
   }
 );
 
+/*
+ * Prevent duplicate active relationship records
+ * between the same two residents with the same
+ * relationship type.
+ */
 relationshipSchema.index(
   {
     fromResident: 1,
@@ -64,6 +71,24 @@ relationshipSchema.index(
     unique: true,
   }
 );
+
+/*
+ * Helpful indexes for household relationship queries.
+ */
+relationshipSchema.index({
+  household: 1,
+  deletedAt: 1,
+});
+
+relationshipSchema.index({
+  fromResident: 1,
+  deletedAt: 1,
+});
+
+relationshipSchema.index({
+  toResident: 1,
+  deletedAt: 1,
+});
 
 module.exports = mongoose.model(
   "Relationship",

@@ -1,47 +1,79 @@
 const User = require("../models/User");
+const Resident = require("../models/Resident");
+const Household = require("../models/Household");
 
 const getDashboard = async (req, res) => {
+  try {
 
-    try {
+    const [
+      totalAdmins,
+      totalResidents,
+      totalHouseholds,
+      verifiedResidents,
+      pendingResidents,
+      mappedHouseholds
+    ] = await Promise.all([
 
-        const totalAdmins = await User.countDocuments();
+      User.countDocuments(),
+      Resident.countDocuments(),
+      Household.countDocuments(),
+      Resident.countDocuments({
+        verificationStatus: "verified"
+      }),
 
-        res.json({
+      Resident.countDocuments({
+        verificationStatus: {
+          $ne: "verified"
+        }
+      }),
 
-            success: true,
+      Household.countDocuments({
+        "gps.latitude": {
+          $exists: true
+        },
+        "gps.longitude": {
+          $exists: true
+        }
+      })
 
-            dashboard: {
+    ]);
 
-                totalAdmins,
+    const gpsCoverage =
+      totalHouseholds > 0
+        ? `${Math.round(
+            (mappedHouseholds / totalHouseholds) * 100
+          )}%`
+        : "0%";
 
-                totalResidents: 0,
+    res.json({
+      success: true,
 
-                totalHouseholds: 0,
+      dashboard: {
+        totalAdmins,
+        totalResidents,
+        totalHouseholds,
+        verifiedResidents,
+        pendingResidents,
+        mappedHouseholds,
+        gpsCoverage
+      }
+    });
 
-                pendingSync: 0,
+  } catch (err) {
 
-                gpsCoverage: "0%"
+    console.error(
+      "DASHBOARD ERROR:",
+      err
+    );
 
-            }
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
 
-        });
-
-    } catch (err) {
-
-        res.status(500).json({
-
-            success: false,
-
-            message: err.message
-
-        });
-
-    }
-
+  }
 };
 
 module.exports = {
-
-    getDashboard
-
+  getDashboard
 };

@@ -22,6 +22,11 @@ const {
   validateGPS,
 } = require("../validators/householdValidator");
 
+/*
+|--------------------------------------------------------------------------
+| CREATE HOUSEHOLD
+|--------------------------------------------------------------------------
+*/
 
 router.post(
   "/",
@@ -35,6 +40,11 @@ router.post(
   createHousehold
 );
 
+/*
+|--------------------------------------------------------------------------
+| GET HOUSEHOLDS
+|--------------------------------------------------------------------------
+*/
 
 router.get(
   "/",
@@ -48,6 +58,12 @@ router.get(
   getHouseholds
 );
 
+/*
+|--------------------------------------------------------------------------
+| GET HOUSEHOLD RELATIONSHIP TREE
+|--------------------------------------------------------------------------
+*/
+
 router.get(
   "/:id/tree",
   protect,
@@ -59,6 +75,29 @@ router.get(
   ),
   getHouseholdTree
 );
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE HOUSEHOLD GPS
+|--------------------------------------------------------------------------
+*/
+
+router.patch(
+  "/:id/gps",
+  protect,
+  authorize(
+    ROLES.SUPER_ADMIN,
+    ROLES.REGISTRATION_OFFICER
+  ),
+  validateGPS,
+  updateHouseholdGPS
+);
+
+/*
+|--------------------------------------------------------------------------
+| GET HOUSEHOLD BY ID
+|--------------------------------------------------------------------------
+*/
 
 router.get(
   "/:id",
@@ -72,6 +111,11 @@ router.get(
   getHouseholdById
 );
 
+/*
+|--------------------------------------------------------------------------
+| UPDATE HOUSEHOLD
+|--------------------------------------------------------------------------
+*/
 
 router.patch(
   "/:id",
@@ -83,25 +127,19 @@ router.patch(
   updateHousehold
 );
 
-
-router.patch(
-  "/:id/gps",
-  protect,
-  authorize(
-    ROLES.SUPER_ADMIN,
-    ROLES.REGISTRATION_OFFICER
-  ),
-  validateGPS,
-  updateHouseholdGPS
-);
-
+/*
+|--------------------------------------------------------------------------
+| DELETE / ARCHIVE HOUSEHOLD
+|--------------------------------------------------------------------------
+*/
 
 router.delete(
   "/:id",
   protect,
-  authorize(ROLES.SUPER_ADMIN),
+  authorize(
+    ROLES.SUPER_ADMIN
+  ),
   deleteHousehold
 );
-
 
 module.exports = router;
