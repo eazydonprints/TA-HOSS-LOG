@@ -1,0 +1,306 @@
+.public-layout {
+  min-height: 100vh;
+
+  display: flex;
+
+  background:
+    #f4f6fb;
+
+  color:
+    #1f2937;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.public-sidebar {
+  width: 260px;
+
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px 16px;
+
+  box-sizing: border-box;
+
+  background:
+    #1f2937;
+
+  color:
+    #ffffff;
+}
+
+
+.public-brand {
+  padding:
+    0 12px
+    24px;
+
+  border-bottom:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.1
+    );
+}
+
+.public-brand h2 {
+  margin: 0;
+
+  font-size: 1.5rem;
+}
+
+.public-brand span {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 0.8rem;
+
+  opacity: 0.65;
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+.public-user {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    20px 12px;
+}
+
+
+.public-avatar {
+  width: 46px;
+  height: 46px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    #3b82f6;
+
+  font-weight: 700;
+
+  font-size: 1.2rem;
+}
+
+
+.public-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+.public-user strong {
+  display: block;
+
+  font-size: 0.9rem;
+}
+
+
+.public-user span {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 0.75rem;
+
+  opacity: 0.65;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.public-nav {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  margin-top: 10px;
+}
+
+
+.public-nav a {
+  padding:
+    12px 14px;
+
+  border-radius: 10px;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.75
+    );
+
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.public-nav a:hover,
+.public-nav a.active {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.12
+    );
+
+  color:
+    #ffffff;
+}
+
+
+/* =========================================================
+   ADMIN SWITCH
+========================================================= */
+
+.admin-interface-switch {
+  margin-top: 24px;
+
+  padding-top: 18px;
+
+  border-top:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.1
+    );
+}
+
+
+.community-switch {
+  display: block;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  background:
+    rgba(
+      59,
+      130,
+      246,
+      0.25
+    );
+
+  color:
+    #ffffff;
+
+  text-decoration: none;
+
+  font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.public-logout-btn {
+  margin-top: auto;
+
+  width: 100%;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  background:
+    rgba(
+      239,
+      68,
+      68,
+      0.15
+    );
+
+  color:
+    #ffffff;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.public-main {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 28px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width: 768px
+) {
+
+  .public-layout {
+    flex-direction: column;
+  }
+
+
+  .public-sidebar {
+    width: 100%;
+
+    min-height: auto;
+  }
+
+
+  .public-nav {
+    flex-direction: row;
+
+    overflow-x: auto;
+  }
+
+
+  .public-nav a {
+    white-space: nowrap;
+  }
+
+}

@@ -116,7 +116,8 @@ const ResidentIDCardPage = () => {
 
       link.href = url;
 
-      link.download = `TA-HOSS-${cardData?.resident?.residentId || id}.pdf`;
+      link.download =
+        `TA-HOSS-${cardData?.resident?.residentId || id}.pdf`;
 
       document.body.appendChild(link);
 
@@ -131,10 +132,6 @@ const ResidentIDCardPage = () => {
         err
       );
 
-      /*
-       * Axios may return the backend error
-       * as a Blob when responseType = blob.
-       */
       let message =
         "Unable to generate ID card PDF.";
 
@@ -183,7 +180,7 @@ const ResidentIDCardPage = () => {
     );
   }
 
-  if (error) {
+  if (error && !cardData) {
     return (
       <div className="dashboard-page resident-id-card-page">
         <div className="dashboard-header">
@@ -263,10 +260,6 @@ const ResidentIDCardPage = () => {
 
   return (
     <div className="dashboard-page resident-id-card-page">
-      {/* =====================================================
-          PAGE HEADER
-      ====================================================== */}
-
       <div className="dashboard-header resident-id-card-header">
         <div>
           <div className="breadcrumb">
@@ -291,10 +284,6 @@ const ResidentIDCardPage = () => {
           ← Back
         </button>
       </div>
-
-      {/* =====================================================
-          ACTION BAR
-      ====================================================== */}
 
       {error && (
         <div className="resident-id-card-inline-error">
@@ -352,10 +341,6 @@ const ResidentIDCardPage = () => {
         </div>
       </section>
 
-      {/* =====================================================
-          ID CARD
-      ====================================================== */}
-
       <section className="dashboard-panel resident-id-card-preview-panel">
         <div className="panel-header">
           <div>
@@ -370,8 +355,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <span className="resident-id-card-status">
-            {identity?.identityStatus ===
-            "active"
+            {identity?.identityStatus === "active"
               ? "ACTIVE"
               : identity?.identityStatus ||
                 "PENDING"}
@@ -380,14 +364,19 @@ const ResidentIDCardPage = () => {
 
         <div className="resident-id-card-stage">
           <div className="resident-id-card">
-            {/* =================================================
-                CARD HEADER
-            ================================================== */}
 
             <div className="resident-id-card-top">
               <div className="resident-id-card-brand">
                 <div className="resident-id-card-brand-mark">
-                  TH
+                  <img
+                    src="/ta-hoss-logo.png"
+                    alt="TA-HOSS LOG"
+                    className="resident-id-card-logo"
+                    onError={(event) => {
+                      event.currentTarget.style.display =
+                        "none";
+                    }}
+                  />
                 </div>
 
                 <div>
@@ -413,13 +402,7 @@ const ResidentIDCardPage = () => {
               </div>
             </div>
 
-            {/* =================================================
-                CARD BODY
-            ================================================== */}
-
             <div className="resident-id-card-body">
-              {/* PHOTO */}
-
               <div className="resident-id-card-photo">
                 {resident?.photo ? (
                   <img
@@ -461,8 +444,6 @@ const ResidentIDCardPage = () => {
                 </div>
               </div>
 
-              {/* DETAILS */}
-
               <div className="resident-id-card-details">
                 <div className="resident-id-card-name">
                   {resident?.fullName ||
@@ -491,9 +472,7 @@ const ResidentIDCardPage = () => {
                         ? resident.gender
                             .charAt(0)
                             .toUpperCase() +
-                          resident.gender.slice(
-                            1
-                          )
+                          resident.gender.slice(1)
                         : "N/A"}
                     </strong>
                   </div>
@@ -534,8 +513,6 @@ const ResidentIDCardPage = () => {
                 </div>
               </div>
 
-              {/* QR */}
-
               <div className="resident-id-card-qr">
                 {qr?.qrCode ? (
                   <img
@@ -553,10 +530,6 @@ const ResidentIDCardPage = () => {
                 </span>
               </div>
             </div>
-
-            {/* =================================================
-                CARD STATUS
-            ================================================== */}
 
             <div className="resident-id-card-status-bar">
               <div>
@@ -588,10 +561,6 @@ const ResidentIDCardPage = () => {
               </div>
             </div>
 
-            {/* =================================================
-                CARD FOOTER
-            ================================================== */}
-
             <div className="resident-id-card-footer">
               <span>
                 {card?.location ||
@@ -603,13 +572,10 @@ const ResidentIDCardPage = () => {
                 Register
               </span>
             </div>
+
           </div>
         </div>
       </section>
-
-      {/* =====================================================
-          CARD INFORMATION
-      ====================================================== */}
 
       <section className="dashboard-panel resident-id-card-information-panel">
         <div className="panel-header">
@@ -627,9 +593,7 @@ const ResidentIDCardPage = () => {
 
         <div className="resident-id-card-info-grid">
           <div className="resident-id-card-info-item">
-            <span>
-              Resident ID
-            </span>
+            <span>Resident ID</span>
 
             <strong>
               {resident?.residentId ||
@@ -638,9 +602,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              Identity Status
-            </span>
+            <span>Identity Status</span>
 
             <strong>
               {identity?.identityStatus ||
@@ -649,9 +611,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              Verification Status
-            </span>
+            <span>Verification Status</span>
 
             <strong>
               {identity?.verificationStatus ||
@@ -660,9 +620,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              Identity Issued
-            </span>
+            <span>Identity Issued</span>
 
             <strong>
               {formatDate(
@@ -672,9 +630,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              Household ID
-            </span>
+            <span>Household ID</span>
 
             <strong>
               {household?.householdId ||
@@ -683,9 +639,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              Compound
-            </span>
+            <span>Compound</span>
 
             <strong>
               {household?.compound ||
@@ -694,9 +648,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              House Number
-            </span>
+            <span>House Number</span>
 
             <strong>
               {household?.houseNumber ||
@@ -705,9 +657,7 @@ const ResidentIDCardPage = () => {
           </div>
 
           <div className="resident-id-card-info-item">
-            <span>
-              QR Identity
-            </span>
+            <span>QR Identity</span>
 
             <strong>
               {qr?.verificationUrl
@@ -717,10 +667,6 @@ const ResidentIDCardPage = () => {
           </div>
         </div>
       </section>
-
-      {/* =====================================================
-          BOTTOM ACTIONS
-      ====================================================== */}
 
       <section className="dashboard-panel resident-id-card-bottom-panel">
         <div className="resident-id-card-bottom-actions">
@@ -738,9 +684,7 @@ const ResidentIDCardPage = () => {
 
           <button
             onClick={() =>
-              navigate(
-                `/resident/${id}`
-              )
+              navigate(`/resident/${id}`)
             }
           >
             <strong>

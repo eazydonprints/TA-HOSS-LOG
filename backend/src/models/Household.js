@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const householdSchema = new mongoose.Schema(
   {
+    /*
+    |--------------------------------------------------------------------------
+    | HOUSEHOLD ID
+    |--------------------------------------------------------------------------
+    */
+
     householdId: {
       type: String,
       required: true,
@@ -9,6 +15,12 @@ const householdSchema = new mongoose.Schema(
       index: true,
       trim: true,
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | COMMUNITY INFORMATION
+    |--------------------------------------------------------------------------
+    */
 
     community: {
       type: String,
@@ -38,15 +50,35 @@ const householdSchema = new mongoose.Schema(
       trim: true,
     },
 
+    /*
+    |--------------------------------------------------------------------------
+    | HOUSE INFORMATION
+    |--------------------------------------------------------------------------
+    */
+
     compound: {
       type: String,
       trim: true,
+      default: "",
     },
 
     houseNumber: {
       type: String,
       trim: true,
+      default: "",
     },
+
+    notes: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | HOUSEHOLD HEAD
+    |--------------------------------------------------------------------------
+    */
 
     householdHead: {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,6 +86,12 @@ const householdSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | GPS / LOCATION INFORMATION
+    |--------------------------------------------------------------------------
+    */
 
     location: {
       latitude: {
@@ -97,17 +135,27 @@ const householdSchema = new mongoose.Schema(
       },
     },
 
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS
+    |--------------------------------------------------------------------------
+    */
+
     status: {
       type: String,
-      enum: ["active", "inactive"],
+      enum: [
+        "active",
+        "inactive",
+      ],
       default: "active",
       index: true,
     },
 
-    notes: {
-      type: String,
-      trim: true,
-    },
+    /*
+    |--------------------------------------------------------------------------
+    | AUDIT INFORMATION
+    |--------------------------------------------------------------------------
+    */
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -120,6 +168,12 @@ const householdSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | SOFT DELETE
+    |--------------------------------------------------------------------------
+    */
 
     deletedAt: {
       type: Date,

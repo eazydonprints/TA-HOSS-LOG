@@ -1,0 +1,578 @@
+/* =========================================================
+   TA-HOSS LOG - RESIDENT PROFILE PAGE
+   Modern, Standard, Responsive CSS Design System
+========================================================= */
+
+:root {
+  /* Color Palette - Core */
+  --rp-bg-page: #f8fafc;
+  --rp-bg-card: #ffffff;
+  --rp-bg-subtle: #f1f5f9;
+
+  --rp-border-light: #e2e8f0;
+  --rp-border-hover: #cbd5e1;
+
+  --rp-text-main: #0f172a;
+  --rp-text-muted: #64748b;
+  --rp-text-light: #94a3b8;
+
+  /* Primary Brand Colors */
+  --rp-primary: #2563eb;
+  --rp-primary-hover: #1d4ed8;
+  --rp-primary-light: #eff6ff;
+  --rp-primary-border: #dbeafe;
+
+  /* Status Colors */
+  --rp-success-bg: #dcfce7;
+  --rp-success-text: #15803d;
+
+  --rp-warning-bg: #fef3c7;
+  --rp-warning-text: #b45309;
+
+  --rp-danger-bg: #fee2e2;
+  --rp-danger-text: #b91c1c;
+
+  /* Focus & Accessibility */
+  --rp-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+  /* Elevations */
+  --rp-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --rp-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --rp-shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.08);
+
+  /* Geometry & Animations */
+  --rp-radius-sm: 8px;
+  --rp-radius-md: 12px;
+  --rp-radius-lg: 16px;
+  --rp-radius-pill: 9999px;
+
+  --rp-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Reset & Scope */
+.resident-profile-page {
+  width: 100%;
+  max-width: 1280px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px 24px;
+  background-color: var(--rp-bg-page);
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  color: var(--rp-text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus outline for interactive elements */
+.resident-profile-page button:focus-visible,
+.resident-profile-page a:focus-visible {
+  outline: none;
+  box-shadow: var(--rp-focus-ring);
+}
+
+/* =========================================================
+   LOADING STATE
+========================================================= */
+
+.resident-profile-page .resident-profile-loading {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--rp-text-muted);
+}
+
+.resident-profile-page .resident-profile-loading p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.resident-profile-page .resident-profile-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--rp-border-light);
+  border-top-color: var(--rp-primary);
+  border-radius: 50%;
+  animation: residentProfileSpin 0.75s linear infinite;
+}
+
+@keyframes residentProfileSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   ERROR & EMPTY STATES
+========================================================= */
+
+.resident-profile-page .resident-profile-error {
+  width: 100%;
+  padding: 16px 20px;
+  margin-top: 16px;
+  border: 1px solid #fca5a5;
+  border-radius: var(--rp-radius-md);
+  background-color: var(--rp-danger-bg);
+  color: var(--rp-danger-text);
+  font-size: 14px;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.resident-profile-page .resident-profile-empty {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border: 2px dashed var(--rp-border-hover);
+  border-radius: var(--rp-radius-lg);
+  background: var(--rp-bg-card);
+  text-align: center;
+}
+
+.resident-profile-page .resident-profile-empty strong {
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: var(--rp-text-main);
+}
+
+.resident-profile-page .resident-profile-empty span {
+  color: var(--rp-text-muted);
+  font-size: 14px;
+}
+
+/* =========================================================
+   PAGE HEADER & NAVIGATION
+========================================================= */
+
+.resident-profile-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.resident-profile-breadcrumb {
+  margin-bottom: 6px;
+  color: var(--rp-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resident-profile-page-header h1 {
+  margin: 0;
+  color: var(--rp-text-main);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+
+.resident-profile-page-header p {
+  margin: 6px 0 0;
+  color: var(--rp-text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.resident-profile-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 18px;
+  border: 1px solid var(--rp-border-light);
+  border-radius: var(--rp-radius-md);
+  background: var(--rp-bg-card);
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--rp-transition);
+  box-shadow: var(--rp-shadow-sm);
+  text-decoration: none;
+}
+
+.resident-profile-back-button:hover {
+  background: var(--rp-bg-subtle);
+  border-color: var(--rp-border-hover);
+  color: var(--rp-text-main);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   PANELS & CONTAINERS
+========================================================= */
+
+.resident-profile-panel {
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 24px;
+  border: 1px solid var(--rp-border-light);
+  border-radius: var(--rp-radius-lg);
+  background: var(--rp-bg-card);
+  box-shadow: var(--rp-shadow-sm);
+  box-sizing: border-box;
+  transition: var(--rp-transition);
+}
+
+.resident-profile-panel:hover {
+  box-shadow: var(--rp-shadow-md);
+}
+
+.resident-profile-panel-header {
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rp-border-light);
+}
+
+.resident-profile-panel-header h2 {
+  margin: 0;
+  color: var(--rp-text-main);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.resident-profile-panel-header p {
+  margin: 4px 0 0;
+  color: var(--rp-text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   HERO / PROFILE HEADER CARD
+========================================================= */
+
+.resident-profile-header-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.resident-profile-photo {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--rp-primary-border);
+  border-radius: 50%;
+  background: var(--rp-primary-light);
+  color: var(--rp-primary);
+  font-size: 38px;
+  font-weight: 700;
+  box-shadow: var(--rp-shadow-sm);
+}
+
+.resident-profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.resident-profile-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.resident-profile-main h2 {
+  margin: 0 0 4px;
+  color: var(--rp-text-main);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.resident-profile-main p {
+  margin: 0;
+  color: var(--rp-text-muted);
+  font-size: 14px;
+}
+
+.resident-profile-main p strong {
+  color: var(--rp-text-main);
+  font-weight: 600;
+}
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.resident-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.resident-status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 12px;
+  border-radius: var(--rp-radius-pill);
+  background-color: var(--rp-bg-subtle);
+  color: var(--rp-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.resident-status-badge.resident-status-verified {
+  background-color: var(--rp-success-bg);
+  color: var(--rp-success-text);
+}
+
+.resident-status-badge.resident-status-pending {
+  background-color: var(--rp-danger-bg);
+  color: var(--rp-danger-text);
+}
+
+.resident-status-badge.resident-status-rejected {
+  background-color: var(--rp-danger-bg);
+  color: var(--rp-danger-text);
+}
+
+.resident-status-badge.resident-status-default {
+  background-color: var(--rp-primary-light);
+  color: var(--rp-primary);
+}
+
+/* =========================================================
+   DETAILS GRID
+========================================================= */
+
+.resident-details-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.resident-detail-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--rp-border-light);
+  border-radius: var(--rp-radius-md);
+  background: var(--rp-bg-page);
+  box-sizing: border-box;
+  transition: var(--rp-transition);
+}
+
+.resident-detail-item:hover {
+  border-color: var(--rp-border-hover);
+  background: var(--rp-bg-card);
+}
+
+.resident-detail-item span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--rp-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.resident-detail-item strong {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--rp-text-main);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   SECTION ACTION BUTTONS
+========================================================= */
+
+.resident-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--rp-border-light);
+}
+
+/* Default / Primary Action Button */
+.resident-profile-actions button,
+.resident-profile-actions .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--rp-primary);
+  border-radius: var(--rp-radius-md);
+  background: var(--rp-primary);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--rp-transition);
+  box-shadow: var(--rp-shadow-sm);
+  text-decoration: none;
+}
+
+.resident-profile-actions button:hover,
+.resident-profile-actions .btn-primary:hover {
+  background: var(--rp-primary-hover);
+  border-color: var(--rp-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+/* Secondary / Outline Action Button Variant */
+.resident-profile-actions .btn-secondary {
+  border-color: var(--rp-border-light);
+  background: var(--rp-bg-card);
+  color: var(--rp-text-main);
+}
+
+.resident-profile-actions .btn-secondary:hover {
+  background: var(--rp-bg-subtle);
+  border-color: var(--rp-border-hover);
+  color: var(--rp-text-main);
+  box-shadow: var(--rp-shadow-sm);
+}
+
+/* =========================================================
+   BOTTOM NAVIGATION ACTION GRID
+========================================================= */
+
+.resident-profile-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.resident-profile-action-grid button,
+.resident-profile-action-grid a {
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--rp-border-light);
+  border-radius: var(--rp-radius-md);
+  background: var(--rp-bg-card);
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: var(--rp-transition);
+}
+
+.resident-profile-action-grid button:hover,
+.resident-profile-action-grid a:hover {
+  border-color: var(--rp-primary-border);
+  background: var(--rp-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--rp-shadow-md);
+}
+
+.resident-profile-action-grid strong {
+  color: var(--rp-text-main);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.resident-profile-action-grid span {
+  color: var(--rp-text-muted);
+  font-size: 12px;
+}
+
+/* =========================================================
+   RESPONSIVE MEDIA QUERIES
+========================================================= */
+
+/* Laptops / Small Desktops */
+@media (max-width: 1200px) {
+  .resident-details-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .resident-profile-page {
+    padding: 24px 16px;
+  }
+
+  .resident-details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resident-profile-action-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 640px) {
+  .resident-profile-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .resident-profile-back-button {
+    align-self: flex-start;
+    width: 100%;
+  }
+
+  .resident-profile-header-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .resident-profile-photo {
+    width: 84px;
+    height: 84px;
+    font-size: 32px;
+  }
+
+  .resident-status-row {
+    justify-content: center;
+  }
+
+  .resident-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resident-profile-actions {
+    flex-direction: column;
+  }
+
+  .resident-profile-actions button,
+  .resident-profile-actions a {
+    width: 100%;
+  }
+
+  .resident-profile-action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resident-profile-panel {
+    padding: 16px;
+  }
+}

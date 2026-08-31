@@ -10,61 +10,269 @@ import {
   useAuth,
 } from "./context/AuthContext";
 
+
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
+
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+
+
+/* =========================================================
+   COMMUNITY LAYOUT
+========================================================= */
+
 import ProtectedLayout from "./layouts/ProtectedLayout";
 
-import CommunityMapPage from "./pages/CommunityMapPage";
-import HouseholdDetailsPage from "./pages/HouseholdDetailsPage";
-import RelationshipTreePage from "./pages/RelationshipTreePage";
-import ResidentProfilePage from "./pages/ResidentProfilePage";
 
-import ResidentsPage from "./pages/ResidentsPage";
-import ResidentRegistrationPage from "./pages/ResidentRegistrationPage";
+/* =========================================================
+   COMMUNITY PAGES
+========================================================= */
 
-import IdentityPage from "./pages/IdentityPage";
-import ResidentIdentityPage from "./pages/ResidentIdentityPage";
-import ResidentQRPage from "./pages/ResidentQRPage";
-import VerificationPage from "./pages/VerificationPage";
-import IDCardsPage from "./pages/IDCardsPage";
-import ResidentIDCardPage from "./pages/ResidentIDCardPage";
-import UsersPage from "./pages/UsersPage";
-import ProfilePage from "./pages/ProfilePage";
-import ResidentEditPage from "./pages/ResidentEditPage";
-import AnalyticsPage from "./pages/AnalyticsPage";
-import AIAssistantPage from "./pages/AIAssistantPage";
+import Dashboard from "./pages/Dashboard";
 
-// IMPORT AI CHAT WIDGET
-import AIChatWidget from "./components/AIChatWidget";
+import HouseholdRegistrationPage
+  from "./pages/HouseholdRegistrationPage";
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+import HouseholdDetailsPage
+  from "./pages/HouseholdDetailsPage";
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+import RelationshipTreePage
+  from "./pages/RelationshipTreePage";
+
+import CommunityMapPage
+  from "./pages/CommunityMapPage";
+
+
+/* =========================================================
+   RESIDENTS
+========================================================= */
+
+import ResidentsPage
+  from "./pages/ResidentsPage";
+
+import ResidentRegistrationPage
+  from "./pages/ResidentRegistrationPage";
+
+import ResidentProfilePage
+  from "./pages/ResidentProfilePage";
+
+import ResidentEditPage
+  from "./pages/ResidentEditPage";
+
+
+/* =========================================================
+   VERIFICATION
+========================================================= */
+
+import VerificationPage
+  from "./pages/VerificationPage";
+
+
+/* =========================================================
+   IDENTITY
+========================================================= */
+
+import IdentityPage
+  from "./pages/IdentityPage";
+
+import ResidentIdentityPage
+  from "./pages/ResidentIdentityPage";
+
+import ResidentQRPage
+  from "./pages/ResidentQRPage";
+
+import IDCardsPage
+  from "./pages/IDCardsPage";
+
+import ResidentIDCardPage
+  from "./pages/ResidentIDCardPage";
+
+
+/* =========================================================
+   ADMINISTRATION
+========================================================= */
+
+import UsersPage
+  from "./pages/UsersPage";
+
+import ProfilePage
+  from "./pages/ProfilePage";
+
+import AnalyticsPage
+  from "./pages/AnalyticsPage";
+
+import AIAssistantPage
+  from "./pages/AIAssistantPage";
+
+import SystemSettingsPage
+  from "./pages/SystemSettingsPage";
+
+
+/* =========================================================
+   AI CHAT WIDGET
+========================================================= */
+
+import AIChatWidget
+  from "./components/AIChatWidget";
+
+
+/* =========================================================
+   PROTECTED ROUTE
+========================================================= */
+
+const ProtectedRoute = ({
+  children,
+}) => {
+
+  const {
+    isAuthenticated,
+    loading,
+  } = useAuth();
+
+
+  /*
+   * Wait for AuthContext to finish
+   * checking the stored session.
+   */
+
+  if (loading) {
+
+    return (
+      <div className="auth-loading">
+        Loading...
+      </div>
+    );
+
   }
 
+
+  /*
+   * User is not authenticated.
+   */
+
+  if (!isAuthenticated) {
+
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+
+  }
+
+
   return children;
+
 };
 
-// RENDER WIDGET ONLY FOR AUTHENTICATED USERS
+
+/* =========================================================
+   SUPER ADMIN ROUTE
+========================================================= */
+
+const SuperAdminRoute = ({
+  children,
+}) => {
+
+  const {
+    user,
+    loading,
+  } = useAuth();
+
+
+  if (loading) {
+
+    return (
+      <div className="auth-loading">
+        Loading...
+      </div>
+    );
+
+  }
+
+
+  const normalizedRole =
+    String(
+      user?.role || ""
+    )
+      .trim()
+      .toLowerCase()
+      .replace(
+        /[\s-]+/g,
+        "_"
+      );
+
+
+  if (
+    normalizedRole !==
+    "super_admin"
+  ) {
+
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
+
+  }
+
+
+  return children;
+
+};
+
+
+/* =========================================================
+   AUTHENTICATED AI WIDGET
+========================================================= */
+
 const AuthenticatedWidget = () => {
-  const { isAuthenticated } = useAuth();
+
+  const {
+    isAuthenticated,
+  } = useAuth();
+
 
   if (!isAuthenticated) {
     return null;
   }
 
+
   return <AIChatWidget />;
+
 };
 
-const AppRoutes = () => {
-  return (
-    <Routes>
-      {/* PUBLIC */}
-      <Route path="/login" element={<Login />} />
 
-      {/* PROTECTED */}
+/* =========================================================
+   APPLICATION ROUTES
+========================================================= */
+
+const AppRoutes = () => {
+
+  return (
+
+    <Routes>
+
+
+      {/* ===================================================
+          LOGIN
+      ==================================================== */}
+
+      <Route
+        path="/login"
+        element={
+          <Login />
+        }
+      />
+
+
+      {/* ===================================================
+          PROTECTED COMMUNITY APPLICATION
+      ==================================================== */}
+
       <Route
         element={
           <ProtectedRoute>
@@ -72,85 +280,262 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        {/* DASHBOARD */}
-        <Route path="/" element={<Dashboard />} />
 
-        {/* HOUSEHOLDS */}
+
+        {/* ================================================
+            DASHBOARD
+        ================================================= */}
+
         <Route
-          path="/households/:id"
-          element={<HouseholdDetailsPage />}
+          path="/"
+          element={
+            <Dashboard />
+          }
         />
+
+
+        {/* ================================================
+            HOUSEHOLDS
+
+            IMPORTANT:
+            /households/register MUST COME BEFORE
+            /households/:id
+        ================================================= */}
+
+        <Route
+          path="/households/register"
+          element={
+            <HouseholdRegistrationPage />
+          }
+        />
+
         <Route
           path="/households/:id/tree"
-          element={<RelationshipTreePage />}
+          element={
+            <RelationshipTreePage />
+          }
         />
 
-        {/* RESIDENTS */}
-        <Route path="/residents" element={<ResidentsPage />} />
+        <Route
+          path="/households/:id"
+          element={
+            <HouseholdDetailsPage />
+          }
+        />
+
+
+        {/* ================================================
+            RESIDENTS
+        ================================================= */}
+
+        <Route
+          path="/residents"
+          element={
+            <ResidentsPage />
+          }
+        />
+
         <Route
           path="/residents/register"
-          element={<ResidentRegistrationPage />}
+          element={
+            <ResidentRegistrationPage />
+          }
         />
-        <Route
-          path="/resident/:id"
-          element={<ResidentProfilePage />}
-        />
+
         <Route
           path="/resident/:id/edit"
-          element={<ResidentEditPage />}
+          element={
+            <ResidentEditPage />
+          }
         />
 
-        {/* VERIFICATION */}
+        <Route
+          path="/resident/:id"
+          element={
+            <ResidentProfilePage />
+          }
+        />
+
+
+        {/* ================================================
+            VERIFICATION
+        ================================================= */}
+
         <Route
           path="/verification"
-          element={<VerificationPage />}
+          element={
+            <VerificationPage />
+          }
         />
 
-        {/* RESIDENT IDENTITY */}
+
+        {/* ================================================
+            COMMUNITY MAP
+        ================================================= */}
+
+        <Route
+          path="/map"
+          element={
+            <CommunityMapPage />
+          }
+        />
+
+
+        {/* ================================================
+            IDENTITY
+        ================================================= */}
+
+        <Route
+          path="/identity"
+          element={
+            <IdentityPage />
+          }
+        />
+
         <Route
           path="/resident/:id/identity"
-          element={<ResidentIdentityPage />}
+          element={
+            <ResidentIdentityPage />
+          }
         />
+
         <Route
           path="/resident/:id/qr"
-          element={<ResidentQRPage />}
+          element={
+            <ResidentQRPage />
+          }
         />
+
+
+        {/* ================================================
+            ID CARDS
+        ================================================= */}
+
+        <Route
+          path="/id-cards"
+          element={
+            <IDCardsPage />
+          }
+        />
+
         <Route
           path="/resident/:id/id-card"
-          element={<ResidentIDCardPage />}
+          element={
+            <ResidentIDCardPage />
+          }
         />
 
-        {/* IDENTITY & QR */}
-        <Route path="/identity" element={<IdentityPage />} />
 
-        {/* COMMUNITY MAP */}
-        <Route path="/map" element={<CommunityMapPage />} />
+        {/* ================================================
+            PROFILE
+        ================================================= */}
 
-        {/* REMAINING MODULES */}
-        <Route path="/id-cards" element={<IDCardsPage />} />
-        <Route path="/users" element={<UsersPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/analytics" element={<AnalyticsPage />} />
-        <Route path="/ai-assistant" element={<AIAssistantPage />} />
+        <Route
+          path="/profile"
+          element={
+            <ProfilePage />
+          }
+        />
+
+
+        {/* ================================================
+            ANALYTICS
+        ================================================= */}
+
+        <Route
+          path="/analytics"
+          element={
+            <AnalyticsPage />
+          }
+        />
+
+
+        {/* ================================================
+            AI ASSISTANT
+        ================================================= */}
+
+        <Route
+          path="/ai-assistant"
+          element={
+            <AIAssistantPage />
+          }
+        />
+
+
+        {/* ================================================
+            USER MANAGEMENT
+        ================================================= */}
+
+        <Route
+          path="/users"
+          element={
+            <SuperAdminRoute>
+              <UsersPage />
+            </SuperAdminRoute>
+          }
+        />
+
+
+        {/* ================================================
+            SYSTEM SETTINGS
+        ================================================= */}
+
+        <Route
+          path="/system-settings"
+          element={
+            <SuperAdminRoute>
+              <SystemSettingsPage />
+            </SuperAdminRoute>
+          }
+        />
+
       </Route>
 
-      {/* FALLBACK */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+
+      {/* ===================================================
+          FALLBACK
+      ==================================================== */}
+
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to="/"
+            replace
+          />
+        }
+      />
+
     </Routes>
+
   );
+
 };
+
+
+/* =========================================================
+   APPLICATION ROOT
+========================================================= */
 
 const App = () => {
+
   return (
+
     <BrowserRouter>
+
       <AuthProvider>
+
         <AppRoutes />
 
-        {/* FLOATING AI CHAT WIDGET */}
         <AuthenticatedWidget />
+
       </AuthProvider>
+
     </BrowserRouter>
+
   );
+
 };
+
 
 export default App;

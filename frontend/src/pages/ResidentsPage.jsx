@@ -42,6 +42,8 @@ const ResidentsPage = () => {
 
   const [exporting, setExporting] = useState("");
 
+  const [deletingId, setDeletingId] = useState("");
+
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 15,
@@ -147,6 +149,107 @@ const ResidentsPage = () => {
     setRefreshing(true);
 
     await loadResidents();
+  };
+
+  // =========================================================
+  // DELETE RESIDENT
+  // =========================================================
+
+  const handleDeleteResident = async (
+    resident
+  ) => {
+    const residentObjectId =
+      getResidentId(resident);
+
+    if (!residentObjectId) {
+      setError(
+        "Unable to delete resident because the resident ID is missing."
+      );
+
+      return;
+    }
+
+    if (deletingId) {
+      return;
+    }
+
+    const residentName =
+      formatName(resident) ||
+      resident.residentId ||
+      "this resident";
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${residentName}?\n\n` +
+        "This action will remove the resident from the active registry."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(residentObjectId);
+      setError("");
+
+      const response = await api.delete(
+        `/residents/${residentObjectId}`
+      );
+
+      if (!response.data?.success) {
+        throw new Error(
+          response.data?.message ||
+            "Unable to delete resident."
+        );
+      }
+
+      // Remove immediately from the current UI
+      setResidents((currentResidents) =>
+        currentResidents.filter(
+          (currentResident) =>
+            getResidentId(
+              currentResident
+            ) !== residentObjectId
+        )
+      );
+
+      // Update total immediately
+      setPagination((currentPagination) => ({
+        ...currentPagination,
+        total: Math.max(
+          0,
+          (currentPagination.total || 0) - 1
+        ),
+      }));
+
+      // If the last item on a page was deleted,
+      // move back one page when appropriate.
+      if (
+        residents.length === 1 &&
+        page > 1
+      ) {
+        setPage((currentPage) =>
+          Math.max(
+            1,
+            currentPage - 1
+          )
+        );
+      } else {
+        await loadResidents();
+      }
+    } catch (err) {
+      console.error(
+        "DELETE RESIDENT ERROR:",
+        err
+      );
+
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Unable to delete resident."
+      );
+    } finally {
+      setDeletingId("");
+    }
   };
 
   // =========================================================
@@ -492,14 +595,12 @@ const ResidentsPage = () => {
       case "active":
         return "status-badge status-success";
 
+      case "pending":
       case "suspended":
       case "deceased":
       case "moved":
-        return "status-badge status-danger";
-
-      case "pending":
       default:
-        return "status-badge status-warning";
+        return "status-badge status-danger";
     }
   };
 
@@ -1019,6 +1120,10 @@ const ResidentsPage = () => {
                           resident
                         );
 
+                      const isDeleting =
+                        deletingId ===
+                        residentObjectId;
+
                       return (
                         <tr
                           key={
@@ -1231,6 +1336,24 @@ const ResidentsPage = () => {
                                 Edit
                               </Link>
 
+                              <button
+                                type="button"
+                                className="table-action-button delete-action"
+                                onClick={() =>
+                                  handleDeleteResident(
+                                    resident
+                                  )
+                                }
+                                disabled={
+                                  isDeleting
+                                }
+                                title="Delete resident"
+                              >
+                                {isDeleting
+                                  ? "Deleting..."
+                                  : "Delete"}
+                              </button>
+
                             </div>
 
                           </td>
@@ -1271,6 +1394,10 @@ const ResidentsPage = () => {
                       resident
                     );
 
+                  const isDeleting =
+                    deletingId ===
+                    residentObjectId;
+
                   return (
                     <article
                       className="resident-mobile-card"
@@ -1292,6 +1419,16 @@ const ResidentsPage = () => {
                                 name
                               }
                               loading="lazy"
+                              onError={(
+                                event
+                              ) => {
+                                event.currentTarget.style.display =
+                                  "none";
+
+                                event.currentTarget.parentElement?.classList.add(
+                                  "avatar-image-error"
+                                );
+                              }}
                             />
                           ) : (
                             <span>
@@ -1422,6 +1559,23 @@ const ResidentsPage = () => {
                         >
                           Edit Record
                         </Link>
+
+                        <button
+                          type="button"
+                          className="table-action-button delete-action"
+                          onClick={() =>
+                            handleDeleteResident(
+                              resident
+                            )
+                          }
+                          disabled={
+                            isDeleting
+                          }
+                        >
+                          {isDeleting
+                            ? "Deleting..."
+                            : "Delete Resident"}
+                        </button>
 
                       </div>
 

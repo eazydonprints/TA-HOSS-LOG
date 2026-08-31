@@ -7,6 +7,8 @@ import {
 
 import api from "../services/api";
 
+import "./ResidentProfilePage.css";
+
 const ResidentProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -162,6 +164,10 @@ const ResidentProfilePage = () => {
       );
   };
 
+  // =========================================================
+  // COMPUTED VALUES
+  // =========================================================
+
   const fullName = useMemo(() => {
     if (!resident) {
       return "";
@@ -190,18 +196,16 @@ const ResidentProfilePage = () => {
     "pending";
 
   const verificationClass =
-    verificationStatus ===
-    "verified"
-      ? "status-badge verified"
-      : verificationStatus ===
-        "rejected"
-        ? "status-badge pending"
-        : "status-badge pending";
+    verificationStatus === "verified"
+      ? "resident-status-badge resident-status-verified"
+      : verificationStatus === "rejected"
+        ? "resident-status-badge resident-status-rejected"
+        : "resident-status-badge resident-status-pending";
 
   const identityClass =
     identityStatus === "active"
-      ? "status-badge verified"
-      : "status-badge pending";
+      ? "resident-status-badge resident-status-verified"
+      : "resident-status-badge resident-status-pending";
 
   // =========================================================
   // LOADING
@@ -209,9 +213,9 @@ const ResidentProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-page">
-        <div className="dashboard-loading">
-          <div className="loading-spinner" />
+      <div className="resident-profile-page">
+        <div className="resident-profile-loading">
+          <div className="resident-profile-spinner" />
 
           <p>
             Loading resident profile...
@@ -227,13 +231,13 @@ const ResidentProfilePage = () => {
 
   if (error) {
     return (
-      <div className="dashboard-page">
-        <div className="dashboard-error">
+      <div className="resident-profile-page">
+        <div className="resident-profile-error">
           {error}
         </div>
 
         <button
-          className="back-button"
+          className="resident-profile-back-button"
           onClick={() =>
             navigate(-1)
           }
@@ -250,8 +254,8 @@ const ResidentProfilePage = () => {
 
   if (!resident) {
     return (
-      <div className="dashboard-page">
-        <div className="empty-state">
+      <div className="resident-profile-page">
+        <div className="resident-profile-empty">
           <strong>
             Resident not found
           </strong>
@@ -270,16 +274,17 @@ const ResidentProfilePage = () => {
   // =========================================================
 
   return (
-    <div className="dashboard-page">
+    <div className="resident-profile-page">
 
       {/* =====================================================
           HEADER
       ====================================================== */}
 
-      <div className="dashboard-header">
+      <div className="resident-profile-page-header">
+
         <div>
-          <div className="breadcrumb">
-            TA-HOSS LOG / Residents /
+          <div className="resident-profile-breadcrumb">
+            TA-HOSS LOG / Residents /{" "}
             {resident.residentId}
           </div>
 
@@ -288,29 +293,29 @@ const ResidentProfilePage = () => {
           </h1>
 
           <p>
-            Complete registered
-            information for this
-            community member.
+            Complete registered information
+            for this community member.
           </p>
         </div>
 
         <button
-          className="back-button"
+          className="resident-profile-back-button"
           onClick={() =>
             navigate(-1)
           }
         >
           ← Back
         </button>
+
       </div>
 
       {/* =====================================================
           PROFILE HEADER
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="resident-profile-header">
+        <div className="resident-profile-header-card">
 
           <div className="resident-profile-photo">
 
@@ -369,7 +374,7 @@ const ResidentProfilePage = () => {
                 )}
               </span>
 
-              <span className="status-badge">
+              <span className="resident-status-badge resident-status-default">
                 {formatLabel(
                   resident.status
                 )}
@@ -378,34 +383,35 @@ const ResidentProfilePage = () => {
             </div>
 
           </div>
+
         </div>
+
       </section>
 
       {/* =====================================================
           PERSONAL INFORMATION
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
               Personal Information
             </h2>
 
             <p>
-              Basic demographic
-              information.
+              Basic demographic information.
             </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
-            <span>
-              First Name
-            </span>
+          <div className="resident-detail-item">
+            <span>First Name</span>
 
             <strong>
               {resident.firstName ||
@@ -413,10 +419,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Middle Name
-            </span>
+          <div className="resident-detail-item">
+            <span>Middle Name</span>
 
             <strong>
               {resident.middleName ||
@@ -424,10 +428,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Last Name
-            </span>
+          <div className="resident-detail-item">
+            <span>Last Name</span>
 
             <strong>
               {resident.lastName ||
@@ -435,10 +437,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Gender
-            </span>
+          <div className="resident-detail-item">
+            <span>Gender</span>
 
             <strong>
               {formatLabel(
@@ -447,10 +447,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Date of Birth
-            </span>
+          <div className="resident-detail-item">
+            <span>Date of Birth</span>
 
             <strong>
               {formatDate(
@@ -459,10 +457,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Marital Status
-            </span>
+          <div className="resident-detail-item">
+            <span>Marital Status</span>
 
             <strong>
               {formatLabel(
@@ -471,10 +467,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Phone Number
-            </span>
+          <div className="resident-detail-item">
+            <span>Phone Number</span>
 
             <strong>
               {resident.phoneNumber ||
@@ -482,7 +476,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Relationship to Head
             </span>
@@ -495,34 +489,34 @@ const ResidentProfilePage = () => {
           </div>
 
         </div>
+
       </section>
 
       {/* =====================================================
           SOCIO-ECONOMIC INFORMATION
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
-              Socio-Economic
-              Information
+              Socio-Economic Information
             </h2>
 
             <p>
-              Education and
-              occupational information.
+              Education and occupational
+              information.
             </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
-            <span>
-              Occupation
-            </span>
+          <div className="resident-detail-item">
+            <span>Occupation</span>
 
             <strong>
               {resident.occupation ||
@@ -530,7 +524,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Education Level
             </span>
@@ -542,33 +536,34 @@ const ResidentProfilePage = () => {
           </div>
 
         </div>
+
       </section>
 
       {/* =====================================================
           HOUSEHOLD
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
               Household Information
             </h2>
 
             <p>
-              Household where this
-              resident is registered.
+              Household where this resident
+              is registered.
             </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
-            <span>
-              Household ID
-            </span>
+          <div className="resident-detail-item">
+            <span>Household ID</span>
 
             <strong>
               {resident.household
@@ -577,10 +572,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Compound
-            </span>
+          <div className="resident-detail-item">
+            <span>Compound</span>
 
             <strong>
               {resident.household
@@ -589,7 +582,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               House Number
             </span>
@@ -604,7 +597,8 @@ const ResidentProfilePage = () => {
         </div>
 
         {householdId && (
-          <div className="profile-actions">
+
+          <div className="resident-profile-actions">
 
             <button
               onClick={() =>
@@ -627,6 +621,7 @@ const ResidentProfilePage = () => {
             </button>
 
           </div>
+
         )}
 
       </section>
@@ -635,27 +630,27 @@ const ResidentProfilePage = () => {
           GPS
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
               GPS Information
             </h2>
 
             <p>
-              Geographic location
-              captured during registration.
+              Geographic location captured
+              during registration.
             </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
-            <span>
-              Latitude
-            </span>
+          <div className="resident-detail-item">
+            <span>Latitude</span>
 
             <strong>
               {resident.gps
@@ -664,10 +659,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Longitude
-            </span>
+          <div className="resident-detail-item">
+            <span>Longitude</span>
 
             <strong>
               {resident.gps
@@ -676,10 +669,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Accuracy
-            </span>
+          <div className="resident-detail-item">
+            <span>Accuracy</span>
 
             <strong>
               {resident.gps
@@ -689,10 +680,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Captured At
-            </span>
+          <div className="resident-detail-item">
+            <span>Captured At</span>
 
             <strong>
               {formatDateTime(
@@ -706,7 +695,8 @@ const ResidentProfilePage = () => {
 
         {resident.gps?.latitude != null &&
           resident.gps?.longitude != null && (
-            <div className="profile-actions">
+
+            <div className="resident-profile-actions">
 
               <button
                 onClick={() =>
@@ -717,6 +707,7 @@ const ResidentProfilePage = () => {
               </button>
 
             </div>
+
           )}
 
       </section>
@@ -725,24 +716,26 @@ const ResidentProfilePage = () => {
           VERIFICATION
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
               Verification
             </h2>
 
             <p>
-              Resident identity
-              verification information.
+              Resident identity verification
+              information.
             </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Verification Status
             </span>
@@ -754,10 +747,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Verified At
-            </span>
+          <div className="resident-detail-item">
+            <span>Verified At</span>
 
             <strong>
               {formatDateTime(
@@ -766,10 +757,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Verified By
-            </span>
+          <div className="resident-detail-item">
+            <span>Verified By</span>
 
             <strong>
               {resident.verifiedBy
@@ -780,7 +769,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Identity Status
             </span>
@@ -792,7 +781,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Identity Issued
             </span>
@@ -804,7 +793,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Identity Last Updated
             </span>
@@ -819,12 +808,17 @@ const ResidentProfilePage = () => {
         </div>
 
         {resident.rejectionReason && (
-          <div className="dashboard-error">
+
+          <div className="resident-profile-error">
+
             <strong>
               Rejection Reason:
             </strong>{" "}
+
             {resident.rejectionReason}
+
           </div>
+
         )}
 
       </section>
@@ -833,9 +827,10 @@ const ResidentProfilePage = () => {
           BIOMETRIC
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
               Biometric Information
@@ -846,14 +841,13 @@ const ResidentProfilePage = () => {
               enrollment status.
             </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
-            <span>
-              Enrolled
-            </span>
+          <div className="resident-detail-item">
+            <span>Enrolled</span>
 
             <strong>
               {resident.biometric
@@ -863,10 +857,8 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
-            <span>
-              Provider
-            </span>
+          <div className="resident-detail-item">
+            <span>Provider</span>
 
             <strong>
               {resident.biometric
@@ -875,7 +867,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Enrolled At
             </span>
@@ -896,9 +888,9 @@ const ResidentProfilePage = () => {
           DIGITAL IDENTITY
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
 
           <div>
             <h2>
@@ -906,16 +898,16 @@ const ResidentProfilePage = () => {
             </h2>
 
             <p>
-              TA-HOSS LOG identity
-              and identification services.
+              TA-HOSS LOG identity and
+              identification services.
             </p>
           </div>
 
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Identity Status
             </span>
@@ -927,7 +919,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               QR Identity
             </span>
@@ -939,7 +931,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Identity Issued
             </span>
@@ -953,7 +945,7 @@ const ResidentProfilePage = () => {
 
         </div>
 
-        <div className="profile-actions">
+        <div className="resident-profile-actions">
 
           <button
             onClick={() =>
@@ -993,22 +985,27 @@ const ResidentProfilePage = () => {
           REGISTRATION
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="panel-header">
+        <div className="resident-profile-panel-header">
+
           <div>
             <h2>
               Registration Information
             </h2>
+
+            <p>
+              Resident registration
+              and system records.
+            </p>
           </div>
+
         </div>
 
-        <div className="details-grid">
+        <div className="resident-details-grid">
 
-          <div className="detail-item">
-            <span>
-              Resident ID
-            </span>
+          <div className="resident-detail-item">
+            <span>Resident ID</span>
 
             <strong>
               {resident.residentId ||
@@ -1016,7 +1013,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Registered At
             </span>
@@ -1028,7 +1025,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Last Updated
             </span>
@@ -1040,7 +1037,7 @@ const ResidentProfilePage = () => {
             </strong>
           </div>
 
-          <div className="detail-item">
+          <div className="resident-detail-item">
             <span>
               Registered By
             </span>
@@ -1062,9 +1059,9 @@ const ResidentProfilePage = () => {
           BOTTOM ACTIONS
       ====================================================== */}
 
-      <section className="dashboard-panel">
+      <section className="resident-profile-panel">
 
-        <div className="household-action-grid">
+        <div className="resident-profile-action-grid">
 
           <button
             onClick={() =>
@@ -1081,6 +1078,7 @@ const ResidentProfilePage = () => {
           </button>
 
           {householdId && (
+
             <button
               onClick={() =>
                 navigate(
@@ -1096,9 +1094,11 @@ const ResidentProfilePage = () => {
                 View household
               </span>
             </button>
+
           )}
 
           {householdId && (
+
             <button
               onClick={() =>
                 navigate(
@@ -1114,6 +1114,7 @@ const ResidentProfilePage = () => {
                 View relationships
               </span>
             </button>
+
           )}
 
           <button

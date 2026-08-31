@@ -1185,100 +1185,144 @@ const ResidentRegistrationPage = () => {
         </section>
 
         {/* ===================================================
-            HOUSEHOLD
-        ==================================================== */}
+    HOUSEHOLD
+==================================================== */}
 
-        <section className="dashboard-panel">
+<section className="dashboard-panel">
 
-          <div className="panel-header">
+  <div className="panel-header">
 
-            <div>
+    <div>
 
-              <h2>
-                Household Assignment
-              </h2>
+      <h2>
+        Household Assignment
+      </h2>
 
-              <p>
-                Select the household where
-                this resident is registered.
-              </p>
+      <p>
+        Select the household where
+        this resident is registered.
+      </p>
 
-            </div>
+    </div>
 
-          </div>
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={() =>
+        navigate("/households/register")
+      }
+      disabled={
+        submitting ||
+        uploadingPhoto ||
+        deletingPhoto
+      }
+    >
+      + Register New Household
+    </button>
 
-          <div className="form-grid">
+  </div>
 
-            <div className="form-group form-group-full">
+  <div className="form-grid">
 
-              <label htmlFor="household">
-                Household
-                <span className="required">
-                  *
-                </span>
-              </label>
+    <div className="form-group form-group-full">
 
-              <select
-                id="household"
-                name="household"
-                value={
-                  form.household
-                }
-                onChange={
-                  handleChange
-                }
-                disabled={
-                  loadingHouseholds ||
-                  submitting
-                }
-                required
-              >
+      <label htmlFor="household">
+        Household
+        <span className="required">
+          *
+        </span>
+      </label>
 
-                <option value="">
-                  {loadingHouseholds
-                    ? "Loading households..."
-                    : "Select household"}
-                </option>
+      <select
+        id="household"
+        name="household"
+        value={
+          form.household
+        }
+        onChange={(event) => {
 
-                {households.map(
-                  (household) => (
+          const selectedValue =
+            event.target.value;
 
-                    <option
-                      key={
-                        household._id
-                      }
-                      value={
-                        household._id
-                      }
-                    >
-                      {household.householdId ||
-                        "Household"}{" "}
-                      —{" "}
-                      {household.compound ||
-                        "No compound"}{" "}
-                      /{" "}
-                      {household.houseNumber ||
-                        "No house number"}
-                    </option>
+          /*
+           * If the user selects
+           * Register New Household,
+           * redirect to household
+           * registration page.
+           */
 
-                  )
-                )}
+          if (
+            selectedValue ===
+            "REGISTER_NEW_HOUSEHOLD"
+          ) {
+            navigate(
+              "/households/register"
+            );
 
-              </select>
+            return;
+          }
 
-              {!loadingHouseholds &&
-                households.length === 0 && (
-                  <small className="form-help">
-                    No active households are
-                    currently available.
-                  </small>
-                )}
+          handleChange(event);
+        }}
+        disabled={
+          loadingHouseholds ||
+          submitting
+        }
+        required
+      >
 
-            </div>
+        <option value="">
+          {loadingHouseholds
+            ? "Loading households..."
+            : "Select household"}
+        </option>
 
-          </div>
+        {households.map(
+          (household) => (
 
-        </section>
+            <option
+              key={
+                household._id
+              }
+              value={
+                household._id
+              }
+            >
+              {household.householdId ||
+                "Household"}{" "}
+              —{" "}
+              {household.compound ||
+                "No compound"}{" "}
+              /{" "}
+              {household.houseNumber ||
+                "No house number"}
+            </option>
+
+          )
+        )}
+
+        <option
+          value="REGISTER_NEW_HOUSEHOLD"
+        >
+          + Register New Household
+        </option>
+
+      </select>
+
+      {!loadingHouseholds &&
+        households.length === 0 && (
+          <small className="form-help">
+            No active households are currently
+            available. You can register a new
+            household using the option above.
+          </small>
+        )}
+
+    </div>
+
+  </div>
+
+</section>
 
         {/* ===================================================
             PERSONAL INFORMATION

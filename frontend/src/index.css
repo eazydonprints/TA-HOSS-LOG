@@ -1,6 +1,15 @@
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
 * {
   box-sizing: border-box;
 }
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
 
 :root {
   font-family:
@@ -11,24 +20,218 @@
     "Segoe UI",
     sans-serif;
 
-  color: #172033;
-  background: #f5f7fb;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
+  color-scheme: light;
+
+  /* GLOBAL BACKGROUNDS */
+  --app-bg: #f5f7fb;
+  --page-bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-secondary: #f8fafc;
+  --surface-hover: #f1f5f9;
+
+  /* TEXT */
+  --text-primary: #172033;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* BORDERS */
+  --border-color: #e2e8f0;
+  --border-light: #edf2f7;
+
+  /* BRAND */
+  --primary: #176a83;
+  --primary-hover: #12576c;
+  --primary-light: #e8f4f7;
+
+  /* SIDEBAR */
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-text: #475569;
+  --sidebar-heading: #94a3b8;
+  --sidebar-hover: #f1f5f9;
+  --sidebar-active-bg: #e8f4f7;
+  --sidebar-active-text: #176a83;
+
+  /* TOPBAR */
+  --topbar-bg: #ffffff;
+  --topbar-border: #e5e7eb;
+
+  /* CARDS */
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+
+  /* INPUTS */
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-text: #172033;
+  --input-placeholder: #94a3b8;
+
+  /* STATUS */
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+
+  --info: #2563eb;
+  --info-bg: #eff6ff;
+
+  /* SHADOWS */
+  --shadow-sm:
+    0 1px 2px rgba(15, 23, 42, 0.05);
+
+  --shadow-md:
+    0 4px 12px rgba(15, 23, 42, 0.08);
+
+  --shadow-lg:
+    0 12px 30px rgba(15, 23, 42, 0.12);
+
+  /* SCROLLBAR */
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #cbd5e1;
+
+  color: var(--text-primary);
+  background: var(--app-bg);
 }
+
+
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* GLOBAL BACKGROUNDS */
+  --app-bg: #0f172a;
+  --page-bg: #111827;
+  --surface: #182235;
+  --surface-secondary: #1e293b;
+  --surface-hover: #263449;
+
+  /* TEXT */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* BORDERS */
+  --border-color: #334155;
+  --border-light: #263449;
+
+  /* BRAND */
+  --primary: #38bdf8;
+  --primary-hover: #0ea5e9;
+  --primary-light: rgba(56, 189, 248, 0.12);
+
+  /* SIDEBAR */
+  --sidebar-bg: #111827;
+  --sidebar-border: #263449;
+  --sidebar-text: #cbd5e1;
+  --sidebar-heading: #64748b;
+  --sidebar-hover: #1e293b;
+  --sidebar-active-bg: rgba(56, 189, 248, 0.12);
+  --sidebar-active-text: #38bdf8;
+
+  /* TOPBAR */
+  --topbar-bg: #111827;
+  --topbar-border: #263449;
+
+  /* CARDS */
+  --card-bg: #182235;
+  --card-border: #334155;
+
+  /* INPUTS */
+  --input-bg: #111827;
+  --input-border: #475569;
+  --input-text: #f8fafc;
+  --input-placeholder: #64748b;
+
+  /* STATUS */
+  --success: #4ade80;
+  --success-bg: rgba(34, 197, 94, 0.12);
+
+  --danger: #f87171;
+  --danger-bg: rgba(239, 68, 68, 0.12);
+
+  --warning: #fbbf24;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+
+  --info: #60a5fa;
+  --info-bg: rgba(59, 130, 246, 0.12);
+
+  /* SHADOWS */
+  --shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.2);
+
+  --shadow-md:
+    0 4px 12px rgba(0, 0, 0, 0.3);
+
+  --shadow-lg:
+    0 12px 30px rgba(0, 0, 0, 0.4);
+
+  /* SCROLLBAR */
+  --scrollbar-track: #111827;
+  --scrollbar-thumb: #475569;
+
+  color: var(--text-primary);
+  background: var(--app-bg);
+}
+
+
+/* =========================================================
+   HTML
+========================================================= */
 
 html {
   min-width: 320px;
   min-height: 100%;
+  background: var(--app-bg);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
+
+
+/* =========================================================
+   BODY
+========================================================= */
 
 body {
   margin: 0;
+
   min-width: 320px;
   min-height: 100vh;
-  background: #f5f7fb;
+
+  background: var(--app-bg);
+  color: var(--text-primary);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
+
+
+/* =========================================================
+   ROOT APPLICATION
+========================================================= */
+
+#root {
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   FORM ELEMENTS
+========================================================= */
 
 button,
 input,
@@ -37,10 +240,112 @@ select {
   font: inherit;
 }
 
+
 button {
   cursor: pointer;
 }
 
+
+input,
+textarea,
+select {
+  color: var(--input-text);
+  background: var(--input-bg);
+  border-color: var(--input-border);
+}
+
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
 a {
   color: inherit;
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   IMAGES
+========================================================= */
+
+img {
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   SMOOTH THEME TRANSITION
+========================================================= */
+
+body,
+.app-shell,
+.sidebar,
+.main-area,
+.topbar,
+.content-area,
+.dashboard-page,
+.stat-card,
+.dashboard-panel,
+.settings-card,
+.profile-card,
+.profile-dropdown-menu,
+input,
+textarea,
+select,
+button {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color:
+    var(--scrollbar-thumb)
+    var(--scrollbar-track);
+}
+
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+
+/* =========================================================
+   TEXT SELECTION
+========================================================= */
+
+::selection {
+  background: var(--primary-light);
+  color: var(--text-primary);
 }

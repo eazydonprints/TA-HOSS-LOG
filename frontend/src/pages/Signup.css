@@ -1,0 +1,283 @@
+/* =========================================================
+   DESIGN SYSTEM & CSS VARIABLES
+========================================================= */
+:root {
+  --primary-color: #3157a4;
+  --primary-hover: #264585;
+  --primary-active: #1d3566;
+  --focus-ring: rgba(49, 87, 164, 0.2);
+  
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(255, 255, 255, 0.4);
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-border-hover: #9ca3af;
+  
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --error-text: #991b1b;
+  
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+  --success-text: #166534;
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --transition-smooth: all 0.2s ease-in-out;
+}
+
+/* =========================================================
+   SIGNUP PAGE LAYOUT
+========================================================= */
+.signup-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 20px;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--text-main);
+  background:
+    linear-gradient(
+      rgba(15, 23, 42, 0.45),
+      rgba(15, 23, 42, 0.55)
+    ),
+    url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80")
+    center/cover no-repeat fixed;
+}
+
+/* =========================================================
+   SIGNUP CARD
+========================================================= */
+.signup-card {
+  width: 100%;
+  max-width: 480px; /* Scaled down for better proportion */
+  margin-top: auto;  /* Pushes card toward center vertically */
+  padding: 32px 28px;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Circular Logo Container */
+.signup-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.signup-logo-container .signup-logo,
+.signup-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%; /* Makes the logo wrapper perfectly circular */
+  object-fit: cover;
+  background-color: #ffffff;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-sizing: border-box;
+}
+
+/* Headers */
+.signup-title {
+  text-align: center;
+  margin: 0;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+.signup-subtitle {
+  text-align: center;
+  margin: 6px 0 24px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   FORM COMPONENTS
+========================================================= */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.signup-name-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-group label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  transition: var(--transition-smooth);
+}
+
+.input-group input:hover,
+.input-group select:hover {
+  border-color: var(--input-border-hover);
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* Submit Button */
+.signup-submit-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--primary-color);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 2px 4px rgba(49, 87, 164, 0.2);
+}
+
+.signup-submit-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.signup-submit-btn:active:not(:disabled) {
+  background-color: var(--primary-active);
+  transform: translateY(0);
+}
+
+.signup-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Alerts */
+.signup-error,
+.signup-success {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.825rem;
+  font-weight: 500;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.signup-error {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+}
+
+.signup-success {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+/* Footer Links & Info */
+.login-link-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.login-link-text a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link-text a:hover {
+  text-decoration: underline;
+}
+
+.signup-community-info {
+  text-align: center;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.775rem;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   DEVELOPER FOOTER (STAYS AT THE VERY BOTTOM)
+========================================================= */
+.developer-footer {
+  margin-top: auto; /* Guarantees footer sticks to the bottom of page */
+  padding-top: 24px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.2px;
+  line-height: 1.5;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MOBILE RESPONSIVENESS
+========================================================= */
+@media (max-width: 520px) {
+  .signup-page {
+    padding: 20px 12px 16px;
+  }
+
+  .signup-card {
+    padding: 24px 18px;
+    border-radius: var(--radius-sm);
+  }
+
+  .signup-title {
+    font-size: 1.4rem;
+  }
+
+  .signup-name-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .developer-footer {
+    font-size: 0.75rem;
+  }
+}

@@ -29,15 +29,64 @@ const getGroqClient = () => {
 };
 
 // =========================================================
-// CONFIGURATION
+// AI MODEL CONFIGURATION
 // =========================================================
 
-const DEFAULT_MODEL =
-  process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+/*
+  IMPORTANT:
+
+  GROQ_MODEL is treated as the user's preferred model,
+  but TA-HOSS AI will verify that the model is actually
+  available to the current Groq API key.
+
+  If it is unavailable, the system automatically tries
+  the fallback models below.
+*/
+
+const ENV_MODEL =
+  String(process.env.GROQ_MODEL || "").trim();
+
+const MODEL_CANDIDATES = [
+  ENV_MODEL,
+
+  // Preferred production models
+  "llama-3.3-70b-versatile",
+  "openai/gpt-oss-20b",
+  "llama-3.1-8b-instant",
+  "openai/gpt-oss-120b",
+]
+  .filter(Boolean)
+  .filter(
+    (model, index, array) =>
+      array.indexOf(model) === index
+  );
+
+/*
+  Cache the model that successfully works.
+
+  This prevents the application from checking models
+  unnecessarily on every single chat request.
+*/
+
+let activeModel = null;
+
+let modelDiscoveryPromise = null;
+
+let lastModelDiscoveryAt = 0;
+
+const MODEL_DISCOVERY_CACHE_MS =
+  5 * 60 * 1000;
+
+// =========================================================
+// REQUEST CONFIGURATION
+// =========================================================
 
 const MAX_MESSAGE_LENGTH = 6000;
+
 const MAX_HISTORY_MESSAGES = 12;
+
 const MAX_HISTORY_MESSAGE_LENGTH = 6000;
+
 const MAX_RESPONSE_TOKENS = 1200;
 
 // =========================================================
@@ -68,14 +117,22 @@ DEVELOPER & SYSTEM INFORMATION
 =========================================================
 
 The system was created, architected, and engineered by:
+
 - Developer: Diyak Ezekiel Dalyop
 - Role: Lead Full-Stack Software Engineer, Creative Technologist & Digital Product Architect
 - Location: Plateau State, Nigeria
 - Brand / Organization: EAZY DON / EAZY DON GRAPHIX AND PRINTS
-- Qualifications: HND in Business Administration & Management (Plateau State Polytechnic, Barkin Ladi) & MTN ICT & Digital Skills Certification.
-- Core Stack: MERN (MongoDB, Express.js, React, Node.js), Groq SDK AI Pipelines, & Brand/UI Design.
+- Qualifications: HND in Business Administration & Management
+  (Plateau State Polytechnic, Barkin Ladi)
+  and MTN ICT & Digital Skills Certification.
+- Core Stack:
+  MERN (MongoDB, Express.js, React, Node.js),
+  Groq SDK AI Pipelines,
+  and Brand/UI Design.
 
-When asked about the developer, who built TA-HOSS LOG, or creator details, provide accurate, professional information based on these developer details.
+When asked about the developer, who built TA-HOSS LOG,
+or creator details, provide accurate and professional
+information based on these developer details.
 
 =========================================================
 IMPORTANT DATA RULES
@@ -87,14 +144,16 @@ IMPORTANT DATA RULES
 - Never claim that a resident exists unless supplied TA-HOSS data confirms it.
 - Never claim that a household exists unless supplied TA-HOSS data confirms it.
 - Treat supplied TA-HOSS database information as authoritative.
-- If the required information is unavailable, clearly state that it is unavailable.
+- If required information is unavailable, clearly state that it is unavailable.
 - Do not guess missing numbers.
 - Do not estimate official TA-HOSS statistics unless the user explicitly asks
   for a hypothetical estimate.
-- Clearly distinguish between:
-  a) information obtained from TA-HOSS data,
-  b) general explanation,
-  c) recommendations or suggestions.
+
+Clearly distinguish between:
+
+a) information obtained from TA-HOSS data,
+b) general explanation,
+c) recommendations or suggestions.
 
 =========================================================
 SECURITY AND PRIVACY
@@ -115,12 +174,12 @@ Never reveal:
 
 Do not unnecessarily expose sensitive resident information.
 
-Only provide personal information when it is actually available in the
-supplied TA-HOSS context and the request is appropriate for the user's
-authorized role.
+Only provide personal information when it is actually available
+in the supplied TA-HOSS context and the request is appropriate
+for the user's authorized role.
 
-Do not reveal internal database identifiers unless they are necessary for
-an authorized administrative purpose.
+Do not reveal internal database identifiers unless they are
+necessary for an authorized administrative purpose.
 
 =========================================================
 OPERATIONAL LIMITATIONS
@@ -153,11 +212,13 @@ You may NOT:
 - change user permissions
 - perform administrative actions
 
-Never claim that you performed an action when you only provided advice.
+Never claim that you performed an action when you only
+provided advice.
 
-If a user requests an operation that is not available, explain that the
-assistant is currently read-only and, where useful, describe what an
-authorized administrator would need to do manually.
+If a user requests an operation that is not available,
+explain that the assistant is currently read-only and,
+where useful, describe what an authorized administrator
+would need to do manually.
 
 =========================================================
 COMMUNITY
@@ -168,8 +229,8 @@ LGA: Riyom
 State: Plateau
 Country: Nigeria
 
-You are an operational assistant, not a replacement for authorized
-community administrators.
+You are an operational assistant, not a replacement
+for authorized community administrators.
 
 =========================================================
 ANSWERING STYLE
@@ -193,16 +254,16 @@ When answering statistical questions:
 
 When answering questions where information is unavailable:
 
-Say clearly that the information is not currently available in the
-database context supplied to you.
+Clearly state that the information is not currently available
+in the database context supplied to you.
 
-Do not pretend that absence of information means that the information
-does not exist in the real world.
+Do not pretend that absence of information means that the
+information does not exist in the real world.
 
 When uncertainty exists, explicitly state it.
 
-When giving recommendations, label them as recommendations rather than
-database facts.
+When giving recommendations, clearly label them as
+recommendations rather than database facts.
 `;
 
 // =========================================================
@@ -291,23 +352,34 @@ const getCommunitySnapshot = async () => {
 
   return {
     community: "Ta-hoss",
+
     lga: "Riyom",
+
     state: "Plateau",
+
     country: "Nigeria",
 
     residents: {
       total: totalResidents,
+
       active: activeResidents,
+
       verified: verifiedResidents,
+
       pendingVerification: pendingResidents,
+
       rejected: rejectedResidents,
+
       activeIdentities,
     },
 
     households: {
       total: totalHouseholds,
+
       active: activeHouseholds,
+
       gpsMapped: mappedHouseholds,
+
       gpsUnmapped: unmappedHouseholds,
     },
 
@@ -323,15 +395,26 @@ const buildUserContext = (user) => {
   if (!user) {
     return {
       authenticated: false,
+
       role: null,
     };
   }
 
   return {
     authenticated: true,
-    fullname: user.fullname || null,
-    username: user.username || null,
-    role: user.role || null,
+
+    fullname:
+      user.fullname ||
+      user.fullName ||
+      null,
+
+    username:
+      user.username ||
+      null,
+
+    role:
+      user.role ||
+      null,
   };
 };
 
@@ -354,11 +437,18 @@ const normalizeMessages = (messages) => {
     .slice(-MAX_HISTORY_MESSAGES)
     .map((message) => ({
       role: message.role,
+
       content: message.content
         .trim()
-        .slice(0, MAX_HISTORY_MESSAGE_LENGTH),
+        .slice(
+          0,
+          MAX_HISTORY_MESSAGE_LENGTH
+        ),
     }))
-    .filter((message) => message.content.length > 0);
+    .filter(
+      (message) =>
+        message.content.length > 0
+    );
 };
 
 // =========================================================
@@ -369,7 +459,8 @@ const buildDatabaseContext = (
   communitySnapshot,
   userContext
 ) => {
-  const appKnowledge = getApplicationKnowledge();
+  const appKnowledge =
+    getApplicationKnowledge();
 
   return `
 =========================================================
@@ -404,268 +495,779 @@ Do not manufacture missing resident, household, verification,
 identity or GPS information.
 
 Snapshot generated at:
+
 ${communitySnapshot.generatedAt}
 `;
 };
 
 // =========================================================
+// MODEL ERROR HELPERS
+// =========================================================
+
+const isModelUnavailableError = (
+  error
+) => {
+  const status =
+    error?.status;
+
+  const code =
+    String(
+      error?.code ||
+      ""
+    ).toLowerCase();
+
+  const message =
+    String(
+      error?.message ||
+      ""
+    ).toLowerCase();
+
+  return (
+    status === 404 ||
+    status === 403 ||
+    code === "model_not_found" ||
+    message.includes("model_not_found") ||
+    message.includes("model does not exist") ||
+    message.includes("do not have access to it") ||
+    message.includes("model is not available") ||
+    message.includes("model permission")
+  );
+};
+
+// =========================================================
+// DISCOVER AVAILABLE GROQ MODELS
+// =========================================================
+
+const discoverAvailableModels =
+  async () => {
+    const groq =
+      getGroqClient();
+
+    try {
+      const response =
+        await groq.models.list();
+
+      const models =
+        Array.isArray(response?.data)
+          ? response.data
+          : Array.isArray(response)
+            ? response
+            : [];
+
+      const availableModelIds =
+        models
+          .filter(
+            (model) =>
+              model &&
+              model.id &&
+              model.active !== false
+          )
+          .map(
+            (model) =>
+              String(model.id).trim()
+          )
+          .filter(Boolean);
+
+      return availableModelIds;
+    } catch (error) {
+      console.error(
+        "TA-HOSS GROQ MODEL DISCOVERY ERROR:",
+        {
+          status:
+            error?.status,
+
+          code:
+            error?.code,
+
+          message:
+            error?.message,
+        }
+      );
+
+      /*
+        Do not completely stop the AI service
+        if the models listing endpoint fails.
+
+        The system will still attempt the
+        configured fallback models directly.
+      */
+
+      return [];
+    }
+  };
+
+// =========================================================
+// GET MODEL CANDIDATES
+// =========================================================
+
+const getModelCandidates =
+  async ({
+    forceRefresh = false,
+  } = {}) => {
+    const now =
+      Date.now();
+
+    /*
+      If we already have a confirmed working model,
+      use it first.
+    */
+
+    if (
+      activeModel &&
+      !forceRefresh
+    ) {
+      return [
+        activeModel,
+
+        ...MODEL_CANDIDATES.filter(
+          (model) =>
+            model !== activeModel
+        ),
+      ];
+    }
+
+    /*
+      Prevent multiple simultaneous model discovery
+      requests.
+    */
+
+    const cacheExpired =
+      now -
+        lastModelDiscoveryAt >
+      MODEL_DISCOVERY_CACHE_MS;
+
+    if (
+      !modelDiscoveryPromise &&
+      (
+        forceRefresh ||
+        cacheExpired
+      )
+    ) {
+      modelDiscoveryPromise =
+        discoverAvailableModels()
+          .then(
+            (availableModels) => {
+              lastModelDiscoveryAt =
+                Date.now();
+
+              return availableModels;
+            }
+          )
+          .finally(() => {
+            modelDiscoveryPromise =
+              null;
+          });
+    }
+
+    const availableModels =
+      modelDiscoveryPromise
+        ? await modelDiscoveryPromise
+        : [];
+
+    /*
+      If Groq returned the actual models available
+      to this API key, prioritize only those.
+    */
+
+    if (
+      availableModels.length > 0
+    ) {
+      const preferredAvailable =
+        MODEL_CANDIDATES.filter(
+          (model) =>
+            availableModels.includes(
+              model
+            )
+        );
+
+      /*
+        Include other available models after our
+        preferred candidates. This gives TA-HOSS AI
+        a final fallback option if Groq changes
+        availability.
+      */
+
+      const otherAvailable =
+        availableModels.filter(
+          (model) =>
+            !preferredAvailable.includes(
+              model
+            )
+        );
+
+      return [
+        ...preferredAvailable,
+        ...otherAvailable,
+      ];
+    }
+
+    /*
+      If discovery was unavailable,
+      try the known candidates directly.
+    */
+
+    return [
+      ...MODEL_CANDIDATES,
+    ];
+};
+
+// =========================================================
+// SEND CHAT REQUEST WITH MODEL FALLBACK
+// =========================================================
+
+const createChatCompletion =
+  async (messages) => {
+    const groq =
+      getGroqClient();
+
+    let candidates =
+      await getModelCandidates();
+
+    if (
+      !Array.isArray(candidates) ||
+      candidates.length === 0
+    ) {
+      candidates = [
+        ...MODEL_CANDIDATES,
+      ];
+    }
+
+    if (
+      candidates.length === 0
+    ) {
+      const error =
+        new Error(
+          "No Groq AI model has been configured."
+        );
+
+      error.statusCode = 503;
+
+      throw error;
+    }
+
+    let lastError = null;
+
+    for (
+      let index = 0;
+      index < candidates.length;
+      index += 1
+    ) {
+      const model =
+        candidates[index];
+
+      try {
+        console.log(
+          `TA-HOSS AI attempting model: ${model}`
+        );
+
+        const response =
+          await groq.chat.completions.create({
+            model,
+
+            messages,
+
+            max_tokens:
+              MAX_RESPONSE_TOKENS,
+
+            temperature:
+              0.2,
+          });
+
+        /*
+          This model worked successfully.
+          Cache it for future requests.
+        */
+
+        activeModel =
+          model;
+
+        console.log(
+          `TA-HOSS AI active model: ${model}`
+        );
+
+        return {
+          response,
+
+          model,
+        };
+      } catch (error) {
+        lastError =
+          error;
+
+        console.error(
+          `TA-HOSS GROQ ERROR FOR MODEL ${model}:`,
+          {
+            status:
+              error?.status,
+
+            code:
+              error?.code,
+
+            type:
+              error?.type,
+
+            message:
+              error?.message,
+          }
+        );
+
+        /*
+          If the model itself is unavailable,
+          immediately try the next model.
+        */
+
+        if (
+          isModelUnavailableError(
+            error
+          )
+        ) {
+          if (
+            activeModel ===
+            model
+          ) {
+            activeModel =
+              null;
+          }
+
+          continue;
+        }
+
+        /*
+          For other errors such as rate limits,
+          authentication errors or provider issues,
+          stop instead of repeatedly sending the
+          same request to multiple models.
+        */
+
+        throw error;
+      }
+    }
+
+    /*
+      All candidate models failed.
+    */
+
+    throw lastError ||
+      new Error(
+        "No available Groq AI model could process the request."
+      );
+  };
+
+// =========================================================
 // GROQ ERROR NORMALIZATION
 // =========================================================
 
-const normalizeGroqError = (error) => {
-  const status = error?.status;
-  const code = error?.code;
-  const type = error?.type;
-  const message = error?.message || "";
+const normalizeGroqError =
+  (error) => {
+    const status =
+      error?.status;
 
-  // Authentication / API key
-  if (
-    status === 401 ||
-    code === "invalid_api_key" ||
-    message.toLowerCase().includes("invalid api key")
-  ) {
+    const code =
+      String(
+        error?.code ||
+        ""
+      ).toLowerCase();
+
+    const type =
+      String(
+        error?.type ||
+        ""
+      ).toLowerCase();
+
+    const message =
+      String(
+        error?.message ||
+        ""
+      );
+
+    const lowerMessage =
+      message.toLowerCase();
+
+    // Authentication / API key
+
+    if (
+      status === 401 ||
+      code === "invalid_api_key" ||
+      lowerMessage.includes(
+        "invalid api key"
+      ) ||
+      lowerMessage.includes(
+        "invalid_api_key"
+      )
+    ) {
+      return {
+        statusCode: 503,
+
+        message:
+          "TA-HOSS AI is not properly configured. Please check the Groq API credentials.",
+      };
+    }
+
+    // Model unavailable
+
+    if (
+      isModelUnavailableError(
+        error
+      )
+    ) {
+      return {
+        statusCode: 503,
+
+        message:
+          "No AI model currently available to this Groq API key could process the request. Please check the Groq project model permissions or GROQ_MODEL setting.",
+      };
+    }
+
+    // Rate limit / quota
+
+    if (
+      status === 429 ||
+      code ===
+        "rate_limit_exceeded" ||
+      type ===
+        "rate_limit_exceeded" ||
+      lowerMessage.includes(
+        "rate limit"
+      ) ||
+      lowerMessage.includes(
+        "quota"
+      )
+    ) {
+      return {
+        statusCode: 429,
+
+        message:
+          "TA-HOSS AI is temporarily unavailable because the AI provider rate limit or quota has been reached. Please try again later.",
+      };
+    }
+
+    // Request too large
+
+    if (
+      status === 413 ||
+      lowerMessage.includes(
+        "too large"
+      ) ||
+      lowerMessage.includes(
+        "context length"
+      ) ||
+      lowerMessage.includes(
+        "maximum context"
+      )
+    ) {
+      return {
+        statusCode: 413,
+
+        message:
+          "The AI request is too large. Please shorten the message or conversation history and try again.",
+      };
+    }
+
+    // Generic provider error
+
     return {
-      statusCode: 503,
-      message:
-        "TA-HOSS AI is not properly configured. Please check the Groq API credentials.",
-    };
-  }
+      statusCode: 502,
 
-  // Rate limit / quota
-  if (
-    status === 429 ||
-    code === "rate_limit_exceeded" ||
-    type === "rate_limit_exceeded"
-  ) {
-    return {
-      statusCode: 429,
       message:
-        "TA-HOSS AI is temporarily unavailable because the AI provider rate limit or quota has been reached. Please try again later.",
+        "TA-HOSS AI could not communicate with the AI provider. Please try again shortly.",
     };
-  }
-
-  // Model unavailable
-  if (
-    status === 404 ||
-    code === "model_not_found" ||
-    message.toLowerCase().includes("model")
-  ) {
-    return {
-      statusCode: 503,
-      message:
-        "The configured TA-HOSS AI model is currently unavailable. Please check the GROQ_MODEL configuration.",
-    };
-  }
-
-  // Request too large
-  if (
-    status === 413 ||
-    message.toLowerCase().includes("too large") ||
-    message.toLowerCase().includes("context length")
-  ) {
-    return {
-      statusCode: 413,
-      message:
-        "The AI request is too large. Please shorten the message or conversation history and try again.",
-    };
-  }
-
-  // Generic provider error
-  return {
-    statusCode: 502,
-    message:
-      "TA-HOSS AI could not communicate with the AI provider. Please try again shortly.",
   };
-};
 
 // =========================================================
 // RESPONSE VALIDATION
 // =========================================================
 
-const extractAIAnswer = (response) => {
-  const answer =
-    response?.choices?.[0]?.message?.content;
+const extractAIAnswer =
+  (response) => {
+    const answer =
+      response
+        ?.choices?.[0]
+        ?.message
+        ?.content;
 
-  if (
-    typeof answer !== "string" ||
-    answer.trim().length === 0
-  ) {
-    return "I was unable to generate a response.";
-  }
+    if (
+      typeof answer !==
+        "string" ||
+      answer.trim().length === 0
+    ) {
+      return (
+        "I was unable to generate a response."
+      );
+    }
 
-  return answer.trim();
-};
+    return answer.trim();
+  };
 
 // =========================================================
 // MAIN AI FUNCTION
 // =========================================================
 
-const askTAHOSS = async ({
-  message,
-  history = [],
-  user = null,
-}) => {
-  if (!message || typeof message !== "string") {
-    throw new Error("AI message is required.");
-  }
+const askTAHOSS =
+  async ({
+    message,
+    history = [],
+    user = null,
+  }) => {
+    if (
+      !message ||
+      typeof message !==
+        "string"
+    ) {
+      throw new Error(
+        "AI message is required."
+      );
+    }
 
-  const cleanMessage = message.trim();
+    const cleanMessage =
+      message.trim();
 
-  if (!cleanMessage) {
-    throw new Error("AI message cannot be empty.");
-  }
+    if (
+      !cleanMessage
+    ) {
+      throw new Error(
+        "AI message cannot be empty."
+      );
+    }
 
-  if (cleanMessage.length > MAX_MESSAGE_LENGTH) {
-    throw new Error(
-      `AI message is too long. Please keep it below ${MAX_MESSAGE_LENGTH} characters.`
-    );
-  }
+    if (
+      cleanMessage.length >
+      MAX_MESSAGE_LENGTH
+    ) {
+      throw new Error(
+        `AI message is too long. Please keep it below ${MAX_MESSAGE_LENGTH} characters.`
+      );
+    }
 
-  const groq = getGroqClient();
+    /*
+      -----------------------------------------------------
+      Retrieve current TA-HOSS data
+      -----------------------------------------------------
+    */
 
-  // -------------------------------------------------------
-  // Retrieve current TA-HOSS data
-  // -------------------------------------------------------
+    const communitySnapshot =
+      await getCommunitySnapshot();
 
-  const communitySnapshot =
-    await getCommunitySnapshot();
+    /*
+      -----------------------------------------------------
+      Build authenticated user context
+      -----------------------------------------------------
+    */
 
-  // -------------------------------------------------------
-  // Build authenticated user context
-  // -------------------------------------------------------
+    const userContext =
+      buildUserContext(
+        user
+      );
 
-  const userContext =
-    buildUserContext(user);
+    /*
+      -----------------------------------------------------
+      Normalize conversation history
+      -----------------------------------------------------
+    */
 
-  // -------------------------------------------------------
-  // Normalize conversation history
-  // -------------------------------------------------------
+    const normalizedHistory =
+      normalizeMessages(
+        history
+      );
 
-  const normalizedHistory =
-    normalizeMessages(history);
+    /*
+      -----------------------------------------------------
+      Build database context
+      -----------------------------------------------------
+    */
 
-  // -------------------------------------------------------
-  // Build database context
-  // -------------------------------------------------------
+    const databaseContext =
+      buildDatabaseContext(
+        communitySnapshot,
+        userContext
+      );
 
-  const databaseContext =
-    buildDatabaseContext(
-      communitySnapshot,
-      userContext
-    );
+    /*
+      -----------------------------------------------------
+      Build Groq messages
+      -----------------------------------------------------
+    */
 
-  // -------------------------------------------------------
-  // Build Groq messages
-  // -------------------------------------------------------
-
-  const messages = [
-    {
-      role: "system",
-      content:
-        `${TA_HOSS_SYSTEM_PROMPT}\n\n${databaseContext}`,
-    },
-
-    ...normalizedHistory,
-
-    {
-      role: "user",
-      content: cleanMessage,
-    },
-  ];
-
-  // -------------------------------------------------------
-  // Send request to Groq
-  // -------------------------------------------------------
-
-  let response;
-
-  try {
-    response =
-      await groq.chat.completions.create({
-        model: DEFAULT_MODEL,
-        messages,
-        max_tokens: MAX_RESPONSE_TOKENS,
-        temperature: 0.2,
-      });
-  } catch (error) {
-    console.error(
-      "TA-HOSS GROQ ERROR:",
+    const messages = [
       {
-        status: error?.status,
-        code: error?.code,
-        type: error?.type,
-        message: error?.message,
-      }
-    );
+        role: "system",
 
-    const normalizedError =
-      normalizeGroqError(error);
+        content:
+          `${TA_HOSS_SYSTEM_PROMPT}\n\n${databaseContext}`,
+      },
 
-    const providerError =
-      new Error(normalizedError.message);
+      ...normalizedHistory,
 
-    providerError.statusCode =
-      normalizedError.statusCode;
+      {
+        role: "user",
 
-    providerError.isAIProviderError = true;
+        content:
+          cleanMessage,
+      },
+    ];
 
-    throw providerError;
-  }
+    /*
+      -----------------------------------------------------
+      Send request to Groq with automatic model fallback
+      -----------------------------------------------------
+    */
 
-  // -------------------------------------------------------
-  // Extract response
-  // -------------------------------------------------------
+    let result;
 
-  const answer =
-    extractAIAnswer(response);
+    try {
+      result =
+        await createChatCompletion(
+          messages
+        );
+    } catch (error) {
+      console.error(
+        "TA-HOSS AI CHAT ERROR:",
+        {
+          status:
+            error?.status,
 
-  // -------------------------------------------------------
-  // Return structured TA-HOSS result
-  // -------------------------------------------------------
+          statusCode:
+            error?.statusCode,
 
-  return {
-    responseId: response?.id || null,
+          code:
+            error?.code,
 
-    answer,
+          message:
+            error?.message,
+        }
+      );
 
-    model: DEFAULT_MODEL,
+      const normalizedError =
+        normalizeGroqError(
+          error
+        );
 
-    context: {
-      community:
-        communitySnapshot.community,
+      const providerError =
+        new Error(
+          normalizedError.message
+        );
 
-      lga:
-        communitySnapshot.lga,
+      providerError.statusCode =
+        normalizedError.statusCode;
 
-      state:
-        communitySnapshot.state,
+      providerError.isAIProviderError =
+        true;
 
-      generatedAt:
-        communitySnapshot.generatedAt,
-    },
+      throw providerError;
+    }
+
+    /*
+      -----------------------------------------------------
+      Extract response
+      -----------------------------------------------------
+    */
+
+    const answer =
+      extractAIAnswer(
+        result.response
+      );
+
+    /*
+      -----------------------------------------------------
+      Return structured TA-HOSS result
+      -----------------------------------------------------
+    */
+
+    return {
+      responseId:
+        result.response?.id ||
+        null,
+
+      answer,
+
+      model:
+        result.model,
+
+      context: {
+        community:
+          communitySnapshot.community,
+
+        lga:
+          communitySnapshot.lga,
+
+        state:
+          communitySnapshot.state,
+
+        generatedAt:
+          communitySnapshot.generatedAt,
+      },
+    };
   };
-};
 
 // =========================================================
 // AI HEALTH CHECK
 // =========================================================
 
-const checkAIHealth = async () => {
-  const configured =
-    Boolean(process.env.GROQ_API_KEY);
+const checkAIHealth =
+  async () => {
+    const configured =
+      Boolean(
+        process.env.GROQ_API_KEY
+      );
 
-  return {
-    configured,
+    let availableModels =
+      [];
 
-    model: DEFAULT_MODEL,
-    service: "TA-HOSS AI by EAZY DON",
-    provider: "Groq",
-    mode: "read_only",
-    status: configured
-      ? "configured"
-      : "not_configured",
+    if (
+      configured
+    ) {
+      try {
+        availableModels =
+          await discoverAvailableModels();
+      } catch (error) {
+        console.error(
+          "TA-HOSS AI HEALTH MODEL CHECK ERROR:",
+          error?.message
+        );
+      }
+    }
+
+    const preferredAvailableModels =
+      availableModels.filter(
+        (model) =>
+          MODEL_CANDIDATES.includes(
+            model
+          )
+      );
+
+    return {
+      configured,
+
+      preferredModel:
+        ENV_MODEL ||
+        null,
+
+      activeModel:
+        activeModel ||
+        null,
+
+      fallbackModels:
+        MODEL_CANDIDATES,
+
+      availablePreferredModels:
+        preferredAvailableModels,
+
+      service:
+        "TA-HOSS AI by EAZY DON",
+
+      provider:
+        "Groq",
+
+      mode:
+        "read_only",
+
+      status:
+        configured
+          ? activeModel
+            ? "online"
+            : "configured"
+          : "not_configured",
+    };
   };
-};
 
 // =========================================================
 // EXPORTS
@@ -673,8 +1275,12 @@ const checkAIHealth = async () => {
 
 module.exports = {
   askTAHOSS,
+
   checkAIHealth,
+
   getCommunitySnapshot,
+
   TA_HOSS_SYSTEM_PROMPT,
+
   buildDatabaseContext,
 };

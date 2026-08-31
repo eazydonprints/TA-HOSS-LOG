@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import CommunityMap from "../components/CommunityMap";
 import api from "../services/api";
 
+import "./CommunityMapPage.css";
+
 const CommunityMapPage = () => {
   const navigate = useNavigate();
 

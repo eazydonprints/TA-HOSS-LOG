@@ -1,0 +1,165 @@
+.verify-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.verify-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 35px;
+  border-radius: 18px;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.verify-logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.verify-logo {
+  width: 85px;
+  height: 85px;
+  object-fit: contain;
+}
+
+.verify-title {
+  text-align: center;
+  margin: 0;
+  font-size: 29px;
+  font-weight: 700;
+}
+
+.verify-description {
+  text-align: center;
+  line-height: 1.6;
+  opacity: 0.75;
+  margin: 12px 0 28px;
+}
+
+.verify-form {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d6d6d6;
+  border-radius: 9px;
+  outline: none;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  border-color: #3157a4;
+  box-shadow: 0 0 0 3px rgba(49, 87, 164, 0.1);
+}
+
+.verify-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  background: #3157a4;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.verify-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verify-error,
+.verify-success {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.verify-error {
+  background: #ffe8e8;
+  color: #a00000;
+}
+
+.verify-success {
+  background: #e8f8ed;
+  color: #176b35;
+}
+
+.resend-section {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.resend-btn {
+  display: block;
+  margin: 8px auto 0;
+  border: none;
+  background: transparent;
+  color: #3157a4;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.resend-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.verify-login-link {
+  text-align: center;
+  margin-top: 22px;
+}
+
+.verify-login-link a {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.verify-community-info {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.developer-footer {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+@media (max-width: 600px) {
+  .verify-card {
+    padding: 25px 20px;
+  }
+
+  .verify-title {
+    font-size: 25px;
+  }
+}

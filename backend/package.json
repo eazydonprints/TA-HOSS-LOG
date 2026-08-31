@@ -1,17 +1,26 @@
 {
-  "name": "backend",
+  "name": "ta-hoss-log-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "TA-HOSS LOG Community Management System API",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ta-hoss",
+    "community",
+    "cmis",
+    "biometric"
+  ],
+  "author": "Diyak Ezekiel Dalyop",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=20 <25"
+  },
   "dependencies": {
+    "@simplewebauthn/server": "^13.3.2",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.10.0",
     "cors": "^2.8.6",

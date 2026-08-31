@@ -5,7 +5,7 @@ const getPagination = require("../utils/pagination");
 
 /*
  * =========================================================
- * CONSTANTS
+ * CONSTANTS & HELPERS
  * =========================================================
  */
 const ALLOWED_ROLES = [
@@ -15,15 +15,8 @@ const ALLOWED_ROLES = [
   "viewer",
 ];
 
-/*
- * =========================================================
- * HELPERS
- * =========================================================
- */
 const isValidRole = (role) => ALLOWED_ROLES.includes(role);
-
 const normalizeUsername = (username) => String(username || "").trim().toLowerCase();
-
 const normalizeFullname = (fullname) => String(fullname || "").trim();
 
 const formatUserResponse = (user) => {
@@ -58,12 +51,46 @@ const deleteCloudinaryPhoto = async (publicId) => {
 
 /*
  * =========================================================
+ * CLOUDINARY BUFFER UPLOAD HELPER
+ * =========================================================
+ */
+const uploadBufferToCloudinary = (buffer, folder = "ta-hoss/users") => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: "image",
+        transformation: [
+          {
+            width: 800,
+            height: 800,
+            crop: "limit",
+            quality: "auto",
+            fetch_format: "auto",
+          },
+        ],
+      },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(result);
+      }
+    );
+
+    uploadStream.end(buffer);
+  });
+};
+
+/*
+ * =========================================================
  * CREATE USER
  * =========================================================
  */
 const createUser = async (req, res) => {
   try {
-    const { fullname, username, password, role } = req.body;
+    const { fullname, username, password, role } = req.body || {};
 
     if (!fullname || !username || !password || !role) {
       return res.status(400).json({
@@ -259,7 +286,7 @@ const getUserById = async (req, res) => {
  */
 const updateUser = async (req, res) => {
   try {
-    const { fullname, role } = req.body;
+    const { fullname, role } = req.body || {};
 
     const user = await User.findOne({
       _id: req.params.id,
@@ -324,95 +351,298 @@ const updateUser = async (req, res) => {
 
 /*
  * =========================================================
- * STATUS MANAGEMENT (TOGGLE, SUSPEND, ACTIVATE, EXPLICIT)
+ * STATUS MANAGEMENT
  * =========================================================
  */
-const toggleUserStatus = async (req, res) => {
+
+/*
+ * ---------------------------------------------------------
+ * UPDATE USER STATUS
+ *
+ * Supported statuses:
+ *   active
+ *   suspended
+ *   inactive
+ *
+ * User model uses isActive as the source of truth.
+ * ---------------------------------------------------------
+ */
+
+const updateUserStatus = async (req, res) => {
   try {
+    const userId = req.params.id;
+
+    const requestedStatus = String(
+      req.body?.status || ""
+    )
+      .trim()
+      .toLowerCase();
+
+    const allowedStatuses = [
+      "active",
+      "suspended",
+      "inactive",
+    ];
+
+    if (
+      !allowedStatuses.includes(
+        requestedStatus
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid or missing status. Allowed values: active, suspended, inactive.",
+      });
+    }
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Administrator ID is required.",
+      });
+    }
+
     const user = await User.findOne({
-      _id: req.params.id,
+      _id: userId,
       deletedAt: null,
     });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Administrator not found.",
+        message:
+          "Administrator not found.",
       });
     }
 
-    if (isSameUser(req.user, user)) {
+    /*
+     * Never allow an administrator to
+     * suspend/deactivate their own account.
+     */
+
+    const shouldActivate =
+      requestedStatus === "active";
+
+    if (
+      isSameUser(req.user, user) &&
+      !shouldActivate
+    ) {
       return res.status(400).json({
         success: false,
-        message: "You cannot suspend or deactivate your own account.",
+        message:
+          "You cannot suspend or deactivate your own account.",
       });
     }
 
-    user.isActive = !user.isActive;
-    await user.save();
-
-    return res.json({
-      success: true,
-      message: user.isActive
-        ? "Administrator activated successfully."
-        : "Administrator suspended successfully.",
-      data: formatUserResponse(user),
-    });
-  } catch (error) {
-    console.error("TOGGLE USER STATUS ERROR:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Unable to change administrator status.",
-    });
-  }
-};
-
-const updateUserStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    if (!status || !["active", "suspended", "inactive"].includes(status.toLowerCase())) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or missing status. Allowed values: 'active', 'suspended'.",
-      });
-    }
-
-    const shouldActivate = status.toLowerCase() === "active";
-
-    const user = await User.findOne({ _id: req.params.id, deletedAt: null });
-    if (!user) {
-      return res.status(404).json({ success: false, message: "Administrator not found." });
-    }
-
-    if (isSameUser(req.user, user) && !shouldActivate) {
-      return res.status(400).json({
-        success: false,
-        message: "You cannot suspend your own account.",
-      });
-    }
+    /*
+     * "active" = true
+     * "suspended" / "inactive" = false
+     */
 
     user.isActive = shouldActivate;
+
     await user.save();
+
+    const updatedUser =
+      await User.findById(user._id)
+        .select("-password")
+        .lean();
 
     return res.json({
       success: true,
-      message: `Administrator ${shouldActivate ? "activated" : "suspended"} successfully.`,
-      data: formatUserResponse(user),
+
+      message: shouldActivate
+        ? "Administrator activated successfully."
+        : "Administrator suspended successfully.",
+
+      data:
+        formatUserResponse(
+          updatedUser
+        ),
     });
+
   } catch (error) {
-    console.error("UPDATE USER STATUS ERROR:", error);
-    return res.status(500).json({ success: false, message: "Unable to update status." });
+    console.error(
+      "UPDATE USER STATUS ERROR:",
+      error
+    );
+
+    console.error(
+      "UPDATE USER STATUS ERROR DETAILS:",
+      {
+        name: error?.name,
+        message: error?.message,
+        code: error?.code,
+        path: error?.path,
+        value: error?.value,
+      }
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to update status.",
+      error:
+        process.env.NODE_ENV ===
+        "development"
+          ? error.message
+          : undefined,
+    });
   }
 };
 
-const suspendUser = async (req, res) => {
-  req.body.status = "suspended";
-  return updateUserStatus(req, res);
+
+/*
+ * ---------------------------------------------------------
+ * SUSPEND USER
+ * ---------------------------------------------------------
+ */
+
+const suspendUser = async (
+  req,
+  res
+) => {
+  req.body = {
+    ...(req.body || {}),
+    status: "suspended",
+  };
+
+  return updateUserStatus(
+    req,
+    res
+  );
 };
 
-const activateUser = async (req, res) => {
-  req.body.status = "active";
-  return updateUserStatus(req, res);
+
+/*
+ * ---------------------------------------------------------
+ * ACTIVATE USER
+ * ---------------------------------------------------------
+ */
+
+const activateUser = async (
+  req,
+  res
+) => {
+  req.body = {
+    ...(req.body || {}),
+    status: "active",
+  };
+
+  return updateUserStatus(
+    req,
+    res
+  );
+};
+
+
+/*
+ * ---------------------------------------------------------
+ * TOGGLE USER STATUS
+ * ---------------------------------------------------------
+ */
+
+const toggleUserStatus = async (
+  req,
+  res
+) => {
+  try {
+    const userId =
+      req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Administrator ID is required.",
+      });
+    }
+
+    const user =
+      await User.findOne({
+        _id: userId,
+        deletedAt: null,
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Administrator not found.",
+      });
+    }
+
+    if (
+      isSameUser(
+        req.user,
+        user
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "You cannot suspend or deactivate your own account.",
+      });
+    }
+
+    user.isActive =
+      !Boolean(
+        user.isActive
+      );
+
+    await user.save();
+
+    const updatedUser =
+      await User.findById(
+        user._id
+      )
+        .select("-password")
+        .lean();
+
+    return res.json({
+      success: true,
+
+      message:
+        updatedUser.isActive
+          ? "Administrator activated successfully."
+          : "Administrator suspended successfully.",
+
+      data:
+        formatUserResponse(
+          updatedUser
+        ),
+    });
+
+  } catch (error) {
+    console.error(
+      "TOGGLE USER STATUS ERROR:",
+      error
+    );
+
+    console.error(
+      "TOGGLE USER STATUS ERROR DETAILS:",
+      {
+        name: error?.name,
+        message: error?.message,
+        code: error?.code,
+        path: error?.path,
+        value: error?.value,
+      }
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to change administrator status.",
+      error:
+        process.env.NODE_ENV ===
+        "development"
+          ? error.message
+          : undefined,
+    });
+  }
 };
 
 /*
@@ -472,7 +702,7 @@ const deleteUser = async (req, res) => {
  */
 const changePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const { currentPassword, newPassword, confirmPassword } = req.body || {};
 
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
@@ -543,7 +773,7 @@ const changePassword = async (req, res) => {
 
 const changeUserPassword = async (req, res) => {
   try {
-    const { newPassword, confirmPassword } = req.body;
+    const { newPassword, confirmPassword } = req.body || {};
 
     if (!newPassword) {
       return res.status(400).json({
@@ -630,7 +860,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { fullname, photo, photoPublicId } = req.body;
+    const { fullname, photo, photoPublicId } = req.body || {};
 
     const user = await User.findOne({
       _id: req.user._id,
@@ -689,17 +919,9 @@ const updateProfile = async (req, res) => {
  * PHOTO MANAGEMENT
  * =========================================================
  */
+
 const uploadUserPhoto = async (req, res) => {
   try {
-    const { photo, photoPublicId } = req.body;
-
-    if (!photo || !photoPublicId) {
-      return res.status(400).json({
-        success: false,
-        message: "Photo URL and photo public ID are required.",
-      });
-    }
-
     const user = await User.findOne({
       _id: req.params.id,
       deletedAt: null,
@@ -712,32 +934,103 @@ const uploadUserPhoto = async (req, res) => {
       });
     }
 
-    const oldPublicId = user.photoPublicId;
+    let photoUrl = null;
+    let photoPublicId = null;
 
-    if (oldPublicId && oldPublicId !== photoPublicId) {
-      await deleteCloudinaryPhoto(oldPublicId);
+    /*
+     * ---------------------------------------------------------
+     * OPTION 1: ACTUAL FILE UPLOAD USING MULTER
+     * ---------------------------------------------------------
+     */
+    if (req.file) {
+      const uploadedPhoto = await uploadBufferToCloudinary(
+        req.file.buffer,
+        "ta-hoss/users"
+      );
+
+      photoUrl = uploadedPhoto.secure_url;
+      photoPublicId = uploadedPhoto.public_id;
     }
 
-    user.photo = photo;
+    /*
+     * ---------------------------------------------------------
+     * OPTION 2: CLOUDINARY URL SENT DIRECTLY
+     * ---------------------------------------------------------
+     */
+    else if (req.body?.photo) {
+      photoUrl = req.body.photo;
+      photoPublicId = req.body.photoPublicId || null;
+    }
+
+    /*
+     * ---------------------------------------------------------
+     * NO PHOTO
+     * ---------------------------------------------------------
+     */
+    else {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a valid photo to upload.",
+      });
+    }
+
+    /*
+     * ---------------------------------------------------------
+     * DELETE OLD CLOUDINARY PHOTO
+     * ---------------------------------------------------------
+     */
+    if (
+      user.photoPublicId &&
+      user.photoPublicId !== photoPublicId
+    ) {
+      await deleteCloudinaryPhoto(
+        user.photoPublicId
+      );
+    }
+
+    /*
+     * ---------------------------------------------------------
+     * SAVE NEW PHOTO
+     * ---------------------------------------------------------
+     */
+    user.photo = photoUrl;
     user.photoPublicId = photoPublicId;
 
     await user.save();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
-      message: "Administrator photo updated successfully.",
+      message: "Administrator photo uploaded successfully.",
       data: formatUserResponse(user),
     });
+
   } catch (error) {
-    console.error("UPLOAD USER PHOTO ERROR:", error);
+    console.error(
+      "UPLOAD USER PHOTO ERROR:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
-      message: "Unable to update administrator photo.",
+      message: "Unable to upload administrator photo.",
     });
   }
 };
 
-const updateUserPhoto = uploadUserPhoto; // Alias for backward compatibility
+/*
+ * =========================================================
+ * ALIAS
+ * =========================================================
+ */
+
+const updateUserPhoto = uploadUserPhoto;
+
+
+/*
+ * =========================================================
+ * REMOVE USER PHOTO
+ * =========================================================
+ */
 
 const removeUserPhoto = async (req, res) => {
   try {
@@ -753,28 +1046,48 @@ const removeUserPhoto = async (req, res) => {
       });
     }
 
+    /*
+     * Delete from Cloudinary
+     */
     if (user.photoPublicId) {
-      await deleteCloudinaryPhoto(user.photoPublicId);
+      await deleteCloudinaryPhoto(
+        user.photoPublicId
+      );
     }
 
+    /*
+     * Remove from database
+     */
     user.photo = null;
     user.photoPublicId = null;
 
     await user.save();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Administrator photo removed successfully.",
       data: formatUserResponse(user),
     });
+
   } catch (error) {
-    console.error("REMOVE USER PHOTO ERROR:", error);
+    console.error(
+      "REMOVE USER PHOTO ERROR:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Unable to remove administrator photo.",
     });
   }
 };
+
+
+/*
+ * =========================================================
+ * REMOVE CURRENT USER PROFILE PHOTO
+ * =========================================================
+ */
 
 const removeProfilePhoto = async (req, res) => {
   try {
@@ -790,8 +1103,13 @@ const removeProfilePhoto = async (req, res) => {
       });
     }
 
+    /*
+     * Delete old Cloudinary image
+     */
     if (user.photoPublicId) {
-      await deleteCloudinaryPhoto(user.photoPublicId);
+      await deleteCloudinaryPhoto(
+        user.photoPublicId
+      );
     }
 
     user.photo = null;
@@ -799,13 +1117,18 @@ const removeProfilePhoto = async (req, res) => {
 
     await user.save();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Profile photo removed successfully.",
       data: formatUserResponse(user),
     });
+
   } catch (error) {
-    console.error("REMOVE PROFILE PHOTO ERROR:", error);
+    console.error(
+      "REMOVE PROFILE PHOTO ERROR:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Unable to remove profile photo.",
@@ -823,7 +1146,6 @@ module.exports = {
   getUsers,
   getUserById,
   updateUser,
-  toggleUserStatus,
   updateUserStatus,
   suspendUser,
   activateUser,

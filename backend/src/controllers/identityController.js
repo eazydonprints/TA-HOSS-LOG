@@ -111,53 +111,76 @@ GENERATE RESIDENT QR
 
 const generateResidentQR = async (req, res) => {
   try {
-    const resident =
-      await Resident.findOne({
-        _id: req.params.id,
-        deletedAt: null,
-        status: "active",
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Resident ID is required.",
       });
+    }
+
+    const resident = await Resident.findOne({
+      _id: id,
+      deletedAt: null,
+      status: "active",
+    });
 
     if (!resident) {
       return res.status(404).json({
         success: false,
-        message: "Resident not found.",
+        message: "Resident not found or inactive.",
       });
     }
 
-
     /*
-    -------------------------------------------------------
+    =========================================================
     QR REQUIREMENTS
-    -------------------------------------------------------
+    =========================================================
     */
 
-    if (
-      resident.verificationStatus !== "verified"
-    ) {
+    if (resident.verificationStatus !== "verified") {
       return res.status(400).json({
         success: false,
         message:
           "QR identity can only be generated for a verified resident.",
+
+        data: {
+          verificationStatus:
+            resident.verificationStatus,
+
+          identityStatus:
+            resident.identityStatus,
+
+          residentStatus:
+            resident.status,
+        },
       });
     }
 
-
-    if (
-      resident.identityStatus !== "active"
-    ) {
+    if (resident.identityStatus !== "active") {
       return res.status(400).json({
         success: false,
         message:
           "Resident digital identity is not active.",
+
+        data: {
+          verificationStatus:
+            resident.verificationStatus,
+
+          identityStatus:
+            resident.identityStatus,
+
+          residentStatus:
+            resident.status,
+        },
       });
     }
 
-
     /*
-    -------------------------------------------------------
+    =========================================================
     GENERATE TOKEN ONLY IF ONE DOES NOT EXIST
-    -------------------------------------------------------
+    =========================================================
     */
 
     if (!resident.qrToken) {
@@ -170,15 +193,12 @@ const generateResidentQR = async (req, res) => {
       await resident.save();
     }
 
-
     const qrData =
-      await generateQRData(
-        resident.qrToken
-      );
-
+      await generateQRData(resident.qrToken);
 
     return res.status(200).json({
       success: true,
+
       message:
         "TA-HOSS QR identity ready.",
 
@@ -209,7 +229,6 @@ const generateResidentQR = async (req, res) => {
           new Date(),
       },
     });
-
   } catch (error) {
     console.error(
       "GENERATE QR ERROR:",
@@ -223,7 +242,6 @@ const generateResidentQR = async (req, res) => {
     });
   }
 };
-
 
 /*
 =========================================================

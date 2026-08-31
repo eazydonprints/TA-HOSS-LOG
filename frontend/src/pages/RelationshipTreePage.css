@@ -1,0 +1,590 @@
+/* ==========================================================================
+   RELATIONSHIP TREE PAGE - COMPACT & STANDARD STYLESHEET
+   ========================================================================== */
+
+:root {
+  --tree-primary: #2563eb;
+  --tree-primary-hover: #1d4ed8;
+  --tree-bg-page: #f8fafc;
+  --tree-bg-card: #ffffff;
+  --tree-bg-subtle: #f1f5f9;
+  --tree-text-main: #0f172a;
+  --tree-text-muted: #64748b;
+  --tree-border: #e2e8f0;
+  --tree-border-hover: #cbd5e1;
+  --tree-line-color: #cbd5e1;
+  --tree-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --tree-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  --tree-radius-sm: 6px;
+  --tree-radius-md: 8px;
+  --tree-radius-lg: 12px;
+  --tree-radius-full: 9999px;
+  --tree-success-bg: #dcfce7;
+  --tree-success-text: #15803d;
+  --tree-pending-bg: #fef3c7;
+  --tree-pending-text: #b45309;
+  --tree-transition: all 0.2s ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   Global Page Container
+   -------------------------------------------------------------------------- */
+.dashboard-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  background-color: var(--tree-bg-page);
+  color: var(--tree-text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.dashboard-page * {
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Header & Navigation
+   -------------------------------------------------------------------------- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--tree-border);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumb {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tree-primary);
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--tree-text-main);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+}
+
+.dashboard-header p {
+  font-size: 0.875rem;
+  color: var(--tree-text-muted);
+  margin: 0;
+}
+
+.back-button {
+  background-color: var(--tree-bg-card);
+  color: var(--tree-text-main);
+  border: 1px solid var(--tree-border);
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--tree-radius-md);
+  cursor: pointer;
+  transition: var(--tree-transition);
+  box-shadow: var(--tree-shadow-sm);
+}
+
+.back-button:hover {
+  background-color: var(--tree-bg-subtle);
+  border-color: var(--tree-border-hover);
+}
+
+/* --------------------------------------------------------------------------
+   Stat Cards Grid
+   -------------------------------------------------------------------------- */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background-color: var(--tree-bg-card);
+  padding: 0.875rem;
+  border-radius: var(--tree-radius-md);
+  border: 1px solid var(--tree-border);
+  box-shadow: var(--tree-shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--tree-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.stat-card strong {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--tree-text-main);
+  margin-top: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard Panels
+   -------------------------------------------------------------------------- */
+.dashboard-panel {
+  background-color: var(--tree-bg-card);
+  border-radius: var(--tree-radius-lg);
+  border: 1px solid var(--tree-border);
+  box-shadow: var(--tree-shadow-sm);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel-header {
+  margin-bottom: 1rem;
+}
+
+.panel-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--tree-text-main);
+  margin: 0 0 0.25rem 0;
+}
+
+.panel-header p {
+  font-size: 0.8125rem;
+  color: var(--tree-text-muted);
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Compact Tree View Layout
+   -------------------------------------------------------------------------- */
+.family-tree-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+.family-tree-root {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.tree-root-connector {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 18px;
+}
+
+.tree-line-vertical {
+  width: 2px;
+  height: 100%;
+  background-color: var(--tree-line-color);
+}
+
+.tree-level {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.tree-horizontal-line {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background-color: var(--tree-line-color);
+}
+
+.tree-members {
+  display: flex;
+  justify-content: center;
+  gap: 0.875rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.tree-member-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 220px;
+  max-width: 260px;
+  flex: 1;
+}
+
+.tree-branch-line {
+  width: 2px;
+  height: 14px;
+  background-color: var(--tree-line-color);
+}
+
+.tree-relationship-label {
+  background-color: var(--tree-bg-subtle);
+  color: var(--tree-primary);
+  border: 1px solid var(--tree-border);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--tree-radius-full);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tree-no-relationships {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--tree-text-muted);
+  font-size: 0.8125rem;
+}
+
+.tree-no-relationships .tree-line-vertical {
+  height: 16px;
+  margin-bottom: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Compact Family Member Card
+   -------------------------------------------------------------------------- */
+.family-member-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 0.625rem;
+  row-gap: 0.125rem;
+  align-items: center;
+  background-color: var(--tree-bg-card);
+  border: 1px solid var(--tree-border);
+  border-radius: var(--tree-radius-md);
+  padding: 0.625rem 0.75rem;
+  text-decoration: none;
+  color: var(--tree-text-main);
+  transition: var(--tree-transition);
+  box-shadow: var(--tree-shadow-sm);
+  width: 100%;
+}
+
+.family-member-card:hover {
+  border-color: var(--tree-primary);
+  box-shadow: var(--tree-shadow-md);
+  transform: translateY(-1px);
+}
+
+.family-member-card.family-head-card {
+  border: 2px solid var(--tree-primary);
+  background-color: #f8fafc;
+  max-width: 320px;
+}
+
+.family-card-top {
+  display: contents; /* Allows child avatar and badge to fit seamlessly into grid */
+}
+
+.family-avatar {
+  grid-row: 1 / span 3;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--tree-radius-full);
+  background-color: var(--tree-primary);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.family-head-card .family-avatar {
+  width: 38px;
+  height: 38px;
+  font-size: 1rem;
+}
+
+.family-verification {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--tree-radius-full);
+  justify-self: end;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.family-verification.verified {
+  background-color: var(--tree-success-bg);
+  color: var(--tree-success-text);
+}
+
+.family-verification.pending {
+  background-color: var(--tree-pending-bg);
+  color: var(--tree-pending-text);
+}
+
+.family-member-details {
+  display: flex;
+  flex-direction: column;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  padding-right: 3rem; /* Leave room for status badge */
+}
+
+.family-member-details strong {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--tree-text-main);
+  line-height: 1.2;
+}
+
+.family-member-details span {
+  font-size: 0.725rem;
+  color: var(--tree-text-muted);
+}
+
+.family-role {
+  font-weight: 600;
+  color: var(--tree-primary) !important;
+}
+
+.family-profile-link {
+  grid-column: 2;
+  grid-row: 3;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--tree-primary);
+  margin-top: 0.125rem;
+}
+
+.family-member-card:hover .family-profile-link {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Unconnected Members Grid
+   -------------------------------------------------------------------------- */
+.unconnected-members {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--tree-border);
+}
+
+.unconnected-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tree-text-muted);
+  margin-bottom: 0.875rem;
+  text-align: center;
+}
+
+.unconnected-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Registered Relationships Section
+   -------------------------------------------------------------------------- */
+.registered-relationships {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.registered-relationship {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--tree-bg-page);
+  border: 1px solid var(--tree-border);
+  border-radius: var(--tree-radius-md);
+  gap: 0.5rem;
+}
+
+.relationship-person {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  flex: 1;
+}
+
+.relationship-person strong {
+  font-size: 0.8125rem;
+  color: var(--tree-text-main);
+}
+
+.relationship-person span {
+  font-size: 0.7rem;
+  color: var(--tree-text-muted);
+}
+
+.relationship-person:hover strong {
+  color: var(--tree-primary);
+}
+
+.relationship-type {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--tree-bg-card);
+  border: 1px solid var(--tree-border);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--tree-radius-full);
+}
+
+.relationship-type span {
+  font-size: 0.725rem;
+  font-weight: 600;
+  color: var(--tree-text-main);
+}
+
+.relationship-type strong {
+  color: var(--tree-primary);
+  font-size: 0.8125rem;
+}
+
+/* --------------------------------------------------------------------------
+   Actions Grid
+   -------------------------------------------------------------------------- */
+.household-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.household-action-grid button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background-color: var(--tree-bg-page);
+  border: 1px solid var(--tree-border);
+  border-radius: var(--tree-radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: var(--tree-transition);
+}
+
+.household-action-grid button:hover {
+  border-color: var(--tree-primary);
+  background-color: var(--tree-bg-card);
+  box-shadow: var(--tree-shadow-sm);
+}
+
+.household-action-grid button strong {
+  font-size: 0.875rem;
+  color: var(--tree-text-main);
+  margin-bottom: 0.125rem;
+}
+
+.household-action-grid button span {
+  font-size: 0.75rem;
+  color: var(--tree-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   States (Loading, Error, Empty)
+   -------------------------------------------------------------------------- */
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1rem;
+  color: var(--tree-text-muted);
+}
+
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--tree-border);
+  border-top-color: var(--tree-primary);
+  border-radius: 50%;
+  animation: tree-spin 0.8s linear infinite;
+  margin-bottom: 0.75rem;
+}
+
+@keyframes tree-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dashboard-error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: var(--tree-radius-md);
+  border: 1px solid #fecaca;
+  margin-bottom: 1rem;
+  font-size: 0.8125rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: var(--tree-bg-page);
+  border-radius: var(--tree-radius-md);
+  border: 1px dashed var(--tree-border);
+  width: 100%;
+}
+
+.empty-state strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--tree-text-main);
+  margin-bottom: 0.25rem;
+}
+
+.empty-state span {
+  font-size: 0.8125rem;
+  color: var(--tree-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .back-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .tree-horizontal-line {
+    display: none;
+  }
+
+  .tree-members {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tree-member-branch {
+    width: 100%;
+    max-width: 100%;
+  }
+}

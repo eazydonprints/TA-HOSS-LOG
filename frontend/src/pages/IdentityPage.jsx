@@ -29,10 +29,16 @@ const IdentityPage = () => {
       if (response.data?.success) {
         setResidents(response.data.data || []);
       } else {
-        setError("Unable to load residents.");
+        setError(
+          response.data?.message ||
+            "Unable to load residents."
+        );
       }
     } catch (err) {
-      console.error("IDENTITY PAGE ERROR:", err);
+      console.error(
+        "IDENTITY PAGE ERROR:",
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -47,76 +53,96 @@ const IdentityPage = () => {
     loadResidents();
   }, []);
 
+  const getFullName = (resident) => {
+    return [
+      resident.firstName,
+      resident.middleName,
+      resident.lastName,
+    ]
+      .filter(Boolean)
+      .join(" ");
+  };
+
   const filteredResidents = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query =
+      search.trim().toLowerCase();
 
     return residents.filter((resident) => {
-      const fullName = [
-        resident.firstName,
-        resident.middleName,
-        resident.lastName,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+      const fullName =
+        getFullName(resident).toLowerCase();
 
       const matchesSearch =
         !query ||
         fullName.includes(query) ||
-        resident.residentId?.toLowerCase().includes(query) ||
-        resident.phoneNumber?.toLowerCase().includes(query);
+        resident.residentId
+          ?.toLowerCase()
+          .includes(query) ||
+        resident.phoneNumber
+          ?.toLowerCase()
+          .includes(query);
 
       let matchesFilter = true;
 
       if (filter === "active") {
-        matchesFilter = resident.identityStatus === "active";
+        matchesFilter =
+          resident.identityStatus === "active";
       }
 
       if (filter === "pending") {
-        matchesFilter = resident.identityStatus === "pending";
+        matchesFilter =
+          resident.identityStatus === "pending";
       }
 
       if (filter === "qr") {
-        matchesFilter = Boolean(resident.qrToken);
+        matchesFilter =
+          Boolean(resident.qrToken);
       }
 
       if (filter === "noqr") {
-        matchesFilter = !resident.qrToken;
+        matchesFilter =
+          !resident.qrToken;
       }
 
-      return matchesSearch && matchesFilter;
+      return (
+        matchesSearch &&
+        matchesFilter
+      );
     });
-  }, [residents, search, filter]);
+  }, [
+    residents,
+    search,
+    filter,
+  ]);
 
   const statistics = useMemo(() => {
     return {
       total: residents.length,
 
       active: residents.filter(
-        (resident) => resident.identityStatus === "active"
+        (resident) =>
+          resident.identityStatus === "active"
       ).length,
 
       pending: residents.filter(
-        (resident) => resident.identityStatus === "pending"
+        (resident) =>
+          resident.identityStatus === "pending"
       ).length,
 
-      qr: residents.filter((resident) => Boolean(resident.qrToken)).length,
+      qr: residents.filter(
+        (resident) =>
+          Boolean(resident.qrToken)
+      ).length,
     };
   }, [residents]);
 
-  const getFullName = (resident) => {
-    return [resident.firstName, resident.middleName, resident.lastName]
-      .filter(Boolean)
-      .join(" ");
-  };
-
-  const generateQR = async (resident) => {
+  const generateQR = async (
+    resident
+  ) => {
     try {
       setGeneratingId(resident._id);
       setError("");
       setSuccess("");
 
-      // Provide required body parameters in case endpoint expects resident payload
       const response = await api.post(
         `/identity/${resident._id}/qr`,
         {
@@ -127,19 +153,27 @@ const IdentityPage = () => {
 
       if (response.data?.success) {
         setSuccess(
-          `QR identity generated for ${getFullName(resident)}.`
+          `QR identity generated for ${getFullName(
+            resident
+          )}.`
         );
 
         await loadResidents();
 
-        navigate(`/resident/${resident._id}/qr`);
+        navigate(
+          `/resident/${resident._id}/qr`
+        );
       } else {
         setError(
-          response.data?.message || "Unable to generate QR identity."
+          response.data?.message ||
+            "Unable to generate QR identity."
         );
       }
     } catch (err) {
-      console.error("GENERATE RESIDENT QR ERROR:", err);
+      console.error(
+        "GENERATE RESIDENT QR ERROR:",
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -151,246 +185,698 @@ const IdentityPage = () => {
   };
 
   const viewIdentity = (resident) => {
-    navigate(`/resident/${resident._id}/identity`);
+    navigate(
+      `/resident/${resident._id}/identity`
+    );
   };
 
   const viewQR = (resident) => {
-    navigate(`/resident/${resident._id}/qr`);
+    navigate(
+      `/resident/${resident._id}/qr`
+    );
   };
 
   const formatDate = (date) => {
-    if (!date) return "N/A";
+    if (!date) {
+      return "N/A";
+    }
 
-    return new Date(date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    const parsedDate =
+      new Date(date);
+
+    if (
+      Number.isNaN(
+        parsedDate.getTime()
+      )
+    ) {
+      return "N/A";
+    }
+
+    return parsedDate.toLocaleDateString(
+      "en-GB",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }
+    );
+  };
+
+  const getStatusClass = (
+    status,
+    type = "verification"
+  ) => {
+    if (type === "identity") {
+      return status === "active"
+        ? "verified"
+        : "pending";
+    }
+
+    if (status === "verified") {
+      return "verified";
+    }
+
+    if (status === "rejected") {
+      return "rejected";
+    }
+
+    return "pending";
+  };
+
+  const getPhoto = (resident) => {
+    if (!resident?.photo) {
+      return "";
+    }
+
+    if (
+      typeof resident.photo ===
+      "string"
+    ) {
+      return resident.photo;
+    }
+
+    return (
+      resident.photo?.url || ""
+    );
   };
 
   return (
     <div className="dashboard-page identity-page">
-      <div className="dashboard-header">
-        <div>
-          <div className="breadcrumb">TA-HOSS LOG / Identity & QR</div>
+      {/* HEADER */}
 
-          <h1>Identity & QR</h1>
+      <div className="dashboard-header identity-page-header">
+        <div>
+          <div className="breadcrumb">
+            TA-HOSS LOG / Identity & QR
+          </div>
+
+          <h1>
+            Identity & QR
+          </h1>
 
           <p>
-            Manage resident digital identities, QR verification and identity
-            status.
+            Manage resident digital identities,
+            QR verification and identity status.
           </p>
         </div>
       </div>
 
-      {error && <div className="dashboard-error">{error}</div>}
+      {/* ALERTS */}
 
-      {success && <div className="dashboard-success">{success}</div>}
+      {error && (
+        <div className="identity-alert identity-alert-error">
+          <div className="identity-alert-icon">
+            !
+          </div>
+
+          <div>
+            <strong>
+              Action required
+            </strong>
+
+            <span>
+              {error}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {success && (
+        <div className="identity-alert identity-alert-success">
+          <div className="identity-alert-icon">
+            ✓
+          </div>
+
+          <div>
+            <strong>
+              Successful
+            </strong>
+
+            <span>
+              {success}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* STATISTICS */}
 
       <section className="identity-stat-grid">
         <div className="identity-stat-card">
-          <span className="identity-stat-icon">♙</span>
+          <div className="identity-stat-icon">
+            ♙
+          </div>
 
-          <div>
-            <span>Total Residents</span>
-            <strong>{statistics.total}</strong>
+          <div className="identity-stat-content">
+            <span>
+              Total Residents
+            </span>
+
+            <strong>
+              {statistics.total}
+            </strong>
           </div>
         </div>
 
         <div className="identity-stat-card">
-          <span className="identity-stat-icon">✓</span>
+          <div className="identity-stat-icon">
+            ✓
+          </div>
 
-          <div>
-            <span>Active Identities</span>
-            <strong>{statistics.active}</strong>
+          <div className="identity-stat-content">
+            <span>
+              Active Identities
+            </span>
+
+            <strong>
+              {statistics.active}
+            </strong>
           </div>
         </div>
 
         <div className="identity-stat-card">
-          <span className="identity-stat-icon">◷</span>
+          <div className="identity-stat-icon">
+            ◷
+          </div>
 
-          <div>
-            <span>Pending Identity</span>
-            <strong>{statistics.pending}</strong>
+          <div className="identity-stat-content">
+            <span>
+              Pending Identity
+            </span>
+
+            <strong>
+              {statistics.pending}
+            </strong>
           </div>
         </div>
 
         <div className="identity-stat-card">
-          <span className="identity-stat-icon">▣</span>
+          <div className="identity-stat-icon">
+            ▣
+          </div>
 
-          <div>
-            <span>QR Generated</span>
-            <strong>{statistics.qr}</strong>
+          <div className="identity-stat-content">
+            <span>
+              QR Generated
+            </span>
+
+            <strong>
+              {statistics.qr}
+            </strong>
           </div>
         </div>
       </section>
 
-      <section className="dashboard-panel">
-        <div className="panel-header identity-toolbar">
-          <div>
-            <h2>Resident Digital Identities</h2>
+      {/* MAIN PANEL */}
 
-            <p>Select a resident to view or manage their identity.</p>
+      <section className="dashboard-panel identity-main-panel">
+        <div className="panel-header identity-toolbar">
+          <div className="identity-toolbar-title">
+            <h2>
+              Resident Digital Identities
+            </h2>
+
+            <p>
+              Select a resident to view,
+              manage or generate their
+              digital identity.
+            </p>
           </div>
 
           <div className="identity-tools">
-            <input
-              type="text"
-              placeholder="Search resident..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
+            <div className="identity-search">
+              <span>
+                ⌕
+              </span>
+
+              <input
+                type="text"
+                placeholder="Search resident..."
+                value={search}
+                onChange={(event) =>
+                  setSearch(
+                    event.target.value
+                  )
+                }
+              />
+            </div>
 
             <select
               value={filter}
-              onChange={(event) => setFilter(event.target.value)}
+              onChange={(event) =>
+                setFilter(
+                  event.target.value
+                )
+              }
             >
-              <option value="all">All Residents</option>
+              <option value="all">
+                All Residents
+              </option>
 
-              <option value="active">Active Identity</option>
+              <option value="active">
+                Active Identity
+              </option>
 
-              <option value="pending">Pending Identity</option>
+              <option value="pending">
+                Pending Identity
+              </option>
 
-              <option value="qr">QR Generated</option>
+              <option value="qr">
+                QR Generated
+              </option>
 
-              <option value="noqr">No QR</option>
+              <option value="noqr">
+                No QR
+              </option>
             </select>
           </div>
         </div>
 
+        {/* RESULTS SUMMARY */}
+
+        {!loading && (
+          <div className="identity-results-summary">
+            <span>
+              Showing{" "}
+              <strong>
+                {filteredResidents.length}
+              </strong>{" "}
+              of{" "}
+              <strong>
+                {residents.length}
+              </strong>{" "}
+              residents
+            </span>
+
+            {filter !== "all" && (
+              <button
+                type="button"
+                onClick={() =>
+                  setFilter("all")
+                }
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* LOADING */}
+
         {loading ? (
-          <div className="dashboard-loading">
+          <div className="identity-loading">
             <div className="loading-spinner" />
 
-            <p>Loading resident identities...</p>
+            <p>
+              Loading resident identities...
+            </p>
           </div>
-        ) : filteredResidents.length === 0 ? (
-          <div className="empty-state">
-            <strong>No residents found</strong>
+        ) : filteredResidents.length ===
+          0 ? (
+          <div className="identity-empty-state">
+            <div className="identity-empty-icon">
+              ♙
+            </div>
+
+            <strong>
+              No residents found
+            </strong>
 
             <span>
-              No resident identity records match your search or filter.
+              No resident identity records
+              match your search or filter.
             </span>
+
+            {(search ||
+              filter !== "all") && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setFilter("all");
+                }}
+              >
+                Reset search
+              </button>
+            )}
           </div>
         ) : (
-          <div className="identity-table-wrapper">
-            <table className="identity-table">
-              <thead>
-                <tr>
-                  <th>Resident</th>
-                  <th>Resident ID</th>
-                  <th>Verification</th>
-                  <th>Identity</th>
-                  <th>QR</th>
-                  <th>Issued</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+          <>
+            {/* DESKTOP TABLE */}
 
-              <tbody>
-                {filteredResidents.map((resident) => (
-                  <tr key={resident._id}>
-                    <td>
-                      <div className="identity-resident">
-                        <div className="identity-avatar">
-                          {resident.photo ? (
-                            <img
-                              src={
-                                typeof resident.photo === "string"
-                                  ? resident.photo
-                                  : resident.photo?.url
+            <div className="identity-table-wrapper">
+              <table className="identity-table">
+                <thead>
+                  <tr>
+                    <th>
+                      Resident
+                    </th>
+
+                    <th>
+                      Resident ID
+                    </th>
+
+                    <th>
+                      Verification
+                    </th>
+
+                    <th>
+                      Identity
+                    </th>
+
+                    <th>
+                      QR
+                    </th>
+
+                    <th>
+                      Issued
+                    </th>
+
+                    <th>
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredResidents.map(
+                    (resident) => (
+                      <tr
+                        key={
+                          resident._id
+                        }
+                      >
+                        <td>
+                          <div className="identity-resident">
+                            <div className="identity-avatar">
+                              {getPhoto(
+                                resident
+                              ) ? (
+                                <img
+                                  src={getPhoto(
+                                    resident
+                                  )}
+                                  alt={getFullName(
+                                    resident
+                                  )}
+                                />
+                              ) : (
+                                resident.firstName
+                                  ?.charAt(0)
+                                  ?.toUpperCase() ||
+                                "?"
+                              )}
+                            </div>
+
+                            <div>
+                              <strong>
+                                {getFullName(
+                                  resident
+                                )}
+                              </strong>
+
+                              <span>
+                                {resident.gender ||
+                                  "N/A"}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <strong className="identity-resident-id">
+                            {resident.residentId ||
+                              "N/A"}
+                          </strong>
+                        </td>
+
+                        <td>
+                          <span
+                            className={`status-badge ${getStatusClass(
+                              resident.verificationStatus
+                            )}`}
+                          >
+                            {resident.verificationStatus ||
+                              "pending"}
+                          </span>
+                        </td>
+
+                        <td>
+                          <span
+                            className={`status-badge ${getStatusClass(
+                              resident.identityStatus,
+                              "identity"
+                            )}`}
+                          >
+                            {resident.identityStatus ||
+                              "pending"}
+                          </span>
+                        </td>
+
+                        <td>
+                          {resident.qrToken ? (
+                            <span className="qr-status available">
+                              ✓ Available
+                            </span>
+                          ) : (
+                            <span className="qr-status">
+                              Not generated
+                            </span>
+                          )}
+                        </td>
+
+                        <td>
+                          {formatDate(
+                            resident.identityIssuedAt
+                          )}
+                        </td>
+
+                        <td>
+                          <div className="identity-action-buttons">
+                            <button
+                              type="button"
+                              className="identity-view-button"
+                              onClick={() =>
+                                viewIdentity(
+                                  resident
+                                )
                               }
-                              alt={getFullName(resident)}
+                            >
+                              View
+                            </button>
+
+                            {resident.qrToken ? (
+                              <button
+                                type="button"
+                                className="identity-qr-button"
+                                onClick={() =>
+                                  viewQR(
+                                    resident
+                                  )
+                                }
+                              >
+                                QR
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="identity-qr-button"
+                                disabled={
+                                  generatingId ===
+                                  resident._id
+                                }
+                                onClick={() =>
+                                  generateQR(
+                                    resident
+                                  )
+                                }
+                              >
+                                {generatingId ===
+                                resident._id
+                                  ? "Generating..."
+                                  : "Generate QR"}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* MOBILE CARDS */}
+
+            <div className="identity-mobile-list">
+              {filteredResidents.map(
+                (resident) => (
+                  <article
+                    className="identity-mobile-card"
+                    key={
+                      resident._id
+                    }
+                  >
+                    <div className="identity-mobile-card-header">
+                      <div className="identity-resident">
+                        <div className="identity-avatar identity-mobile-avatar">
+                          {getPhoto(
+                            resident
+                          ) ? (
+                            <img
+                              src={getPhoto(
+                                resident
+                              )}
+                              alt={getFullName(
+                                resident
+                              )}
                             />
                           ) : (
-                            resident.firstName?.charAt(0)?.toUpperCase() || "?"
+                            resident.firstName
+                              ?.charAt(0)
+                              ?.toUpperCase() ||
+                            "?"
                           )}
                         </div>
 
                         <div>
-                          <strong>{getFullName(resident)}</strong>
+                          <strong>
+                            {getFullName(
+                              resident
+                            )}
+                          </strong>
 
-                          <span>{resident.gender || "N/A"}</span>
+                          <span>
+                            {resident.gender ||
+                              "N/A"}
+                          </span>
                         </div>
                       </div>
-                    </td>
 
-                    <td>
-                      <strong>{resident.residentId}</strong>
-                    </td>
-
-                    <td>
-                      <span
-                        className={`status-badge ${
-                          resident.verificationStatus === "verified"
-                            ? "verified"
-                            : resident.verificationStatus === "rejected"
-                            ? "rejected"
-                            : "pending"
-                        }`}
-                      >
-                        {resident.verificationStatus}
+                      <span className="identity-mobile-id">
+                        {resident.residentId ||
+                          "N/A"}
                       </span>
-                    </td>
+                    </div>
 
-                    <td>
-                      <span
-                        className={`status-badge ${
-                          resident.identityStatus === "active"
-                            ? "verified"
-                            : "pending"
-                        }`}
-                      >
-                        {resident.identityStatus || "pending"}
-                      </span>
-                    </td>
-
-                    <td>
-                      {resident.qrToken ? (
-                        <span className="qr-status available">
-                          ✓ Available
+                    <div className="identity-mobile-details">
+                      <div>
+                        <span>
+                          Verification
                         </span>
-                      ) : (
-                        <span className="qr-status">Not generated</span>
-                      )}
-                    </td>
 
-                    <td>{formatDate(resident.identityIssuedAt)}</td>
+                        <strong>
+                          <span
+                            className={`status-badge ${getStatusClass(
+                              resident.verificationStatus
+                            )}`}
+                          >
+                            {resident.verificationStatus ||
+                              "pending"}
+                          </span>
+                        </strong>
+                      </div>
 
-                    <td>
-                      <div className="identity-action-buttons">
+                      <div>
+                        <span>
+                          Identity
+                        </span>
+
+                        <strong>
+                          <span
+                            className={`status-badge ${getStatusClass(
+                              resident.identityStatus,
+                              "identity"
+                            )}`}
+                          >
+                            {resident.identityStatus ||
+                              "pending"}
+                          </span>
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          QR Identity
+                        </span>
+
+                        <strong
+                          className={
+                            resident.qrToken
+                              ? "identity-mobile-available"
+                              : ""
+                          }
+                        >
+                          {resident.qrToken
+                            ? "Available"
+                            : "Not generated"}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Issued
+                        </span>
+
+                        <strong>
+                          {formatDate(
+                            resident.identityIssuedAt
+                          )}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div className="identity-mobile-actions">
+                      <button
+                        type="button"
+                        className="identity-view-button"
+                        onClick={() =>
+                          viewIdentity(
+                            resident
+                          )
+                        }
+                      >
+                        View Identity
+                      </button>
+
+                      {resident.qrToken ? (
                         <button
                           type="button"
-                          onClick={() => viewIdentity(resident)}
+                          className="identity-qr-button"
+                          onClick={() =>
+                            viewQR(
+                              resident
+                            )
+                          }
                         >
-                          View
+                          View QR
                         </button>
-
-                        {resident.qrToken ? (
-                          <button
-                            type="button"
-                            onClick={() => viewQR(resident)}
-                          >
-                            QR
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            disabled={generatingId === resident._id}
-                            onClick={() => generateQR(resident)}
-                          >
-                            {generatingId === resident._id
-                              ? "Generating..."
-                              : "Generate QR"}
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="identity-qr-button"
+                          disabled={
+                            generatingId ===
+                            resident._id
+                          }
+                          onClick={() =>
+                            generateQR(
+                              resident
+                            )
+                          }
+                        >
+                          {generatingId ===
+                          resident._id
+                            ? "Generating..."
+                            : "Generate QR"}
+                        </button>
+                      )}
+                    </div>
+                  </article>
+                )
+              )}
+            </div>
+          </>
         )}
       </section>
     </div>

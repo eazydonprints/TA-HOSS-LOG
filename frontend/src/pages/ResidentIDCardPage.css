@@ -5,6 +5,8 @@
 
 .resident-id-card-page {
   width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 
@@ -112,6 +114,8 @@
   color: #b91c1c;
 
   font-size: 14px;
+
+  word-break: break-word;
 }
 
 
@@ -150,6 +154,8 @@
   font-weight: 600;
 
   cursor: pointer;
+
+  white-space: nowrap;
 
   transition:
     background 0.2s ease,
@@ -200,6 +206,8 @@
   width: 15px;
   height: 15px;
 
+  flex: 0 0 15px;
+
   border: 2px solid rgba(255, 255, 255, 0.4);
 
   border-top-color: #ffffff;
@@ -243,6 +251,8 @@
   font-weight: 800;
 
   letter-spacing: 0.04em;
+
+  white-space: nowrap;
 }
 
 
@@ -260,6 +270,8 @@
   justify-content: center;
 
   align-items: center;
+
+  overflow: hidden;
 
   background:
     linear-gradient(
@@ -290,6 +302,8 @@
 .resident-id-card {
   width: min(760px, 100%);
 
+  min-width: 0;
+
   min-height: 390px;
 
   position: relative;
@@ -301,6 +315,8 @@
   background: #ffffff;
 
   border: 1px solid #d7dee8;
+
+  box-sizing: border-box;
 
   box-shadow:
     0 20px 45px rgba(15, 23, 42, 0.15),
@@ -328,6 +344,8 @@
   background: #123b63;
 
   color: #ffffff;
+
+  box-sizing: border-box;
 }
 
 .resident-id-card-brand {
@@ -335,31 +353,46 @@
 
   align-items: center;
 
+  min-width: 0;
+
   gap: 12px;
 }
 
 .resident-id-card-brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
 
-  flex: 0 0 44px;
+  flex: 0 0 50px;
 
   display: flex;
 
   align-items: center;
   justify-content: center;
 
+  overflow: hidden;
+
   border-radius: 10px;
 
   background: #ffffff;
 
-  color: #123b63;
+  box-sizing: border-box;
+}
 
-  font-size: 15px;
+.resident-id-card-logo {
+  width: 100%;
+  height: 100%;
 
-  font-weight: 900;
+  display: block;
 
-  letter-spacing: -0.04em;
+  object-fit: contain;
+
+  padding: 3px;
+
+  box-sizing: border-box;
+}
+
+.resident-id-card-brand > div:last-child {
+  min-width: 0;
 }
 
 .resident-id-card-brand strong {
@@ -370,6 +403,8 @@
   line-height: 1.1;
 
   letter-spacing: 0.01em;
+
+  overflow-wrap: anywhere;
 }
 
 .resident-id-card-brand span {
@@ -387,6 +422,8 @@
 }
 
 .resident-id-card-community {
+  flex-shrink: 0;
+
   text-align: right;
 
   font-size: 12px;
@@ -426,6 +463,8 @@
   gap: 22px;
 
   align-items: start;
+
+  box-sizing: border-box;
 }
 
 
@@ -437,6 +476,8 @@
   width: 125px;
   height: 155px;
 
+  max-width: 100%;
+
   overflow: hidden;
 
   border-radius: 8px;
@@ -446,6 +487,8 @@
   background: #eef2f6;
 
   position: relative;
+
+  box-sizing: border-box;
 }
 
 .resident-id-card-photo img {
@@ -493,10 +536,12 @@
 
   line-height: 1.15;
 
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .resident-id-card-detail {
+  min-width: 0;
+
   margin-bottom: 9px;
 }
 
@@ -525,15 +570,15 @@
 
   font-weight: 700;
 
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .resident-id-card-detail-row {
   display: grid;
 
   grid-template-columns:
-    1fr
-    1fr;
+    minmax(0, 1fr)
+    minmax(0, 1fr);
 
   gap: 15px;
 }
@@ -544,6 +589,8 @@
 ========================================================= */
 
 .resident-id-card-qr {
+  min-width: 0;
+
   display: flex;
 
   flex-direction: column;
@@ -559,11 +606,15 @@
   width: 92px;
   height: 92px;
 
+  max-width: 100%;
+
   display: block;
 
   object-fit: contain;
 
   border: 4px solid #ffffff;
+
+  box-sizing: border-box;
 
   box-shadow:
     0 0 0 1px #d9e1ea;
@@ -581,6 +632,8 @@
   letter-spacing: 0.06em;
 
   text-align: center;
+
+  white-space: nowrap;
 }
 
 .resident-id-card-qr-empty {
@@ -601,6 +654,8 @@
   font-size: 20px;
 
   font-weight: 800;
+
+  box-sizing: border-box;
 }
 
 
@@ -624,10 +679,12 @@
   border-bottom: 1px solid #e1e7ee;
 
   background: #f7f9fb;
+
+  box-sizing: border-box;
 }
 
 .resident-id-card-status-bar > div {
-  min-width: 100px;
+  min-width: 0;
 }
 
 .resident-id-card-status-bar span {
@@ -650,6 +707,8 @@
   font-size: 9px;
 
   font-weight: 800;
+
+  overflow-wrap: anywhere;
 }
 
 .resident-id-card-valid {
@@ -687,6 +746,14 @@
   font-size: 7px;
 
   line-height: 1.3;
+
+  box-sizing: border-box;
+}
+
+.resident-id-card-footer span {
+  min-width: 0;
+
+  overflow-wrap: anywhere;
 }
 
 
@@ -708,6 +775,8 @@
 }
 
 .resident-id-card-info-item {
+  min-width: 0;
+
   padding: 15px;
 
   border: 1px solid #e1e7ee;
@@ -715,6 +784,8 @@
   border-radius: 9px;
 
   background: #fafbfd;
+
+  box-sizing: border-box;
 }
 
 .resident-id-card-info-item span {
@@ -740,7 +811,7 @@
 
   text-transform: capitalize;
 
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 
@@ -762,6 +833,8 @@
 }
 
 .resident-id-card-bottom-actions button {
+  min-width: 0;
+
   min-height: 90px;
 
   padding: 16px;
@@ -790,6 +863,8 @@
 
   cursor: pointer;
 
+  overflow: hidden;
+
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
@@ -806,6 +881,8 @@
 
 .resident-id-card-bottom-actions strong {
   font-size: 13px;
+
+  overflow-wrap: anywhere;
 }
 
 .resident-id-card-bottom-actions span {
@@ -814,11 +891,13 @@
   font-size: 11px;
 
   line-height: 1.4;
+
+  overflow-wrap: anywhere;
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   TABLET
 ========================================================= */
 
 @media (max-width: 1000px) {
@@ -834,27 +913,50 @@
 }
 
 
+/* =========================================================
+   MOBILE / SMALL TABLET
+========================================================= */
+
 @media (max-width: 760px) {
+  .resident-id-card-header {
+    margin-bottom: 16px;
+  }
+
   .resident-id-card-stage {
     min-height: auto;
 
-    padding: 25px 10px;
+    padding: 20px 10px;
   }
 
   .resident-id-card {
+    width: 100%;
+
+    min-height: auto;
+
     border-radius: 12px;
   }
 
   .resident-id-card-top {
+    min-height: auto;
+
     padding: 14px;
 
-    flex-direction: column;
+    gap: 12px;
+  }
 
-    align-items: flex-start;
+  .resident-id-card-brand-mark {
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 44px;
+  }
+
+  .resident-id-card-brand strong {
+    font-size: 16px;
   }
 
   .resident-id-card-community {
-    text-align: left;
+    font-size: 11px;
   }
 
   .resident-id-card-body {
@@ -869,6 +971,7 @@
 
   .resident-id-card-photo {
     width: 100px;
+
     height: 130px;
   }
 
@@ -877,12 +980,17 @@
 
     flex-direction: row;
 
-    justify-content: flex-end;
+    justify-content: flex-start;
+
+    align-items: center;
+
+    padding-top: 8px;
   }
 
   .resident-id-card-qr img,
   .resident-id-card-qr-empty {
     width: 75px;
+
     height: 75px;
   }
 
@@ -891,10 +999,12 @@
 
     flex-wrap: wrap;
 
-    gap: 12px;
+    gap: 12px 20px;
   }
 
   .resident-id-card-valid {
+    width: 100%;
+
     margin-left: 0;
   }
 
@@ -904,31 +1014,104 @@
     flex-direction: column;
 
     align-items: flex-start;
+
+    gap: 4px;
   }
 }
 
 
+/* =========================================================
+   PHONE
+========================================================= */
+
 @media (max-width: 560px) {
+  .resident-id-card-error {
+    padding: 30px 18px;
+  }
+
   .resident-id-card-actions {
     display: grid;
 
     grid-template-columns:
-      1fr 1fr;
+      repeat(2, minmax(0, 1fr));
+
+    width: 100%;
   }
 
   .resident-id-card-primary-button,
   .resident-id-card-secondary-button {
     width: 100%;
 
+    min-width: 0;
+
     padding: 0 10px;
 
     font-size: 11px;
+
+    white-space: normal;
   }
+
+  .resident-id-card-stage {
+    padding: 14px 6px;
+  }
+
+  .resident-id-card-top {
+    padding: 12px;
+
+    gap: 10px;
+  }
+
+  .resident-id-card-brand {
+    gap: 9px;
+
+    width: 100%;
+  }
+
+  .resident-id-card-brand-mark {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    border-radius: 8px;
+  }
+
+  .resident-id-card-brand strong {
+    font-size: 14px;
+  }
+
+  .resident-id-card-brand span {
+    font-size: 7px;
+
+    letter-spacing: 0.05em;
+  }
+
+  .resident-id-card-community {
+    font-size: 10px;
+
+    white-space: nowrap;
+  }
+
+  .resident-id-card-community small {
+    font-size: 7px;
+  }
+
+  /*
+    IMPORTANT MOBILE FIX:
+
+    Keep photo and information side-by-side.
+    The QR moves to the next row.
+
+    This prevents the card from becoming
+    too narrow or broken on phone screens.
+  */
 
   .resident-id-card-body {
     grid-template-columns:
       85px
       minmax(0, 1fr);
+
+    grid-template-rows: auto auto;
 
     padding: 14px;
 
@@ -937,6 +1120,7 @@
 
   .resident-id-card-photo {
     width: 85px;
+
     height: 112px;
   }
 
@@ -944,20 +1128,184 @@
     font-size: 16px;
 
     margin-bottom: 10px;
+
+    line-height: 1.15;
   }
 
   .resident-id-card-detail-row {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
 
-    gap: 0;
+    gap: 8px;
+  }
+
+  .resident-id-card-detail {
+    margin-bottom: 7px;
+  }
+
+  .resident-id-card-detail span {
+    font-size: 7px;
+  }
+
+  .resident-id-card-detail strong {
+    font-size: 9px;
+
+    line-height: 1.25;
+  }
+
+  .resident-id-card-qr {
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    flex-direction: row;
+
+    justify-content: flex-start;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding-top: 8px;
+
+    border-top: 1px solid #edf1f5;
+  }
+
+  .resident-id-card-qr img,
+  .resident-id-card-qr-empty {
+    width: 70px;
+
+    height: 70px;
+
+    flex: 0 0 70px;
+  }
+
+  .resident-id-card-qr span {
+    white-space: normal;
+
+    text-align: left;
+
+    font-size: 8px;
+  }
+
+  .resident-id-card-status-bar {
+    padding: 10px 14px;
+
+    gap: 10px 18px;
+  }
+
+  .resident-id-card-status-bar span {
+    font-size: 7px;
+  }
+
+  .resident-id-card-status-bar strong {
+    font-size: 8px;
+  }
+
+  .resident-id-card-valid {
+    font-size: 8px !important;
+  }
+
+  .resident-id-card-footer {
+    padding: 8px 14px;
+
+    font-size: 7px;
   }
 
   .resident-id-card-info-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
   }
 
   .resident-id-card-bottom-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 390px) {
+  .resident-id-card-actions {
+    grid-template-columns:
+      1fr;
+  }
+
+  .resident-id-card-top {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .resident-id-card-community {
+    width: 100%;
+
+    text-align: left;
+  }
+
+  /*
+    Do not collapse the entire card into
+    a single-column layout.
+
+    Keep photo + details together because
+    that is the proper ID card structure.
+  */
+
+  .resident-id-card-body {
+    grid-template-columns:
+      78px
+      minmax(0, 1fr);
+
+    padding: 12px;
+
+    gap: 10px;
+  }
+
+  .resident-id-card-photo {
+    width: 78px;
+
+    height: 105px;
+  }
+
+  .resident-id-card-name {
+    font-size: 14px;
+  }
+
+  .resident-id-card-detail-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    gap: 6px;
+  }
+
+  .resident-id-card-detail span {
+    font-size: 6px;
+  }
+
+  .resident-id-card-detail strong {
+    font-size: 8px;
+  }
+
+  .resident-id-card-qr {
+    justify-content: center;
+  }
+
+  .resident-id-card-status-bar {
+    flex-direction: row;
+
+    flex-wrap: wrap;
+
+    align-items: flex-start;
+
+    gap: 8px 14px;
+  }
+
+  .resident-id-card-valid {
+    width: 100%;
   }
 }
 
@@ -988,16 +1336,19 @@
 
   .main-area {
     margin: 0 !important;
+
     width: 100% !important;
   }
 
   .content-area {
     padding: 0 !important;
+
     margin: 0 !important;
   }
 
   .dashboard-page {
     padding: 0 !important;
+
     margin: 0 !important;
   }
 

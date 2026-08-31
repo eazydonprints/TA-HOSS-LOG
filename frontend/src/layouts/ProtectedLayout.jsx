@@ -4,13 +4,17 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useAuth } from "../context/AuthContext";
 
 
 /* =========================================================
-   BASE NAVIGATION
+   COMMUNITY NAVIGATION
 ========================================================= */
 
 const menuSections = [
@@ -22,6 +26,7 @@ const menuSections = [
         label: "Dashboard",
         path: "/",
         icon: "▦",
+        end: true,
       },
     ],
   },
@@ -32,7 +37,7 @@ const menuSections = [
     items: [
       {
         label: "Households",
-        path: "/households",
+        path: "/households/register",
         icon: "⌂",
       },
 
@@ -60,9 +65,25 @@ const menuSections = [
         icon: "⌖",
       },
 
+      /*
+       * There is currently no standalone:
+       *
+       * /households
+       *
+       * page in App.jsx.
+       *
+       * Relationship Tree requires a specific
+       * household ID:
+       *
+       * /households/:id/tree
+       *
+       * Therefore the sidebar entry opens the
+       * Household registration area rather than
+       * sending the user to a non-existent route.
+       */
       {
         label: "Family Tree",
-        path: "/households",
+        path: "/households/register",
         icon: "♧",
       },
     ],
@@ -107,10 +128,11 @@ const menuSections = [
 
 
 /* =========================================================
-   PROTECTED LAYOUT
+   PROTECTED COMMUNITY LAYOUT
 ========================================================= */
 
 const ProtectedLayout = () => {
+
   const {
     user,
     logout,
@@ -118,10 +140,93 @@ const ProtectedLayout = () => {
 
   const navigate = useNavigate();
 
+
+  /* =======================================================
+     MOBILE SIDEBAR
+  ======================================================== */
+
   const [
     mobileOpen,
     setMobileOpen,
   ] = useState(false);
+
+
+  /* =======================================================
+     PROFILE MENU
+  ======================================================== */
+
+  const [
+    profileMenuOpen,
+    setProfileMenuOpen,
+  ] = useState(false);
+
+
+  /* =======================================================
+     THEME
+  ======================================================== */
+
+  const [
+    theme,
+    setTheme,
+  ] = useState(() => {
+
+    const savedTheme =
+      localStorage.getItem(
+        "ta-hoss-theme"
+      );
+
+    if (
+      savedTheme === "light" ||
+      savedTheme === "dark"
+    ) {
+      return savedTheme;
+    }
+
+    return "light";
+
+  });
+
+
+  /* =======================================================
+     PROFILE MENU REF
+  ======================================================== */
+
+  const profileMenuRef =
+    useRef(null);
+
+
+  /* =======================================================
+     APPLY THEME
+  ======================================================== */
+
+  useEffect(() => {
+
+    document.documentElement.setAttribute(
+      "data-theme",
+      theme
+    );
+
+    localStorage.setItem(
+      "ta-hoss-theme",
+      theme
+    );
+
+  }, [theme]);
+
+
+  /* =======================================================
+     TOGGLE THEME
+  ======================================================== */
+
+  const toggleTheme = () => {
+
+    setTheme((currentTheme) =>
+      currentTheme === "light"
+        ? "dark"
+        : "light"
+    );
+
+  };
 
 
   /* =======================================================
@@ -133,23 +238,14 @@ const ProtectedLayout = () => {
   )
     .trim()
     .toLowerCase()
-    .replace(/[\s-]+/g, "_");
+    .replace(
+      /[\s-]+/g,
+      "_"
+    );
 
 
   const isSuperAdmin =
     normalizedRole === "super_admin";
-
-
-  const isRegistrationOfficer =
-    normalizedRole === "registration_officer";
-
-
-  const isVerificationOfficer =
-    normalizedRole === "verification_officer";
-
-
-  const isViewer =
-    normalizedRole === "viewer";
 
 
   /* =======================================================
@@ -157,8 +253,103 @@ const ProtectedLayout = () => {
   ======================================================== */
 
   const closeMobileSidebar = () => {
+
     setMobileOpen(false);
+
   };
+
+
+  /* =======================================================
+     CLOSE PROFILE MENU
+  ======================================================== */
+
+  const closeProfileMenu = () => {
+
+    setProfileMenuOpen(false);
+
+  };
+
+
+  /* =======================================================
+     OUTSIDE CLICK
+  ======================================================== */
+
+  useEffect(() => {
+
+    const handleOutsideClick = (
+      event
+    ) => {
+
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(
+          event.target
+        )
+      ) {
+
+        setProfileMenuOpen(false);
+
+      }
+
+    };
+
+
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
+
+
+    return () => {
+
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+
+    };
+
+  }, []);
+
+
+  /* =======================================================
+     ESCAPE KEY
+  ======================================================== */
+
+  useEffect(() => {
+
+    const handleEscapeKey = (
+      event
+    ) => {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        setProfileMenuOpen(false);
+        setMobileOpen(false);
+
+      }
+
+    };
+
+
+    document.addEventListener(
+      "keydown",
+      handleEscapeKey
+    );
+
+
+    return () => {
+
+      document.removeEventListener(
+        "keydown",
+        handleEscapeKey
+      );
+
+    };
+
+  }, []);
 
 
   /* =======================================================
@@ -166,6 +357,10 @@ const ProtectedLayout = () => {
   ======================================================== */
 
   const handleLogout = () => {
+
+    closeProfileMenu();
+    closeMobileSidebar();
+
     logout();
 
     navigate(
@@ -174,6 +369,23 @@ const ProtectedLayout = () => {
         replace: true,
       }
     );
+
+  };
+
+
+  /* =======================================================
+     NAVIGATION HELPER
+  ======================================================== */
+
+  const handleNavigate = (
+    path
+  ) => {
+
+    closeMobileSidebar();
+    closeProfileMenu();
+
+    navigate(path);
+
   };
 
 
@@ -182,9 +394,24 @@ const ProtectedLayout = () => {
   ======================================================== */
 
   const handleProfileClick = () => {
-    closeMobileSidebar();
 
-    navigate("/profile");
+    handleNavigate(
+      "/profile"
+    );
+
+  };
+
+
+  /* =======================================================
+     SYSTEM SETTINGS NAVIGATION
+  ======================================================== */
+
+  const handleSystemSettingsClick = () => {
+
+    handleNavigate(
+      "/system-settings"
+    );
+
   };
 
 
@@ -193,32 +420,51 @@ const ProtectedLayout = () => {
   ======================================================== */
 
   const administrationSection = {
+
     title: "ADMINISTRATION",
 
     items: [
+
       {
         label: "User Management",
         path: "/users",
         icon: "♟",
+        adminOnly: true,
       },
+
+      {
+        label: "System Settings",
+        path: "/system-settings",
+        icon: "⚙",
+        adminOnly: true,
+      },
+
     ],
+
   };
 
 
   /* =======================================================
-     BUILD NAVIGATION
+     BUILD VISIBLE NAVIGATION
   ======================================================== */
 
   const visibleSections = [
+
     ...menuSections,
 
     ...(isSuperAdmin
       ? [administrationSection]
       : []),
+
   ];
 
 
+  /* =======================================================
+     RENDER
+  ======================================================== */
+
   return (
+
     <div className="app-shell">
 
 
@@ -227,10 +473,14 @@ const ProtectedLayout = () => {
       ====================================================== */}
 
       {mobileOpen && (
+
         <div
           className="sidebar-overlay"
-          onClick={closeMobileSidebar}
+          onClick={
+            closeMobileSidebar
+          }
         />
+
       )}
 
 
@@ -247,41 +497,47 @@ const ProtectedLayout = () => {
       >
 
 
-        {/* =================================================
-    BRAND
-================================================== */}
+        {/* ===================================================
+            BRAND
+        ==================================================== */}
 
-<div className="sidebar-brand">
+        <div className="sidebar-brand">
 
-  <div className="brand-logo">
-    <img
-      src="/ta-hoss-logo.png"
-      alt="TA-HOSS LOG"
-    />
-  </div>
+          <div className="brand-logo">
 
-  <div>
-    <strong>
-      TA-HOSS LOG
-    </strong>
+            <img
+              src="/ta-hoss-logo.png"
+              alt="TA-HOSS LOG"
+            />
 
-    <span>
-      Community MIS Register
-    </span>
-  </div>
-
-</div>
+          </div>
 
 
-        {/* =================================================
-            COMMUNITY
-        ================================================== */}
+          <div>
+
+            <strong>
+              TA-HOSS LOG
+            </strong>
+
+            <span>
+              Community MIS Register
+            </span>
+
+          </div>
+
+        </div>
+
+
+        {/* ===================================================
+            COMMUNITY STATUS
+        ==================================================== */}
 
         <div className="sidebar-community">
 
           <span className="status-dot" />
 
           <div>
+
             <strong>
               Ta-hoss Community
             </strong>
@@ -289,19 +545,21 @@ const ProtectedLayout = () => {
             <small>
               Riyom, Plateau State
             </small>
+
           </div>
 
         </div>
 
 
-        {/* =================================================
+        {/* ===================================================
             NAVIGATION
-        ================================================== */}
+        ==================================================== */}
 
         <nav className="sidebar-nav">
 
           {visibleSections.map(
             (section) => (
+
               <div
                 className={`nav-section ${
                   section.title ===
@@ -315,24 +573,20 @@ const ProtectedLayout = () => {
               >
 
                 <div className="nav-section-title">
-                  {
-                    section.title
-                  }
+
+                  {section.title}
+
                 </div>
 
 
                 {section.items.map(
                   (item) => (
+
                     <NavLink
-                      key={
-                        `${item.label}-${item.path}`
-                      }
-                      to={
-                        item.path
-                      }
+                      key={`${item.label}-${item.path}`}
+                      to={item.path}
                       end={
-                        item.path ===
-                        "/"
+                        item.end === true
                       }
                       className={({
                         isActive,
@@ -343,35 +597,45 @@ const ProtectedLayout = () => {
                             : ""
                         }`
                       }
-                      onClick={
-                        closeMobileSidebar
-                      }
+                      onClick={() => {
+
+                        closeMobileSidebar();
+                        closeProfileMenu();
+
+                      }}
                     >
 
                       <span className="nav-icon">
-                        {
-                          item.icon
-                        }
+
+                        {item.icon}
+
                       </span>
+
 
                       <span>
-                        {
-                          item.label
-                        }
+
+                        {item.label}
+
                       </span>
 
-                      {item.label ===
-                        "User Management" && (
+
+                      {item.adminOnly && (
+
                         <span className="admin-nav-badge">
+
                           ADMIN
+
                         </span>
+
                       )}
 
                     </NavLink>
+
                   )
                 )}
 
               </div>
+
             )
           )}
 
@@ -393,20 +657,22 @@ const ProtectedLayout = () => {
               <div className="sidebar-profile-avatar">
 
                 {user?.photo ? (
+
                   <img
-                    src={
-                      user.photo
-                    }
+                    src={user.photo}
                     alt={
                       user?.fullname ||
                       "User"
                     }
                   />
+
                 ) : (
+
                   user?.fullname
                     ?.charAt(0)
                     ?.toUpperCase() ||
                   "A"
+
                 )}
 
               </div>
@@ -415,24 +681,26 @@ const ProtectedLayout = () => {
               <div className="sidebar-profile-info">
 
                 <strong>
-                  {
-                    user?.fullname ||
-                    "Administrator"
-                  }
+
+                  {user?.fullname ||
+                    "Administrator"}
+
                 </strong>
 
                 <span>
-                  {
-                    user?.role ||
-                    "viewer"
-                  }
+
+                  {user?.role ||
+                    "viewer"}
+
                 </span>
 
               </div>
 
 
               <span className="sidebar-profile-arrow">
+
                 →
+
               </span>
 
             </button>
@@ -442,13 +710,14 @@ const ProtectedLayout = () => {
         </nav>
 
 
-        {/* =================================================
+        {/* =====================================================
             SIDEBAR BOTTOM
-        ================================================== */}
+        ====================================================== */}
 
         <div className="sidebar-bottom">
 
           <button
+            type="button"
             className="logout-button"
             onClick={
               handleLogout
@@ -475,9 +744,9 @@ const ProtectedLayout = () => {
       <div className="main-area">
 
 
-        {/* =================================================
+        {/* ===================================================
             TOPBAR
-        ================================================== */}
+        ==================================================== */}
 
         <header className="topbar">
 
@@ -485,6 +754,7 @@ const ProtectedLayout = () => {
           {/* MOBILE MENU */}
 
           <button
+            type="button"
             className="mobile-menu-button"
             onClick={() =>
               setMobileOpen(
@@ -493,93 +763,371 @@ const ProtectedLayout = () => {
             }
             aria-label="Open navigation"
           >
+
             ☰
+
           </button>
 
 
           {/* TITLE */}
 
           <div className="topbar-title">
+
             TA-HOSS Community Management
+
           </div>
 
 
-          {/* USER */}
+          {/* =================================================
+              TOPBAR USER AREA
+          ================================================== */}
 
           <div className="topbar-user">
 
 
             {/* NOTIFICATION */}
 
-            <div
+            <button
+              type="button"
               className="notification"
               title="Notifications"
+              aria-label="Notifications"
             >
+
               ♢
-            </div>
+
+            </button>
 
 
-            {/* PROFILE */}
+            {/* =================================================
+                THEME TOGGLE
+            ================================================== */}
 
             <button
               type="button"
-              className="topbar-profile-button"
+              className="topbar-theme-toggle"
               onClick={
-                handleProfileClick
+                toggleTheme
               }
-              title="Open profile"
+              title={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              aria-label={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
             >
 
-              <div className="user-avatar">
+              <span className="topbar-theme-icon">
 
-                {user?.photo ? (
-                  <img
-                    src={
-                      user.photo
-                    }
-                    alt={
-                      user?.fullname ||
-                      "User"
-                    }
-                  />
-                ) : (
-                  user?.fullname
-                    ?.charAt(0)
-                    ?.toUpperCase() ||
-                  "A"
-                )}
+                {theme === "dark"
+                  ? "☀"
+                  : "☾"}
 
-              </div>
-
-
-              <div className="user-details">
-
-                <strong>
-                  {
-                    user?.fullname ||
-                    "Administrator"
-                  }
-                </strong>
-
-                <span>
-                  {
-                    user?.role ||
-                    "viewer"
-                  }
-                </span>
-
-              </div>
+              </span>
 
             </button>
+
+
+            {/* =================================================
+                PROFILE DROPDOWN
+            ================================================== */}
+
+            <div
+              className="topbar-profile-wrapper"
+              ref={
+                profileMenuRef
+              }
+            >
+
+
+              {/* PROFILE BUTTON */}
+
+              <button
+                type="button"
+                className="topbar-profile-button"
+                onClick={() =>
+                  setProfileMenuOpen(
+                    (previous) =>
+                      !previous
+                  )
+                }
+                title="Account menu"
+                aria-expanded={
+                  profileMenuOpen
+                }
+                aria-haspopup="menu"
+              >
+
+
+                <div className="user-avatar">
+
+                  {user?.photo ? (
+
+                    <img
+                      src={user.photo}
+                      alt={
+                        user?.fullname ||
+                        "User"
+                      }
+                    />
+
+                  ) : (
+
+                    user?.fullname
+                      ?.charAt(0)
+                      ?.toUpperCase() ||
+                    "A"
+
+                  )}
+
+                </div>
+
+
+                <div className="user-details">
+
+                  <strong>
+
+                    {user?.fullname ||
+                      "Administrator"}
+
+                  </strong>
+
+                  <span>
+
+                    {user?.role ||
+                      "viewer"}
+
+                  </span>
+
+                </div>
+
+
+                <span
+                  className={`profile-dropdown-arrow ${
+                    profileMenuOpen
+                      ? "profile-dropdown-arrow-open"
+                      : ""
+                  }`}
+                >
+
+                  ▾
+
+                </span>
+
+              </button>
+
+
+              {/* =================================================
+                  PROFILE DROPDOWN
+              ================================================== */}
+
+              {profileMenuOpen && (
+
+                <div
+                  className="profile-dropdown-menu"
+                  role="menu"
+                >
+
+
+                  {/* USER SUMMARY */}
+
+                  <div className="profile-dropdown-header">
+
+                    <div className="profile-dropdown-avatar">
+
+                      {user?.photo ? (
+
+                        <img
+                          src={user.photo}
+                          alt={
+                            user?.fullname ||
+                            "User"
+                          }
+                        />
+
+                      ) : (
+
+                        user?.fullname
+                          ?.charAt(0)
+                          ?.toUpperCase() ||
+                        "A"
+
+                      )}
+
+                    </div>
+
+
+                    <div className="profile-dropdown-user-info">
+
+                      <strong>
+
+                        {user?.fullname ||
+                          "Administrator"}
+
+                      </strong>
+
+                      <span>
+
+                        {user?.role ||
+                          "viewer"}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="profile-dropdown-divider" />
+
+
+                  {/* MY PROFILE */}
+
+                  <button
+                    type="button"
+                    className="profile-dropdown-item"
+                    onClick={
+                      handleProfileClick
+                    }
+                    role="menuitem"
+                  >
+
+                    <span className="profile-dropdown-icon">
+
+                      ♙
+
+                    </span>
+
+                    <span>
+
+                      My Profile
+
+                    </span>
+
+                  </button>
+
+
+                  {/* THEME */}
+
+                  <button
+                    type="button"
+                    className="profile-dropdown-item theme-dropdown-item"
+                    onClick={
+                      toggleTheme
+                    }
+                    role="menuitem"
+                  >
+
+                    <span className="profile-dropdown-icon">
+
+                      {theme === "dark"
+                        ? "☀"
+                        : "☾"}
+
+                    </span>
+
+
+                    <span>
+
+                      {theme === "dark"
+                        ? "Light Mode"
+                        : "Dark Mode"}
+
+                    </span>
+
+
+                    <span className="theme-status">
+
+                      ON
+
+                    </span>
+
+                  </button>
+
+
+                  {/* SYSTEM SETTINGS */}
+
+                  {isSuperAdmin && (
+
+                    <button
+                      type="button"
+                      className="profile-dropdown-item"
+                      onClick={
+                        handleSystemSettingsClick
+                      }
+                      role="menuitem"
+                    >
+
+                      <span className="profile-dropdown-icon">
+
+                        ⚙
+
+                      </span>
+
+                      <span>
+
+                        System Settings
+
+                      </span>
+
+
+                      <small className="profile-admin-label">
+
+                        ADMIN
+
+                      </small>
+
+                    </button>
+
+                  )}
+
+
+                  <div className="profile-dropdown-divider" />
+
+
+                  {/* SIGN OUT */}
+
+                  <button
+                    type="button"
+                    className="profile-dropdown-item profile-logout-item"
+                    onClick={
+                      handleLogout
+                    }
+                    role="menuitem"
+                  >
+
+                    <span className="profile-dropdown-icon">
+
+                      ↪
+
+                    </span>
+
+                    <span>
+
+                      Sign out
+
+                    </span>
+
+                  </button>
+
+                </div>
+
+              )}
+
+            </div>
 
           </div>
 
         </header>
 
 
-        {/* =================================================
+        {/* =====================================================
             PAGE CONTENT
-        ================================================== */}
+        ====================================================== */}
 
         <main className="content-area">
 
@@ -590,7 +1138,9 @@ const ProtectedLayout = () => {
       </div>
 
     </div>
+
   );
+
 };
 
 

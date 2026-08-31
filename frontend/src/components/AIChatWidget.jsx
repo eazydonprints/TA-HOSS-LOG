@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import "./AIChatWidget.css";
 
 const API_BASE =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+  import.meta.env.VITE_API_URL || "http://10.253.205.21:5000/api/v1";
 
 const QUICK_SUGGESTIONS = [
   "How do I access community records?",

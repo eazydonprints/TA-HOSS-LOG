@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import api from "../services/api";
 
+import "./RelationshipTreePage.css";
+
 const RelationshipTreePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();

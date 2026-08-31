@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 
+import "./Dashboard.css";
+
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentResidents, setRecentResidents] = useState([]);

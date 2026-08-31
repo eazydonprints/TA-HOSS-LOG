@@ -6,6 +6,8 @@ import {
 
 import api from "../services/api";
 
+import "./HouseholdDetailsPage.css";
+
 const HouseholdDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();

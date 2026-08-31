@@ -257,7 +257,11 @@ const residentSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["active", "inactive"],
+      enum: [
+        "active",
+        "inactive",
+        "deleted",
+      ],
       default: "active",
       index: true,
     },
@@ -274,13 +278,26 @@ const residentSchema = new mongoose.Schema(
     },
 
     // =========================================================
-    // SOFT DELETE
+    // SOFT DELETE INFORMATION
     // =========================================================
 
     deletedAt: {
       type: Date,
       default: null,
       index: true,
+    },
+
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+      index: true,
+    },
+
+    deletionReason: {
+      type: String,
+      trim: true,
+      default: null,
     },
   },
   {
@@ -337,6 +354,20 @@ residentSchema.index({
   identityStatus: 1,
   status: 1,
 });
+
+residentSchema.index({
+  deletedAt: 1,
+  status: 1,
+});
+
+residentSchema.index({
+  deletedBy: 1,
+  deletedAt: 1,
+});
+
+// =========================================================
+// EXPORT MODEL
+// =========================================================
 
 module.exports = mongoose.model(
   "Resident",

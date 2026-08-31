@@ -55,6 +55,7 @@ const createMessage = (role, content, extra = {}) => ({
 
 const formatTime = (date) => {
   if (!date) return "";
+
   return new Intl.DateTimeFormat("en-NG", {
     hour: "2-digit",
     minute: "2-digit",
@@ -72,6 +73,7 @@ const formatInlineText = (text) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return <strong key={index}>{part.slice(2, -2)}</strong>;
     }
+
     return part;
   });
 };
@@ -98,6 +100,7 @@ const formatAnswer = (text) => {
       trimmed.startsWith("# ")
     ) {
       const heading = trimmed.replace(/^#{1,3}\s/, "");
+
       return (
         <div key={index} className="ai-answer-heading">
           {formatInlineText(heading)}
@@ -115,6 +118,7 @@ const formatAnswer = (text) => {
     }
 
     const numberedMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
+
     if (numberedMatch) {
       return (
         <div key={index} className="ai-answer-numbered">
@@ -148,18 +152,20 @@ const AIAssistantPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const chatScrollRef = useRef(null);
-  const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
   const hasMessages = messages.length > 0;
 
   const conversationHistory = useMemo(() => {
     return messages
-      .filter((msg) => msg.role === "user" || msg.role === "assistant")
+      .filter(
+        (message) =>
+          message.role === "user" || message.role === "assistant"
+      )
       .slice(-12)
-      .map((msg) => ({
-        role: msg.role,
-        content: msg.content,
+      .map((message) => ({
+        role: message.role,
+        content: message.content,
       }));
   }, [messages]);
 
@@ -169,23 +175,37 @@ const AIAssistantPage = () => {
 
   const checkHealth = async () => {
     setHealthLoading(true);
+
     try {
       const response = await api.get("/ai/health");
+
       if (response.data?.success) {
         setHealth(response.data.data);
       } else {
-        setHealth({ configured: false, status: "unavailable" });
+        setHealth({
+          configured: false,
+          status: "unavailable",
+        });
       }
     } catch (err) {
       console.error("TA-HOSS AI health check failed:", err);
-      setHealth({ configured: false, status: "unavailable" });
+
+      setHealth({
+        configured: false,
+        status: "unavailable",
+      });
     } finally {
       setHealthLoading(false);
     }
   };
 
+  /* ============================================================
+     AUTO-SCROLL ONLY THE CHAT AREA
+  ============================================================ */
+
   useEffect(() => {
     const scrollContainer = chatScrollRef.current;
+
     if (!scrollContainer) return;
 
     requestAnimationFrame(() => {
@@ -195,6 +215,10 @@ const AIAssistantPage = () => {
       });
     });
   }, [messages, loading]);
+
+  /* ============================================================
+     SEND MESSAGE
+  ============================================================ */
 
   const sendMessage = async (messageOverride = null) => {
     const message = (
@@ -212,8 +236,15 @@ const AIAssistantPage = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
+
     try {
-      const response = await api.post("/ai/chat", { message, history });
+      const response = await api.post("/ai/chat", {
+        message,
+        history,
+      });
 
       if (!response.data?.success) {
         throw new Error(
@@ -223,6 +254,7 @@ const AIAssistantPage = () => {
       }
 
       const data = response.data.data;
+
       const assistantMessage = createMessage(
         "assistant",
         data?.answer || "I was unable to generate a response.",
@@ -235,45 +267,55 @@ const AIAssistantPage = () => {
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err) {
       console.error("TA-HOSS AI chat error:", err);
+
       const serverMessage =
         err.response?.data?.message ||
         err.message ||
         "Unable to connect to TA-HOSS AI.";
 
       setError(serverMessage);
+
       setMessages((prev) => [
         ...prev,
         createMessage(
           "assistant",
           "I could not process that request. Please check the AI service connection and try again.",
-          { isError: true }
+          {
+            isError: true,
+          }
         ),
       ]);
     } finally {
       setLoading(false);
+
       setTimeout(() => {
         textareaRef.current?.focus();
       }, 50);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     await sendMessage();
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       sendMessage();
     }
   };
 
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
-    const textarea = e.target;
+  const handleInputChange = (event) => {
+    setInput(event.target.value);
+
+    const textarea = event.target;
+
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 140)}px`;
+    textarea.style.height = `${Math.min(
+      textarea.scrollHeight,
+      140
+    )}px`;
   };
 
   const handleQuickQuestion = (question) => {
@@ -288,7 +330,10 @@ const AIAssistantPage = () => {
 
     requestAnimationFrame(() => {
       if (chatScrollRef.current) {
-        chatScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+        chatScrollRef.current.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
       }
     });
 
@@ -306,13 +351,18 @@ const AIAssistantPage = () => {
   return (
     <div className="ai-root">
       <div className="ai-shell">
-        {/* HEADER */}
+        {/* ======================================================
+            HEADER
+        ====================================================== */}
+
         <header className="ai-header">
           <div className="ai-header-left">
             <button
               type="button"
               className="ai-mobile-menu-btn"
-              onClick={() => setSidebarOpen((val) => !val)}
+              onClick={() =>
+                setSidebarOpen((currentValue) => !currentValue)
+              }
               aria-label="Toggle AI assistant sidebar"
             >
               ☰
@@ -325,6 +375,7 @@ const AIAssistantPage = () => {
             <div className="ai-brand-text">
               <div className="ai-title-row">
                 <h1>TA-HOSS AI</h1>
+
                 <span
                   className={`ai-status-badge ${
                     health?.configured ? "online" : "offline"
@@ -334,6 +385,7 @@ const AIAssistantPage = () => {
                   {aiStatus}
                 </span>
               </div>
+
               <p>Intelligent community operations assistant</p>
             </div>
           </div>
@@ -346,46 +398,75 @@ const AIAssistantPage = () => {
               disabled={loading}
             >
               <span className="ai-btn-icon">＋</span>
-              <span className="ai-btn-text">New conversation</span>
+
+              <span className="ai-btn-text">
+                New conversation
+              </span>
             </button>
           </div>
         </header>
 
-        {/* BODY */}
+        {/* ======================================================
+            BODY
+        ====================================================== */}
+
         <div className="ai-body">
-          {/* ISOLATED AI SIDEBAR */}
+          {/* ====================================================
+              SIDEBAR
+          ==================================================== */}
+
           <aside
             className={`ai-sidebar-inner ${
               sidebarOpen ? "ai-sidebar-open" : ""
             }`}
           >
             <div className="ai-sidebar-section">
-              <div className="ai-sidebar-heading">Assistant</div>
+              <div className="ai-sidebar-heading">
+                Assistant
+              </div>
+
               <div className="ai-capability-card">
-                <div className="ai-capability-icon">✦</div>
+                <div className="ai-capability-icon">
+                  ✦
+                </div>
+
                 <div className="ai-capability-text">
-                  <strong>Community Intelligence</strong>
+                  <strong>
+                    Community Intelligence
+                  </strong>
+
                   <p>
-                    Ask questions about the current TA-HOSS database, residents,
-                    households, verification and field operations.
+                    Ask questions about the current TA-HOSS
+                    database, residents, households, verification
+                    and field operations.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="ai-sidebar-section">
-              <div className="ai-sidebar-heading">Quick questions</div>
+              <div className="ai-sidebar-heading">
+                Quick questions
+              </div>
+
               <div className="ai-quick-list">
                 {QUICK_QUESTIONS.map((item) => (
                   <button
                     type="button"
                     key={item.title}
                     className="ai-quick-item"
-                    onClick={() => handleQuickQuestion(item.question)}
+                    onClick={() =>
+                      handleQuickQuestion(item.question)
+                    }
                     disabled={loading}
                   >
-                    <span className="ai-quick-icon">{item.icon}</span>
-                    <span className="ai-quick-title">{item.title}</span>
+                    <span className="ai-quick-icon">
+                      {item.icon}
+                    </span>
+
+                    <span className="ai-quick-title">
+                      {item.title}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -393,16 +474,22 @@ const AIAssistantPage = () => {
 
             <div className="ai-sidebar-footer">
               <div className="ai-readonly-badge">
-                <span>🔒</span> Read-only intelligence
+                <span>🔒</span>
+                Read-only intelligence
               </div>
+
               <p>
-                Note that TA-HOSS AI provides administrative assistance but
-                does not directly modify community records.
+                Note that TA-HOSS AI provides administrative
+                assistance but does not directly modify community
+                records.
               </p>
             </div>
           </aside>
 
-          {/* OVERLAY FOR MOBILE */}
+          {/* ====================================================
+              MOBILE OVERLAY
+          ==================================================== */}
+
           {sidebarOpen && (
             <button
               type="button"
@@ -412,23 +499,37 @@ const AIAssistantPage = () => {
             />
           )}
 
-          {/* CHAT MAIN AREA */}
+          {/* ====================================================
+              CHAT AREA
+          ==================================================== */}
+
           <main className="ai-chat-main">
-            {/* ONLY THIS SECTION SCROLLS */}
-            <div className="ai-chat-scroll" ref={chatScrollRef}>
+            {/* ONLY THIS AREA SCROLLS */}
+
+            <div
+              className="ai-chat-scroll"
+              ref={chatScrollRef}
+            >
               {!hasMessages ? (
-                /* WELCOME SCREEN */
+                /* ==============================================
+                   WELCOME SCREEN
+                ============================================== */
+
                 <div className="ai-welcome">
-                  <div className="ai-welcome-icon">✦</div>
+                  <div className="ai-welcome-icon">
+                    ✦
+                  </div>
+
                   <h2>
                     How can I help with
                     <br />
                     TA-HOSS today?
                   </h2>
+
                   <p>
-                    Ask me about residents, households, verification, GPS
-                    coverage, community statistics, data quality or TA-HOSS
-                    operations.
+                    Ask me about residents, households,
+                    verification, GPS coverage, community
+                    statistics, data quality or TA-HOSS operations.
                   </p>
 
                   <div className="ai-welcome-grid">
@@ -437,21 +538,35 @@ const AIAssistantPage = () => {
                         type="button"
                         className="ai-welcome-card"
                         key={item.title}
-                        onClick={() => handleQuickQuestion(item.question)}
+                        onClick={() =>
+                          handleQuickQuestion(item.question)
+                        }
                         disabled={loading}
                       >
-                        <span className="ai-card-icon">{item.icon}</span>
+                        <span className="ai-card-icon">
+                          {item.icon}
+                        </span>
+
                         <div className="ai-card-text">
                           <strong>{item.title}</strong>
-                          <small>{item.question}</small>
+
+                          <small>
+                            {item.question}
+                          </small>
                         </div>
-                        <span className="ai-card-arrow">→</span>
+
+                        <span className="ai-card-arrow">
+                          →
+                        </span>
                       </button>
                     ))}
                   </div>
                 </div>
               ) : (
-                /* MESSAGES STREAM */
+                /* ==============================================
+                   MESSAGE STREAM
+                ============================================== */
+
                 <div className="ai-messages-container">
                   {messages.map((message) => (
                     <div
@@ -463,26 +578,42 @@ const AIAssistantPage = () => {
                       }`}
                     >
                       {message.role === "assistant" && (
-                        <div className="ai-avatar">✦</div>
+                        <div className="ai-avatar">
+                          ✦
+                        </div>
                       )}
 
                       <div className="ai-message-content">
                         <div className="ai-message-label">
-                          {message.role === "user" ? "You" : "TA-HOSS AI"}
-                          <span>{formatTime(message.timestamp)}</span>
+                          {message.role === "user"
+                            ? "You"
+                            : "TA-HOSS AI"}
+
+                          <span>
+                            {formatTime(
+                              message.timestamp
+                            )}
+                          </span>
                         </div>
 
                         <div
                           className={`ai-message-bubble ${
-                            message.isError ? "message-error" : ""
+                            message.isError
+                              ? "message-error"
+                              : ""
                           }`}
                         >
-                          {formatAnswer(message.content)}
+                          {formatAnswer(
+                            message.content
+                          )}
                         </div>
 
                         {message.context && (
                           <div className="ai-context-note">
-                            <span className="ai-context-dot">●</span>
+                            <span className="ai-context-dot">
+                              ●
+                            </span>
+
                             Live TA-HOSS database context used
                           </div>
                         )}
@@ -492,30 +623,44 @@ const AIAssistantPage = () => {
 
                   {loading && (
                     <div className="ai-message-row assistant-message">
-                      <div className="ai-avatar">✦</div>
+                      <div className="ai-avatar">
+                        ✦
+                      </div>
+
                       <div className="ai-message-content">
-                        <div className="ai-message-label">TA-HOSS AI</div>
+                        <div className="ai-message-label">
+                          TA-HOSS AI
+                        </div>
+
                         <div className="ai-message-bubble ai-typing">
                           <span />
                           <span />
                           <span />
-                          <em>Analysing TA-HOSS data...</em>
+
+                          <em>
+                            Analysing TA-HOSS data...
+                          </em>
                         </div>
                       </div>
                     </div>
                   )}
-
-                  <div ref={messagesEndRef} />
                 </div>
               )}
 
               {error && (
                 <div className="ai-error-banner">
-                  <span className="ai-error-icon">⚠</span>
+                  <span className="ai-error-icon">
+                    ⚠
+                  </span>
+
                   <div className="ai-error-text">
-                    <strong>AI request failed</strong>
+                    <strong>
+                      AI request failed
+                    </strong>
+
                     <p>{error}</p>
                   </div>
+
                   <button
                     type="button"
                     onClick={() => setError("")}
@@ -527,10 +672,16 @@ const AIAssistantPage = () => {
               )}
             </div>
 
-            {/* STRICTLY PINNED COMPOSER AT BOTTOM */}
+            {/* ==================================================
+                FIXED / NON-SCROLLING COMPOSER
+            ================================================== */}
+
             <div className="ai-composer-wrapper">
               <div className="ai-composer-inner">
-                <form className="ai-input-wrapper" onSubmit={handleSubmit}>
+                <form
+                  className="ai-input-wrapper"
+                  onSubmit={handleSubmit}
+                >
                   <textarea
                     ref={textareaRef}
                     value={input}
@@ -546,7 +697,9 @@ const AIAssistantPage = () => {
                     <div className="ai-input-hint">
                       <span>Enter to send</span>
                       <span>•</span>
-                      <span>Shift + Enter for new line</span>
+                      <span>
+                        Shift + Enter for new line
+                      </span>
                     </div>
 
                     <div className="ai-input-actions">
@@ -559,7 +712,9 @@ const AIAssistantPage = () => {
                       <button
                         type="submit"
                         className="ai-send-button"
-                        disabled={loading || !input.trim()}
+                        disabled={
+                          loading || !input.trim()
+                        }
                         aria-label="Send message"
                       >
                         {loading ? (
@@ -573,8 +728,9 @@ const AIAssistantPage = () => {
                 </form>
 
                 <div className="ai-disclaimer">
-                  TA-HOSS AI uses live read-only database context. Always verify
-                  critical administrative information against system records.
+                  TA-HOSS AI uses live read-only database context.
+                  Always verify critical administrative information
+                  against system records.
                 </div>
               </div>
             </div>

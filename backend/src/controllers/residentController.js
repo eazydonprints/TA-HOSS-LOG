@@ -66,6 +66,10 @@ const createResident = async (req, res) => {
       });
     }
 
+    // =====================================================
+    // CHECK HOUSEHOLD HEAD
+    // =====================================================
+
     if (relationshipToHead === "head") {
       const existingHead = await Resident.findOne({
         household,
@@ -77,12 +81,21 @@ const createResident = async (req, res) => {
       if (existingHead) {
         return res.status(409).json({
           success: false,
-          message: "This household already has a registered household head.",
+          message:
+            "This household already has a registered household head.",
         });
       }
     }
 
+    // =====================================================
+    // GENERATE RESIDENT ID
+    // =====================================================
+
     const residentId = await generateResidentId();
+
+    // =====================================================
+    // CREATE RESIDENT
+    // =====================================================
 
     const resident = await Resident.create({
       residentId,
@@ -102,11 +115,15 @@ const createResident = async (req, res) => {
       photoPublicId: photoPublicId || null,
 
       gps:
-        latitude !== undefined && longitude !== undefined
+        latitude !== undefined &&
+        longitude !== undefined
           ? {
               latitude: Number(latitude),
               longitude: Number(longitude),
-              accuracy: accuracy !== undefined ? Number(accuracy) : undefined,
+              accuracy:
+                accuracy !== undefined
+                  ? Number(accuracy)
+                  : undefined,
               capturedAt: new Date(),
             }
           : undefined,
@@ -118,23 +135,44 @@ const createResident = async (req, res) => {
       identityStatus: "pending",
 
       status: "active",
+
+      deletedAt: null,
+
+      deletedBy: null,
     });
 
-    if (relationshipToHead === "head") {
-      householdRecord.householdHead = resident._id;
+    // =====================================================
+    // ASSIGN HOUSEHOLD HEAD
+    // =====================================================
 
-      householdRecord.updatedBy = req.user._id;
+    if (relationshipToHead === "head") {
+      householdRecord.householdHead =
+        resident._id;
+
+      householdRecord.updatedBy =
+        req.user._id;
 
       await householdRecord.save();
     }
 
-    const createdResident = await Resident.findById(resident._id)
-      .populate(
-        "household",
-        "householdId compound houseNumber gps householdHead status"
-      )
-      .populate("registeredBy", "fullname username photo")
-      .populate("verifiedBy", "fullname username photo");
+    // =====================================================
+    // RETURN CREATED RESIDENT
+    // =====================================================
+
+    const createdResident =
+      await Resident.findById(resident._id)
+        .populate(
+          "household",
+          "householdId compound houseNumber gps householdHead status"
+        )
+        .populate(
+          "registeredBy",
+          "fullname username photo"
+        )
+        .populate(
+          "verifiedBy",
+          "fullname username photo"
+        );
 
     return res.status(201).json({
       success: true,
@@ -142,13 +180,20 @@ const createResident = async (req, res) => {
       data: createdResident,
     });
   } catch (error) {
-    console.error("CREATE RESIDENT ERROR:", error);
+    console.error(
+      "CREATE RESIDENT ERROR:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Unable to register resident.",
+      message:
+        "Unable to register resident.",
       error:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
+        process.env.NODE_ENV ===
+        "development"
+          ? error.message
+          : undefined,
     });
   }
 };
@@ -159,20 +204,36 @@ const createResident = async (req, res) => {
 
 const getResidents = async (req, res) => {
   try {
-    const { page, limit, skip } = getPagination(req.query);
+    const {
+      page,
+      limit,
+      skip,
+    } = getPagination(req.query);
 
-    const search = req.query.search?.trim();
+    const search =
+      req.query.search?.trim();
 
-    const verificationStatus = req.query.verificationStatus?.trim();
+    const verificationStatus =
+      req.query.verificationStatus?.trim();
 
-    const identityStatus = req.query.identityStatus?.trim();
+    const identityStatus =
+      req.query.identityStatus?.trim();
 
-    const household = req.query.household?.trim();
+    const household =
+      req.query.household?.trim();
+
+    // =====================================================
+    // BASE FILTER
+    // =====================================================
 
     const filter = {
       deletedAt: null,
       status: "active",
     };
+
+    // =====================================================
+    // SEARCH
+    // =====================================================
 
     if (search) {
       filter.$or = [
@@ -209,59 +270,103 @@ const getResidents = async (req, res) => {
       ];
     }
 
+    // =====================================================
+    // VERIFICATION FILTER
+    // =====================================================
+
     if (
       verificationStatus &&
-      ["pending", "verified", "rejected"].includes(verificationStatus)
+      [
+        "pending",
+        "verified",
+        "rejected",
+      ].includes(verificationStatus)
     ) {
-      filter.verificationStatus = verificationStatus;
+      filter.verificationStatus =
+        verificationStatus;
     }
+
+    // =====================================================
+    // IDENTITY STATUS FILTER
+    // =====================================================
 
     if (
       identityStatus &&
-      ["pending", "active", "suspended", "deceased", "moved"].includes(
-        identityStatus
-      )
+      [
+        "pending",
+        "active",
+        "suspended",
+        "deceased",
+        "moved",
+      ].includes(identityStatus)
     ) {
-      filter.identityStatus = identityStatus;
+      filter.identityStatus =
+        identityStatus;
     }
 
-    if (household && isValidObjectId(household)) {
+    // =====================================================
+    // HOUSEHOLD FILTER
+    // =====================================================
+
+    if (
+      household &&
+      isValidObjectId(household)
+    ) {
       filter.household = household;
     }
 
-    const [residents, total] = await Promise.all([
-      Resident.find(filter)
-        .populate(
-          "household",
-          "householdId compound houseNumber gps householdHead status"
-        )
-        .populate("registeredBy", "fullname username photo")
-        .populate("verifiedBy", "fullname username photo")
-        .sort({
-          createdAt: -1,
-        })
-        .skip(skip)
-        .limit(limit),
+    // =====================================================
+    // FETCH RESIDENTS
+    // =====================================================
 
-      Resident.countDocuments(filter),
-    ]);
+    const [residents, total] =
+      await Promise.all([
+        Resident.find(filter)
+          .populate(
+            "household",
+            "householdId compound houseNumber gps householdHead status"
+          )
+          .populate(
+            "registeredBy",
+            "fullname username photo"
+          )
+          .populate(
+            "verifiedBy",
+            "fullname username photo"
+          )
+          .sort({
+            createdAt: -1,
+          })
+          .skip(skip)
+          .limit(limit),
+
+        Resident.countDocuments(filter),
+      ]);
 
     return res.json({
       success: true,
       data: residents,
+
       pagination: {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit),
+
+        totalPages: Math.ceil(
+          total / limit
+        ),
       },
     });
   } catch (error) {
-    console.error("GET RESIDENTS ERROR:", error);
+    console.error(
+      "GET RESIDENTS ERROR:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Unable to load residents.",
+      message:
+        "Unable to load residents.",
     });
   }
 };
@@ -270,32 +375,44 @@ const getResidents = async (req, res) => {
 // GET RESIDENT BY ID
 // =========================================================
 
-const getResidentById = async (req, res) => {
+const getResidentById = async (
+  req,
+  res
+) => {
   try {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid resident ID.",
+        message:
+          "Invalid resident ID.",
       });
     }
 
-    const resident = await Resident.findOne({
-      _id: id,
-      deletedAt: null,
-    })
-      .populate(
-        "household",
-        "householdId compound houseNumber gps householdHead status"
-      )
-      .populate("registeredBy", "fullname username photo")
-      .populate("verifiedBy", "fullname username photo");
+    const resident =
+      await Resident.findOne({
+        _id: id,
+        deletedAt: null,
+      })
+        .populate(
+          "household",
+          "householdId compound houseNumber gps householdHead status"
+        )
+        .populate(
+          "registeredBy",
+          "fullname username photo"
+        )
+        .populate(
+          "verifiedBy",
+          "fullname username photo"
+        );
 
     if (!resident) {
       return res.status(404).json({
         success: false,
-        message: "Resident not found.",
+        message:
+          "Resident not found.",
       });
     }
 
@@ -304,11 +421,15 @@ const getResidentById = async (req, res) => {
       data: resident,
     });
   } catch (error) {
-    console.error("GET RESIDENT ERROR:", error);
+    console.error(
+      "GET RESIDENT ERROR:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Unable to load resident profile.",
+      message:
+        "Unable to load resident profile.",
     });
   }
 };
@@ -317,26 +438,32 @@ const getResidentById = async (req, res) => {
 // UPDATE RESIDENT
 // =========================================================
 
-const updateResident = async (req, res) => {
+const updateResident = async (
+  req,
+  res
+) => {
   try {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid resident ID.",
+        message:
+          "Invalid resident ID.",
       });
     }
 
-    const resident = await Resident.findOne({
-      _id: id,
-      deletedAt: null,
-    });
+    const resident =
+      await Resident.findOne({
+        _id: id,
+        deletedAt: null,
+      });
 
     if (!resident) {
       return res.status(404).json({
         success: false,
-        message: "Resident not found.",
+        message:
+          "Resident not found.",
       });
     }
 
@@ -359,53 +486,69 @@ const updateResident = async (req, res) => {
       accuracy,
     } = req.body;
 
-    const oldHouseholdId = resident.household?.toString();
+    const oldHouseholdId =
+      resident.household?.toString();
 
     const newHouseholdId =
-      household !== undefined ? household : oldHouseholdId;
+      household !== undefined
+        ? household
+        : oldHouseholdId;
 
-    // =======================================================
+    // =====================================================
     // HOUSEHOLD VALIDATION
-    // =======================================================
+    // =====================================================
 
-    if (!isValidObjectId(newHouseholdId)) {
+    if (
+      !isValidObjectId(
+        newHouseholdId
+      )
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Invalid household ID.",
+        message:
+          "Invalid household ID.",
       });
     }
 
-    const householdRecord = await Household.findOne({
-      _id: newHouseholdId,
-      deletedAt: null,
-      status: "active",
-    });
+    const householdRecord =
+      await Household.findOne({
+        _id: newHouseholdId,
+        deletedAt: null,
+        status: "active",
+      });
 
     if (!householdRecord) {
       return res.status(404).json({
         success: false,
-        message: "Selected household was not found.",
+        message:
+          "Selected household was not found.",
       });
     }
 
-    // =======================================================
+    // =====================================================
     // HOUSEHOLD HEAD VALIDATION
-    // =======================================================
+    // =====================================================
 
-    if (relationshipToHead === "head") {
-      const existingHead = await Resident.findOne({
-        _id: {
-          $ne: resident._id,
-        },
+    if (
+      relationshipToHead ===
+      "head"
+    ) {
+      const existingHead =
+        await Resident.findOne({
+          _id: {
+            $ne: resident._id,
+          },
 
-        household: newHouseholdId,
+          household:
+            newHouseholdId,
 
-        relationshipToHead: "head",
+          relationshipToHead:
+            "head",
 
-        deletedAt: null,
+          deletedAt: null,
 
-        status: "active",
-      });
+          status: "active",
+        });
 
       if (existingHead) {
         return res.status(409).json({
@@ -416,152 +559,349 @@ const updateResident = async (req, res) => {
       }
     }
 
-    // =======================================================
+    // =====================================================
+    // UPDATE HOUSEHOLD
+    // =====================================================
+
+    if (
+      household !== undefined
+    ) {
+      resident.household =
+        newHouseholdId;
+    }
+
+    // =====================================================
     // PERSONAL INFORMATION
-    // =======================================================
+    // =====================================================
 
-    if (household !== undefined) {
-      resident.household = newHouseholdId;
+    if (
+      firstName !== undefined
+    ) {
+      resident.firstName =
+        String(firstName).trim();
     }
 
-    if (firstName !== undefined) {
-      resident.firstName = String(firstName).trim();
+    if (
+      middleName !== undefined
+    ) {
+      resident.middleName =
+        String(middleName).trim();
     }
 
-    if (middleName !== undefined) {
-      resident.middleName = String(middleName).trim();
+    if (
+      lastName !== undefined
+    ) {
+      resident.lastName =
+        String(lastName).trim();
     }
 
-    if (lastName !== undefined) {
-      resident.lastName = String(lastName).trim();
-    }
-
-    if (gender !== undefined) {
+    if (
+      gender !== undefined
+    ) {
       resident.gender = gender;
     }
 
-    if (dateOfBirth !== undefined) {
-      resident.dateOfBirth = dateOfBirth;
+    if (
+      dateOfBirth !== undefined
+    ) {
+      resident.dateOfBirth =
+        dateOfBirth;
     }
 
-    if (phoneNumber !== undefined) {
-      resident.phoneNumber = String(phoneNumber).trim();
+    if (
+      phoneNumber !== undefined
+    ) {
+      resident.phoneNumber =
+        String(phoneNumber).trim();
     }
 
-    if (maritalStatus !== undefined) {
-      resident.maritalStatus = maritalStatus;
+    if (
+      maritalStatus !== undefined
+    ) {
+      resident.maritalStatus =
+        maritalStatus;
     }
 
-    if (occupation !== undefined) {
-      resident.occupation = String(occupation).trim();
+    if (
+      occupation !== undefined
+    ) {
+      resident.occupation =
+        String(occupation).trim();
     }
 
-    if (educationLevel !== undefined) {
-      resident.educationLevel = String(educationLevel).trim();
+    if (
+      educationLevel !== undefined
+    ) {
+      resident.educationLevel =
+        String(
+          educationLevel
+        ).trim();
     }
 
-    // =======================================================
+    // =====================================================
     // PHOTO
-    // =======================================================
+    // =====================================================
 
     if (photo !== undefined) {
-      resident.photo = photo || null;
+      resident.photo =
+        photo || null;
     }
 
-    if (photoPublicId !== undefined) {
-      resident.photoPublicId = photoPublicId || null;
+    if (
+      photoPublicId !== undefined
+    ) {
+      resident.photoPublicId =
+        photoPublicId || null;
     }
 
-    // =======================================================
+    // =====================================================
     // RELATIONSHIP
-    // =======================================================
+    // =====================================================
 
-    if (relationshipToHead !== undefined) {
-      resident.relationshipToHead = relationshipToHead;
+    if (
+      relationshipToHead !==
+      undefined
+    ) {
+      resident.relationshipToHead =
+        relationshipToHead;
     }
 
-    // =======================================================
+    // =====================================================
     // GPS
-    // =======================================================
+    // =====================================================
 
-    if (latitude !== undefined && longitude !== undefined) {
+    if (
+      latitude !== undefined &&
+      longitude !== undefined
+    ) {
       resident.gps = {
-        latitude: Number(latitude),
+        latitude:
+          Number(latitude),
 
-        longitude: Number(longitude),
+        longitude:
+          Number(longitude),
 
-        accuracy: accuracy !== undefined ? Number(accuracy) : undefined,
+        accuracy:
+          accuracy !== undefined
+            ? Number(accuracy)
+            : undefined,
 
-        capturedAt: new Date(),
+        capturedAt:
+          new Date(),
       };
     }
 
     await resident.save();
 
-    // =======================================================
+    // =====================================================
     // OLD HOUSEHOLD CLEANUP
-    // =======================================================
+    // =====================================================
 
-    if (oldHouseholdId && oldHouseholdId !== newHouseholdId.toString()) {
-      const oldHousehold = await Household.findById(oldHouseholdId);
+    if (
+      oldHouseholdId &&
+      oldHouseholdId !==
+        newHouseholdId.toString()
+    ) {
+      const oldHousehold =
+        await Household.findById(
+          oldHouseholdId
+        );
 
       if (
         oldHousehold &&
-        oldHousehold.householdHead?.toString() === resident._id.toString()
+        oldHousehold.householdHead
+          ?.toString() ===
+          resident._id.toString()
       ) {
-        oldHousehold.householdHead = null;
+        oldHousehold.householdHead =
+          null;
 
-        oldHousehold.updatedBy = req.user._id;
+        oldHousehold.updatedBy =
+          req.user._id;
 
         await oldHousehold.save();
       }
     }
 
-    // =======================================================
+    // =====================================================
     // NEW HOUSEHOLD HEAD
-    // =======================================================
+    // =====================================================
 
-    if (resident.relationshipToHead === "head") {
-      householdRecord.householdHead = resident._id;
+    if (
+      resident.relationshipToHead ===
+      "head"
+    ) {
+      householdRecord.householdHead =
+        resident._id;
 
-      householdRecord.updatedBy = req.user._id;
+      householdRecord.updatedBy =
+        req.user._id;
 
       await householdRecord.save();
     } else if (
-      householdRecord.householdHead?.toString() === resident._id.toString()
+      householdRecord.householdHead
+        ?.toString() ===
+      resident._id.toString()
     ) {
-      householdRecord.householdHead = null;
+      householdRecord.householdHead =
+        null;
 
-      householdRecord.updatedBy = req.user._id;
+      householdRecord.updatedBy =
+        req.user._id;
 
       await householdRecord.save();
     }
 
-    // =======================================================
+    // =====================================================
     // RETURN UPDATED RECORD
-    // =======================================================
+    // =====================================================
 
-    const updatedResident = await Resident.findById(resident._id)
-      .populate(
-        "household",
-        "householdId compound houseNumber gps householdHead status"
+    const updatedResident =
+      await Resident.findById(
+        resident._id
       )
-      .populate("registeredBy", "fullname username photo")
-      .populate("verifiedBy", "fullname username photo");
+        .populate(
+          "household",
+          "householdId compound houseNumber gps householdHead status"
+        )
+        .populate(
+          "registeredBy",
+          "fullname username photo"
+        )
+        .populate(
+          "verifiedBy",
+          "fullname username photo"
+        );
 
     return res.json({
       success: true,
-      message: "Resident updated successfully.",
+      message:
+        "Resident updated successfully.",
       data: updatedResident,
     });
   } catch (error) {
-    console.error("UPDATE RESIDENT ERROR:", error);
+    console.error(
+      "UPDATE RESIDENT ERROR:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Unable to update resident.",
+      message:
+        "Unable to update resident.",
       error:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
+        process.env.NODE_ENV ===
+        "development"
+          ? error.message
+          : undefined,
+    });
+  }
+};
+
+// =========================================================
+// DELETE RESIDENT
+// SOFT DELETE
+// =========================================================
+
+const deleteResident = async (
+  req,
+  res
+) => {
+  try {
+    const { id } = req.params;
+
+    // =====================================================
+    // VALIDATE ID
+    // =====================================================
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid resident ID.",
+      });
+    }
+
+    // =====================================================
+    // FIND RESIDENT
+    // =====================================================
+
+    const resident =
+      await Resident.findOne({
+        _id: id,
+        deletedAt: null,
+      });
+
+    if (!resident) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Resident not found or has already been deleted.",
+      });
+    }
+
+    // =====================================================
+    // REMOVE AS HOUSEHOLD HEAD
+    // =====================================================
+
+    const household =
+      await Household.findById(
+        resident.household
+      );
+
+    if (
+      household &&
+      household.householdHead?.toString() ===
+        resident._id.toString()
+    ) {
+      household.householdHead = null;
+
+      household.updatedBy =
+        req.user._id;
+
+      await household.save();
+    }
+
+    // =====================================================
+    // SOFT DELETE RESIDENT
+    // =====================================================
+
+    resident.status = "deleted";
+
+    resident.deletedAt = new Date();
+
+    resident.deletedBy =
+      req.user._id;
+
+    await resident.save();
+
+    return res.json({
+      success: true,
+      message:
+        "Resident deleted successfully.",
+      data: {
+        _id: resident._id,
+        residentId:
+          resident.residentId,
+        deletedAt:
+          resident.deletedAt,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "DELETE RESIDENT ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to delete resident.",
+      error:
+        process.env.NODE_ENV ===
+        "development"
+          ? error.message
+          : undefined,
     });
   }
 };
@@ -570,45 +910,64 @@ const updateResident = async (req, res) => {
 // EXPORT RESIDENTS - EXCEL
 // =========================================================
 
-const exportResidentsExcel = async (req, res) => {
-  try {
-    return res.status(501).json({
-      success: false,
-      message: "Excel export feature coming soon.",
-    });
-  } catch (error) {
-    console.error("EXPORT EXCEL ERROR:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Unable to export residents to Excel.",
-    });
-  }
-};
+const exportResidentsExcel =
+  async (req, res) => {
+    try {
+      return res.status(501).json({
+        success: false,
+        message:
+          "Excel export feature coming soon.",
+      });
+    } catch (error) {
+      console.error(
+        "EXPORT EXCEL ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to export residents to Excel.",
+      });
+    }
+  };
 
 // =========================================================
 // EXPORT RESIDENTS - PDF
 // =========================================================
 
-const exportResidentsPDF = async (req, res) => {
-  try {
-    return res.status(501).json({
-      success: false,
-      message: "PDF export feature coming soon.",
-    });
-  } catch (error) {
-    console.error("EXPORT PDF ERROR:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Unable to export residents to PDF.",
-    });
-  }
-};
+const exportResidentsPDF =
+  async (req, res) => {
+    try {
+      return res.status(501).json({
+        success: false,
+        message:
+          "PDF export feature coming soon.",
+      });
+    } catch (error) {
+      console.error(
+        "EXPORT PDF ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Unable to export residents to PDF.",
+      });
+    }
+  };
+
+// =========================================================
+// EXPORT CONTROLLERS
+// =========================================================
 
 module.exports = {
   createResident,
   getResidents,
   getResidentById,
   updateResident,
+  deleteResident,
   exportResidentsExcel,
   exportResidentsPDF,
 };

@@ -1,21 +1,79 @@
-const dotenv = require('dotenv');
-// Load environment variables BEFORE importing app or any other modules
+const dotenv = require("dotenv");
+
+// Load environment variables first
 dotenv.config();
 
-const mongoose = require('mongoose');
-const app = require('./app');
+const mongoose = require("mongoose");
+
+const app = require("./app");
+
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
 
 const PORT = process.env.PORT || 5000;
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('MongoDB connected');
+const MONGODB_URI =
+  process.env.MONGODB_URI;
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+
+/* =========================================================
+   VALIDATE ENVIRONMENT
+========================================================= */
+
+if (!MONGODB_URI) {
+  console.error(
+    "MONGODB_URI is not defined."
+  );
+
+  process.exit(1);
+}
+
+
+/* =========================================================
+   DATABASE CONNECTION
+========================================================= */
+
+const startServer = async () => {
+  try {
+    await mongoose.connect(MONGODB_URI);
+
+    console.log(
+      "MongoDB connected successfully"
+    );
+
+
+    /* =====================================================
+       START SERVER
+    ===================================================== */
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(
+        `TA-HOSS LOG API running on port ${PORT}`
+      );
+
+      console.log(
+        `Environment: ${
+          process.env.NODE_ENV || "development"
+        }`
+      );
     });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
-  });
+
+  } catch (error) {
+
+    console.error(
+      "MongoDB connection error:",
+      error.message
+    );
+
+    process.exit(1);
+  }
+};
+
+
+/* =========================================================
+   START APPLICATION
+========================================================= */
+
+startServer();
